@@ -26,9 +26,9 @@ public class BUnacceptedOrdersPage extends BaseClassMobile {
 
             ExtentTestListener.logStep("Clicking Unaccepted Orders...");
 
-            WebElement unacceptedOrders = wait.until(
-                    ExpectedConditions.elementToBeClickable(
-                            AppiumBy.xpath("//android.view.View[contains(@content-desc,'Unaccepted Orders')]")));
+            WebElement unacceptedOrders = wait.until
+                    (ExpectedConditions.elementToBeClickable
+                            (AppiumBy.xpath("//android.view.View[contains(@content-desc,'Unaccepted Orders')]")));
 
             unacceptedOrders.click();
 
@@ -37,11 +37,10 @@ public class BUnacceptedOrdersPage extends BaseClassMobile {
             ExtentTestListener.logStep("Unaccepted Orders clicked successfully | Time Taken : "
                             + String.format("%.2f", duration)
                             + " sec");
-
-        } catch (Exception e) {
-
-            ExtentTestListener.logStep("Failed to click Unaccepted Orders: "
-                            + e.getMessage());
+        }
+        catch (Exception e)
+        {
+            ExtentTestListener.logStep("Failed to click Unaccepted Orders: " + e.getMessage());
 
             throw new RuntimeException("Unable to click Unaccepted Orders", e);
         }

@@ -1,5 +1,6 @@
 package com.AndroidTest.KSettingFlow;
 
+import Base.ExtentTestListener;
 import io.appium.java_client.AppiumBy;
 import io.appium.java_client.android.AndroidDriver;
 import org.openqa.selenium.By;
@@ -41,7 +42,7 @@ public class ALanguagePage {
         );
         language.click();
 
-        System.out.println("Language English clicked");
+        ExtentTestListener.logStep("Language English clicked");
 
         // Select Arabic
         WebElement arabic = wait.until(
@@ -50,7 +51,7 @@ public class ALanguagePage {
         );
         arabic.click();
 
-        System.out.println("Arabic selected");
+        ExtentTestListener.logStep("Arabic selected");
 
         // Wait for page reload
         Thread.sleep(3000);
@@ -62,7 +63,7 @@ public class ALanguagePage {
         );
         arabicPage.click();
 
-        System.out.println("Arabic Language clicked");
+        ExtentTestListener.logStep("Arabic Language clicked");
 
         // Select English
         WebElement english = wait.until(
@@ -71,6 +72,6 @@ public class ALanguagePage {
         );
         english.click();
 
-        System.out.println("English selected");
+        ExtentTestListener.logStep("English selected");
     }
 }

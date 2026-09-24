@@ -9,53 +9,43 @@ public class JAccountProfileSettingFlowTest extends BaseClassMobile {
     @Test
     public void accountProfileSettingFlowTest() throws InterruptedException {
 
-//        // =====================================================
-//        // A - PHOTO UPLOAD
-//        // =====================================================
-//
-//        APhotoUploadPage photoUploadPage =
-//                new APhotoUploadPage(driver);
-//
-//        photoUploadPage.uploadPhoto();
-//
-//
-//        // =====================================================
-//        // B - QR CODE
-//        // =====================================================
-//
-//        BQRCodePage qrCodePage =
-//                new BQRCodePage(driver);
-//
-//        qrCodePage.openQRCodeAndGoBack();
-//
-//
-//        // =====================================================
-//        // C - LANGUAGE
-//        // =====================================================
-//
-//        CLanguagePage languagePage =
-//                new CLanguagePage(driver);
-//
-//        languagePage.changeArabicAndBackToEnglish();
-//
-//
-//        // =====================================================
-//        // D - NAME CHANGE
-//        // =====================================================
-//
-//        DNameChangePage nameChangePage =
-//                new DNameChangePage(driver);
-//
-//        nameChangePage.changeLastName();
-//
-//
+        // =====================================================
+        // A - PHOTO UPLOAD
+        // =====================================================
+
+        APhotoUploadPage photoUploadPage = new APhotoUploadPage(driver);
+        photoUploadPage.uploadPhoto();
+
+
+        // =====================================================
+        // B - QR CODE
+        // =====================================================
+
+        BQRCodePage qrCodePage = new BQRCodePage(driver);
+        qrCodePage.openQRCodeAndGoBack();
+
+
+        // =====================================================
+        // C - LANGUAGE
+        // =====================================================
+
+        CLanguagePage languagePage = new CLanguagePage(driver);
+        languagePage.changeArabicAndBackToEnglish();
+
+
+        // =====================================================
+        // D - NAME CHANGE
+        // =====================================================
+
+        DNameChangePage nameChangePage = new DNameChangePage(driver);
+        nameChangePage.changeLastName();
+
+
 //        // =====================================================
 //        // E - EMAIL VALIDATION
 //        // =====================================================
 //
-//        EEmailValidationPage emailPage =
-//                new EEmailValidationPage(driver);
-//
+//        EEmailValidationPage emailPage = new EEmailValidationPage(driver);
 //        emailPage.validateEmail();
 //
 //
@@ -64,24 +54,22 @@ public class JAccountProfileSettingFlowTest extends BaseClassMobile {
 //        // =====================================================
 //
 //        FChangePasswordPage changePasswordPage = new FChangePasswordPage(driver);
-//
 //        changePasswordPage.clickAccount();
-//
 //        changePasswordPage.clickUserName();
-//
-//        // Admin@194 -> Admin@199
 //        changePasswordPage.changePasswordToNewPassword();
-//
-//        // Admin@199 -> Admin@194
 //        changePasswordPage.changePasswordBackToOldPassword();
-//
-//        //
-//        GAddressPage addressPage = new GAddressPage(driver);
-//        addressPage.addAndDeleteAddress();
-//
-//        //
-//        HCheckForUpdatePage checkForUpdatePage = new HCheckForUpdatePage(driver);
-//        checkForUpdatePage.checkForUpdate();
+
+        //Address flow
+        G1AddressPage addressPage = new G1AddressPage(driver);
+        addressPage.completeAddressFlow();
+
+        // Create Delete Address page object
+        G2DeleteAddress deleteAddress = new G2DeleteAddress(driver);
+        deleteAddress.deleteAddress();
+
+        //
+        HCheckForUpdatePage checkForUpdatePage = new HCheckForUpdatePage(driver);
+        checkForUpdatePage.checkForUpdate();
 
         //
         IFreeUpSpacePage freeUpSpacePage = new IFreeUpSpacePage(driver);

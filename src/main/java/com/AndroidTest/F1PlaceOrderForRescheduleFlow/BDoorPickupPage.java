@@ -1,6 +1,7 @@
 package com.AndroidTest.F1PlaceOrderForRescheduleFlow;
 
 import Base.BaseClassMobile;
+import Base.ExtentTestListener;
 import io.appium.java_client.AppiumBy;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
@@ -51,7 +52,7 @@ public class BDoorPickupPage extends BaseClassMobile {
 
         requestNowButton.click();
 
-        System.out.println("Request Now clicked successfully");
+        ExtentTestListener.logStep("Request Now clicked successfully");
 
 
         // 2. Select Material Checkbox
@@ -63,7 +64,7 @@ public class BDoorPickupPage extends BaseClassMobile {
 
         checkbox.click();
 
-        System.out.println("Checkbox Selected");
+        ExtentTestListener.logStep("Checkbox Selected");
 
 
         // 3. Click Continue
@@ -75,11 +76,11 @@ public class BDoorPickupPage extends BaseClassMobile {
 
         continueBtn.click();
 
-        System.out.println("Continue clicked");
+        ExtentTestListener.logStep("Continue clicked");
 
 
         System.out.println("==============================================");
-        System.out.println("Doorstep Pickup Flow Completed");
+        ExtentTestListener.logStep("Doorstep Pickup Flow Completed");
         System.out.println("==============================================");
     }
 

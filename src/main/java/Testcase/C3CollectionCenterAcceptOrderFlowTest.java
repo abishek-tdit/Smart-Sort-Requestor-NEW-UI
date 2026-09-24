@@ -19,7 +19,8 @@ public class C3CollectionCenterAcceptOrderFlowTest extends BaseClassMobile {
         //Login:
         ALoginPage loginPage = new ALoginPage();
         loginPage.login("0500123001",
-                               generatedPassword);
+                generatedPassword);
+
 
         //Unaccepted - Orders:
         BUnacceptedOrdersPage unacceptedOrdersPage = new BUnacceptedOrdersPage();

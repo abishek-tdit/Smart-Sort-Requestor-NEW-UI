@@ -42,8 +42,8 @@ public class ALoginPage extends BaseClassMobile {
 
             StepTimer.startStep();
 
-            WebElement passwordField = wait.until(ExpectedConditions.visibilityOfElementLocated(
-                            AppiumBy.androidUIAutomator("new UiSelector().className(\"android.widget.EditText\").instance(1)")));
+            WebElement passwordField = wait.until(ExpectedConditions.visibilityOfElementLocated
+                            (AppiumBy.androidUIAutomator("new UiSelector().className(\"android.widget.EditText\").instance(1)")));
 
             passwordField.click();
             passwordField.clear();
@@ -65,9 +65,9 @@ public class ALoginPage extends BaseClassMobile {
 
             StepTimer.startStep();
 
-            WebElement signInButton = wait.until(
-                    ExpectedConditions.elementToBeClickable(
-                            AppiumBy.accessibilityId("Sign In")));
+            WebElement signInButton =
+                    wait.until(ExpectedConditions.elementToBeClickable
+                            (AppiumBy.accessibilityId("Sign In")));
 
             signInButton.click();
 
@@ -76,10 +76,9 @@ public class ALoginPage extends BaseClassMobile {
             ExtentTestListener.logStep("Login Button Clicked Successfully | Time Taken : "
                             + String.format("%.2f", duration)
                             + " sec");
-
         }
-        catch (Exception e) {
-
+        catch (Exception e)
+        {
             ExtentTestListener.logStep("Login Failed : " + e.getMessage());
 
             throw new RuntimeException("Login Flow Failed", e);

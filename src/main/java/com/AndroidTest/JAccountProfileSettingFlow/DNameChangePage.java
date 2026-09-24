@@ -15,7 +15,7 @@ public class DNameChangePage {
     private final WebDriverWait wait;
 
     // =========================================================
-    // LOCATORS - FIRST CHANGE
+    // LOCATORS
     // =========================================================
 
     // Full Name
@@ -25,29 +25,23 @@ public class DNameChangePage {
                     "//*[contains(@content-desc,'Full Name')]"
             );
 
-    // Last Name = abi
-    private final By lastNameAbi =
+    // ---------------------------------------------------------
+    // LAST NAME FIELD
+    // ---------------------------------------------------------
+
+    private final By lastNameField =
             AppiumBy.xpath(
-                    "//android.widget.EditText[@text='abi']"
+                    "//android.widget.EditText"
             );
 
     // =========================================================
-    // LOCATORS - SECOND CHANGE
+    // UPDATED FULL NAME
     // =========================================================
 
-    // Full Name after changing abi -> abishek
-    // Do NOT use exact content-desc because Android may expose
-    // "Full Name\nAbiram abishek"
     private final By fullNameAbishek =
             AppiumBy.xpath(
                     "//*[contains(@content-desc,'Full Name') " +
                             "and contains(@content-desc,'abishek')]"
-            );
-
-    // Last Name = abishek
-    private final By lastNameAbishek =
-            AppiumBy.xpath(
-                    "//android.widget.EditText[@text='abishek']"
             );
 
     // Update button
@@ -59,12 +53,18 @@ public class DNameChangePage {
     // =========================================================
 
     public DNameChangePage(AndroidDriver driver) {
+
         this.driver = driver;
-        this.wait = new WebDriverWait(driver, Duration.ofSeconds(20));
+
+        this.wait = new WebDriverWait(
+                driver,
+                Duration.ofSeconds(20)
+        );
     }
 
     // =========================================================
     // CHANGE LAST NAME
+    //
     // ABI -> ABISHEK -> ABI
     // =========================================================
 
@@ -77,9 +77,14 @@ public class DNameChangePage {
 
         System.out.println("===== FIRST NAME CHANGE =====");
 
-        // Find Full Name
+        // -----------------------------------------------------
+        // FIND FULL NAME
+        // -----------------------------------------------------
+
         WebElement fullNameElement = wait.until(
-                ExpectedConditions.presenceOfElementLocated(fullName)
+                ExpectedConditions.presenceOfElementLocated(
+                        fullName
+                )
         );
 
         System.out.println(
@@ -87,85 +92,128 @@ public class DNameChangePage {
                         fullNameElement.getAttribute("contentDescription")
         );
 
-        // Click Full Name
-        clickElement(fullNameElement, fullName);
-
-        System.out.println("Full Name clicked successfully");
-
         // -----------------------------------------------------
-        // FIND LAST NAME = ABI
+        // CLICK FULL NAME
         // -----------------------------------------------------
 
-        WebElement lastNameField = wait.until(
-                ExpectedConditions.visibilityOfElementLocated(lastNameAbi)
+        clickElement(
+                fullNameElement,
+                fullName
         );
 
-        // Change ABI -> ABISHEK
-        lastNameField.click();
-        lastNameField.clear();
-        lastNameField.sendKeys("abishek");
+        System.out.println(
+                "Full Name clicked successfully"
+        );
 
-        System.out.println("Last Name changed: abi -> abishek");
+        // -----------------------------------------------------
+        // WAIT FOR NAME EDIT SCREEN
+        // -----------------------------------------------------
+
+        WebElement lastName = wait.until(
+                ExpectedConditions.visibilityOfElementLocated(
+                        lastNameField
+                )
+        );
+
+        System.out.println(
+                "Last Name field found successfully"
+        );
+
+        // -----------------------------------------------------
+        // CHANGE ABI -> ABISHEK
+        // -----------------------------------------------------
+
+        lastName.click();
+
+        lastName.clear();
+
+        lastName.sendKeys("abishek");
+
+        System.out.println(
+                "Last Name changed: abi -> abishek"
+        );
 
         // -----------------------------------------------------
         // CLICK UPDATE
         // -----------------------------------------------------
 
         WebElement update = wait.until(
-                ExpectedConditions.elementToBeClickable(updateButton)
+                ExpectedConditions.elementToBeClickable(
+                        updateButton
+                )
         );
 
         update.click();
 
-        System.out.println("First Update clicked successfully");
+        System.out.println(
+                "First Update clicked successfully"
+        );
 
         // =====================================================
         // SECOND CHANGE
-        // ABISHEK -> ABI
+        // ABISHEK -> ABIRAM
         // =====================================================
 
-        System.out.println("===== SECOND NAME CHANGE =====");
+        System.out.println(
+                "===== SECOND NAME CHANGE ====="
+        );
 
         // -----------------------------------------------------
-        // WAIT FOR UPDATED FULL NAME
+        // WAIT UNTIL UPDATED FULL NAME IS DISPLAYED
         // -----------------------------------------------------
 
         WebElement updatedFullName = wait.until(
-                ExpectedConditions.presenceOfElementLocated(fullNameAbishek)
+                ExpectedConditions.presenceOfElementLocated(
+                        fullNameAbishek
+                )
         );
 
         System.out.println(
                 "Updated Full Name found: " +
-                        updatedFullName.getAttribute("contentDescription")
+                        updatedFullName.getAttribute(
+                                "contentDescription"
+                        )
         );
 
         // -----------------------------------------------------
         // CLICK UPDATED FULL NAME
         // -----------------------------------------------------
 
-        clickElement(updatedFullName, fullNameAbishek);
+        clickElement(
+                updatedFullName,
+                fullNameAbishek
+        );
 
         System.out.println(
                 "Updated Full Name clicked successfully"
         );
 
         // -----------------------------------------------------
-        // FIND LAST NAME = ABISHEK
+        // FIND LAST NAME FIELD AGAIN
         // -----------------------------------------------------
 
         WebElement updatedLastNameField = wait.until(
                 ExpectedConditions.visibilityOfElementLocated(
-                        lastNameAbishek
+                        lastNameField
                 )
         );
 
-        // Change ABISHEK -> ABI
+        System.out.println(
+                "Updated Last Name field found successfully"
+        );
+
+        // -----------------------------------------------------
+        // CHANGE ABISHEK -> ABI
+        // -----------------------------------------------------
+
         updatedLastNameField.click();
+
         updatedLastNameField.clear();
-        updatedLastNameField.sendKeys("abi");
+
+        updatedLastNameField.sendKeys("Abiram");
 
         System.out.println(
-                "Last Name changed: abishek -> abi"
+                "Last Name changed: abishek -> Abiram"
         );
 
         // -----------------------------------------------------
@@ -184,12 +232,16 @@ public class DNameChangePage {
                 "Second Update clicked successfully"
         );
 
+        // -----------------------------------------------------
+        // COMPLETED
+        // -----------------------------------------------------
+
         System.out.println(
                 "===== NAME CHANGE COMPLETED ====="
         );
 
         System.out.println(
-                "Final Last Name: abi"
+                "Final Last Name: Abiram"
         );
     }
 
@@ -197,32 +249,43 @@ public class DNameChangePage {
     // COMMON CLICK METHOD
     // =========================================================
 
-    private void clickElement(WebElement element, By locator) {
+    private void clickElement(
+            WebElement element,
+            By locator
+    ) {
 
         try {
 
             wait.until(
-                    ExpectedConditions.elementToBeClickable(locator)
+                    ExpectedConditions.elementToBeClickable(
+                            locator
+                    )
             ).click();
 
         } catch (Exception e) {
 
-            // If the located element itself is not clickable,
-            // try its parent.
+            System.out.println(
+                    "Normal click failed. Trying parent element..."
+            );
+
             try {
 
-                WebElement parent = element.findElement(
-                        By.xpath("..")
-                );
+                WebElement parent =
+                        element.findElement(
+                                By.xpath("..")
+                        );
 
                 wait.until(
-                        ExpectedConditions.elementToBeClickable(parent)
+                        ExpectedConditions.elementToBeClickable(
+                                parent
+                        )
                 ).click();
 
             } catch (Exception parentException) {
 
                 throw new RuntimeException(
-                        "Unable to click element: " + locator,
+                        "Unable to click element: " +
+                                locator,
                         parentException
                 );
             }

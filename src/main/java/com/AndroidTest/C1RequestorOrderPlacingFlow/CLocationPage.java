@@ -30,9 +30,9 @@ public class CLocationPage {
         // Explore Other Locations
         StepTimer.startStep();
 
-        WebElement exploreBtn = wait.until(
-                ExpectedConditions.elementToBeClickable(
-                        AppiumBy.accessibilityId("Explore Other Locations")));
+        WebElement exploreBtn = wait.until
+                (ExpectedConditions.elementToBeClickable
+                        (AppiumBy.accessibilityId("Explore Other Locations")));
 
         exploreBtn.click();
 
@@ -43,9 +43,9 @@ public class CLocationPage {
         // Bqaiq Location
         StepTimer.startStep();
 
-        WebElement locationBtn = wait.until(
-                ExpectedConditions.elementToBeClickable(
-                        AppiumBy.accessibilityId("Bqaiq")));
+        WebElement locationBtn = wait.until
+                (ExpectedConditions.elementToBeClickable
+                        (AppiumBy.accessibilityId("Bqaiq")));
 
         locationBtn.click();
 

@@ -27,23 +27,38 @@ public class ALoginPage extends BasePage {
     // Locators
     // =========================================================
 
-    private final By MOBILE =
-            By.xpath("(//android.widget.EditText)[1]");
+    private final By HAVE_AN_ACCOUNT = AppiumBy.accessibilityId("I have an Account");
 
-    private final By PASSWORD =
-            By.xpath("(//android.widget.EditText)[2]");
+    private final By MOBILE = By.xpath("(//android.widget.EditText)[1]");
 
-    private final By LOGIN =
-            AppiumBy.accessibilityId("Login");
+    private final By PASSWORD = By.xpath("(//android.widget.EditText)[2]");
+
+    private final By LOGIN = AppiumBy.accessibilityId("Login");
 
 
     // =========================================================
     // LOGIN FLOW
     // =========================================================
 
-    public void login(
-            String mobileNo,
-            String passwordText) {
+    public void login(String mobileNo, String passwordText) {
+
+        // =====================================================
+        // I HAVE AN ACCOUNT
+        // =====================================================
+
+        StepTimer.startStep();
+
+        WebElement haveAnAccountButton =
+                wait.until(ExpectedConditions.elementToBeClickable(HAVE_AN_ACCOUNT));
+
+        haveAnAccountButton.click();
+
+        double duration = StepTimer.endStep();
+
+        ExtentTestListener.logStep("I have an Account button clicked | Time Taken : "
+                        + String.format("%.2f", duration)
+                        + " sec");
+
 
         // =====================================================
         // MOBILE NUMBER
@@ -51,22 +66,13 @@ public class ALoginPage extends BasePage {
 
         StepTimer.startStep();
 
-        sendKeys(
-                MOBILE,
-                mobileNo
-        );
+        sendKeys(MOBILE, mobileNo);
 
-        double duration =
-                StepTimer.endStep();
+        duration = StepTimer.endStep();
 
-        ExtentTestListener.logStep(
-                "Mobile Number Entered | Time Taken : "
-                        + String.format(
-                        "%.2f",
-                        duration
-                )
-                        + " sec"
-        );
+        ExtentTestListener.logStep("Mobile Number Entered | Time Taken : "
+                        + String.format("%.2f", duration)
+                        + " sec");
 
         hideKeyboard();
 
@@ -75,16 +81,13 @@ public class ALoginPage extends BasePage {
         // WAIT FOR OTP TO BE GENERATED
         // =====================================================
 
-        ExtentTestListener.logStep(
-                "Waiting 5 seconds for OTP to be generated..."
-        );
+        ExtentTestListener.logStep("Waiting 5 seconds for OTP to be generated...");
 
         try {
-
             Thread.sleep(7000);
-
-        } catch (InterruptedException e) {
-
+        }
+        catch (InterruptedException e)
+        {
             Thread.currentThread().interrupt();
         }
 
@@ -95,14 +98,11 @@ public class ALoginPage extends BasePage {
 
         StepTimer.startStep();
 
-        BLoginOTP loginOTP =
-                new BLoginOTP();
+        BLoginOTP loginOTP = new BLoginOTP();
 
-        String otp =
-                loginOTP.getOTP(mobileNo);
+        String otp = loginOTP.getOTP(mobileNo);
 
-        duration =
-                StepTimer.endStep();
+        duration = StepTimer.endStep();
 
 
         // =====================================================
@@ -112,22 +112,10 @@ public class ALoginPage extends BasePage {
         if (otp != null && !otp.isEmpty()) {
 
             System.out.println();
-            System.out.println(
-                    "========================================"
-            );
-
-            System.out.println(
-                    "LOGIN OTP : " + otp
-            );
-
-            System.out.println(
-                    "PLEASE ENTER OTP MANUALLY"
-            );
-
-            System.out.println(
-                    "========================================"
-            );
-
+            System.out.println("========================================");
+            System.out.println("LOGIN OTP : " + otp);
+            System.out.println("PLEASE ENTER OTP MANUALLY");
+            System.out.println("========================================");
             System.out.println();
 
 
@@ -135,28 +123,18 @@ public class ALoginPage extends BasePage {
             // EXTENT REPORT
             // =================================================
 
-            ExtentTestListener.logStep(
-                    "Login OTP Generated : "
+            ExtentTestListener.logStep("Login OTP Generated : "
                             + otp
                             + " | Time Taken : "
-                            + String.format(
-                            "%.2f",
-                            duration
-                    )
-                            + " sec"
-            );
+                            + String.format("%.2f", duration)
+                            + " sec");
 
-            ExtentTestListener.logStep(
-                    "Login OTP displayed in console. "
-                            + "Please enter OTP manually."
-            );
-
-        } else {
-
-            ExtentTestListener.logStep(
-                    "Login OTP was not found for mobile : "
-                            + mobileNo
-            );
+            ExtentTestListener.logStep("Login OTP displayed in console. "
+                            + "Please enter OTP manually.");
+        }
+        else
+        {
+            ExtentTestListener.logStep("Login OTP was not found for mobile : " + mobileNo);
         }
 
 
@@ -168,31 +146,20 @@ public class ALoginPage extends BasePage {
 
             StepTimer.startStep();
 
-            sendKeys(
-                    PASSWORD,
-                    passwordText
-            );
+            sendKeys(PASSWORD, passwordText);
 
-            duration =
-                    StepTimer.endStep();
+            duration = StepTimer.endStep();
 
-            ExtentTestListener.logStep(
-                    "Password Entered | Time Taken : "
-                            + String.format(
-                            "%.2f",
-                            duration
-                    )
-                            + " sec"
-            );
+            ExtentTestListener.logStep("Password Entered | Time Taken : "
+                            + String.format("%.2f", duration)
+                            + " sec");
 
             hideKeyboard();
-
-        } else {
-
-            ExtentTestListener.logStep(
-                    "Password field NOT visible | "
-                            + "Skipping Password Entry"
-            );
+        }
+        else
+        {
+            ExtentTestListener.logStep("Password field NOT visible | "
+                            + "Skipping Password Entry");
         }
 
 
@@ -205,31 +172,19 @@ public class ALoginPage extends BasePage {
             StepTimer.startStep();
 
             WebElement loginButton =
-                    wait.until(
-                            ExpectedConditions
-                                    .elementToBeClickable(LOGIN)
-                    );
+                    wait.until(ExpectedConditions.elementToBeClickable(LOGIN));
 
             loginButton.click();
 
-            duration =
-                    StepTimer.endStep();
+            duration = StepTimer.endStep();
 
-            ExtentTestListener.logStep(
-                    "Login Button Clicked | Time Taken : "
-                            + String.format(
-                            "%.2f",
-                            duration
-                    )
-                            + " sec"
-            );
-
-        } else {
-
-            ExtentTestListener.logStep(
-                    "Login button NOT visible | "
-                            + "Skipping Login Button"
-            );
+            ExtentTestListener.logStep("Login Button Clicked | Time Taken : "
+                            + String.format("%.2f", duration)
+                            + " sec");
+        }
+        else
+        {
+            ExtentTestListener.logStep("Login button NOT visible | " + "Skipping Login Button");
         }
 
 
@@ -237,10 +192,8 @@ public class ALoginPage extends BasePage {
         // MANUAL OTP MESSAGE
         // =====================================================
 
-        ExtentTestListener.logStep(
-                "Automation stopped after OTP retrieval. "
-                        + "Please enter OTP manually in the application."
-        );
+        ExtentTestListener.logStep("Automation stopped after OTP retrieval. "
+                        + "Please enter OTP manually in the application.");
     }
 
 
@@ -249,16 +202,12 @@ public class ALoginPage extends BasePage {
     // =========================================================
 
     private boolean isVisible(By locator) {
-
         try {
-
-            WebElement element =
-                    driver.findElement(locator);
-
+            WebElement element = driver.findElement(locator);
             return element.isDisplayed();
-
-        } catch (Exception e) {
-
+        }
+        catch (Exception e)
+        {
             return false;
         }
     }

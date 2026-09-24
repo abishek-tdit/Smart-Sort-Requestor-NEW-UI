@@ -7,21 +7,28 @@ import java.util.Random;
 
 public class BMobileNumber {
 
-    // Database Configuration
+    // =========================================================
+    // DATABASE CONFIGURATION
+    // =========================================================
+
     private static final String URL =
-            "jdbc:sqlserver://10.0.2.52:1433;databaseName=ABQAIQDB_QA;encrypt=false";
+            "jdbc:sqlserver://10.0.2.52:1433;"
+                    + "databaseName=ABQAIQDB_QA;"
+                    + "encrypt=false";
 
     private static final String USER = "Testing_Team";
     private static final String PASSWORD = "Testing@194";
 
     private final Random random = new Random();
 
-    /**
-     * Generate a random mobile number based on city
-     */
+    // =========================================================
+    // GENERATE RANDOM MOBILE
+    // =========================================================
+
     public String generateRandomMobileNumber(String city) {
 
-        String cityNormalized = city.trim().toLowerCase();
+        String cityNormalized =
+                city.trim().toLowerCase();
 
         String prefix;
         int totalLength;
@@ -34,12 +41,14 @@ public class BMobileNumber {
             case "sakaka":
             case "riyadh":
             case "jeddah":
+
                 prefix = "05";
                 totalLength = 10;
                 break;
 
             // Egypt
             case "asyut":
+
                 prefix = "01";
                 totalLength = 11;
                 break;
@@ -47,95 +56,184 @@ public class BMobileNumber {
             // India
             case "chennai":
             case "vellore":
-                int[] startDigits = {6, 7, 8, 9};
-                prefix = String.valueOf(startDigits[random.nextInt(startDigits.length)]);
+
+                int[] startDigits = {
+                        6, 7, 8, 9
+                };
+
+                prefix =
+                        String.valueOf(
+                                startDigits[
+                                        random.nextInt(
+                                                startDigits.length
+                                        )
+                                        ]
+                        );
+
                 totalLength = 10;
                 break;
 
             default:
-                throw new IllegalArgumentException("Unsupported city : " + city);
+
+                throw new IllegalArgumentException(
+                        "Unsupported city : " + city
+                );
         }
 
-        StringBuilder mobile = new StringBuilder(prefix);
+        StringBuilder mobile =
+                new StringBuilder(prefix);
 
         while (mobile.length() < totalLength) {
-            mobile.append(random.nextInt(10));
+
+            mobile.append(
+                    random.nextInt(10)
+            );
         }
 
         return mobile.toString();
     }
 
-    /**
-     * Check whether mobile number already exists
-     */
+    // =========================================================
+    // CHECK MOBILE EXISTS
+    // =========================================================
+
     public boolean mobileExists(String mobile) {
 
-        String sql = "SELECT COUNT(*) FROM Users WHERE Phone = ?";
+        String sql =
+                "SELECT COUNT(*) "
+                        + "FROM Users "
+                        + "WHERE Phone = ?";
 
         try (
-                Connection con = DriverManager.getConnection(URL, USER, PASSWORD);
-                PreparedStatement ps = con.prepareStatement(sql)
+                Connection con =
+                        DriverManager.getConnection(
+                                URL,
+                                USER,
+                                PASSWORD
+                        );
+
+                PreparedStatement ps =
+                        con.prepareStatement(sql)
         ) {
 
             ps.setString(1, mobile);
 
-            ResultSet rs = ps.executeQuery();
+            ResultSet rs =
+                    ps.executeQuery();
 
             if (rs.next()) {
+
                 return rs.getInt(1) > 0;
             }
 
         } catch (Exception e) {
+
             e.printStackTrace();
         }
 
         return false;
     }
 
-    /**
-     * Generate unique mobile number
-     */
+    // =========================================================
+    // GENERATE UNIQUE MOBILE
+    // =========================================================
+
     public String getUniqueMobileNumber(String city) {
 
         String mobile;
 
         do {
 
-            mobile = generateRandomMobileNumber(city);
+            mobile =
+                    generateRandomMobileNumber(city);
 
-            ExtentTestListener.logStep("Checking Mobile Number : " + mobile);
+            ExtentTestListener.logStep(
+                    "Checking Mobile Number : "
+                            + mobile
+            );
 
         } while (mobileExists(mobile));
 
         return mobile;
     }
 
-    /**
-     * Get OTP from database
-     */
+    // =========================================================
+    // GET OTP
+    // =========================================================
+
     public String getOTP(String mobile) {
 
-        String sql = "SELECT OTP FROM otpverification WHERE phno = ?";
+        String sql =
+                "SELECT TOP 1 OTP "
+                        + "FROM otpverification "
+                        + "WHERE phno = ? "
+                        + "ORDER BY 1 DESC";
 
-        String otp = null;
+        // 15 attempts x 2 seconds = 30 seconds
+        for (int attempt = 1; attempt <= 15; attempt++) {
 
-        try (
-                Connection con = DriverManager.getConnection(URL, USER, PASSWORD);
-                PreparedStatement ps = con.prepareStatement(sql)
-        ) {
+            try (
+                    Connection con =
+                            DriverManager.getConnection(
+                                    URL,
+                                    USER,
+                                    PASSWORD
+                            );
 
-            ps.setString(1, mobile);
+                    PreparedStatement ps =
+                            con.prepareStatement(sql)
+            ) {
 
-            ResultSet rs = ps.executeQuery();
+                ps.setString(1, mobile);
 
-            if (rs.next()) {
-                otp = rs.getString("OTP");
+                ResultSet rs =
+                        ps.executeQuery();
+
+                if (rs.next()) {
+
+                    String otp =
+                            rs.getString("OTP");
+
+                    if (otp != null
+                            && !otp.trim().isEmpty()) {
+
+                        ExtentTestListener.logStep(
+                                "OTP found for mobile : "
+                                        + mobile
+                        );
+
+                        return otp;
+                    }
+                }
+
+            } catch (SQLException e) {
+
+                ExtentTestListener.logStep(
+                        "OTP database check failed - Attempt "
+                                + attempt
+                );
             }
 
-        } catch (SQLException e) {
-            e.printStackTrace();
+            // Small polling wait
+            try {
+
+                Thread.sleep(2000);
+
+            } catch (InterruptedException e) {
+
+                Thread.currentThread().interrupt();
+
+                throw new RuntimeException(
+                        "OTP wait interrupted",
+                        e
+                );
+            }
         }
 
-        return otp;
+        throw new RuntimeException(
+                "OTP not found for mobile : "
+                        + mobile
+                        + " within 30 seconds"
+        );
     }
 }

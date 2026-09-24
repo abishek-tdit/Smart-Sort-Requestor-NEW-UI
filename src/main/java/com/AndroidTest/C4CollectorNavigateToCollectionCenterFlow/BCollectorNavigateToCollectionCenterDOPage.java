@@ -19,11 +19,10 @@ public class BCollectorNavigateToCollectionCenterDOPage extends BaseClassMobile 
             // =========================================================
             StepTimer.startStep();
 
-            ExtentTestListener.logStep(
-                    "Clicking Delivery Orders (DO)...");
+            ExtentTestListener.logStep("Clicking Delivery Orders (DO)...");
 
-            WebElement deliveryOrders = waitUntilClickable(
-                    AppiumBy.accessibilityId("Delivery Orders (DO)"), 20);
+            WebElement deliveryOrders =
+                    waitUntilClickable(AppiumBy.accessibilityId("Delivery Orders (DO)"), 20);
 
             deliveryOrders.click();
 
@@ -72,7 +71,6 @@ public class BCollectorNavigateToCollectionCenterDOPage extends BaseClassMobile 
 
             ExtentTestListener.logStep("Saved DO Number : " + savedDONumber);
 
-
             // Find DO Card Using Saved DO Number
             String doXpath = "//android.view.View[contains(@content-desc,\""
                             + savedDONumber
@@ -98,8 +96,8 @@ public class BCollectorNavigateToCollectionCenterDOPage extends BaseClassMobile 
             // =========================================================
             StepTimer.startStep();
 
-            WebElement startNavigation = waitUntilClickable(
-                    AppiumBy.accessibilityId("Start Navigation"), 20);
+            WebElement startNavigation =
+                    waitUntilClickable(AppiumBy.accessibilityId("Start Navigation"), 20);
 
             startNavigation.click();
 
@@ -127,8 +125,8 @@ public class BCollectorNavigateToCollectionCenterDOPage extends BaseClassMobile 
             // =========================================================
             StepTimer.startStep();
 
-            WebElement secondStartNavigation = waitUntilClickable(
-                    AppiumBy.accessibilityId("Start Navigation"), 20);
+            WebElement secondStartNavigation =
+                    waitUntilClickable(AppiumBy.accessibilityId("Start Navigation"), 20);
 
             secondStartNavigation.click();
 
@@ -145,8 +143,8 @@ public class BCollectorNavigateToCollectionCenterDOPage extends BaseClassMobile 
 
             ExtentTestListener.logStep("Waiting for Reached Destination...");
 
-            WebElement reachedDestination = waitUntilClickable(
-                    AppiumBy.accessibilityId("Reached Destination"), 20);
+            WebElement reachedDestination =
+                    waitUntilClickable(AppiumBy.accessibilityId("Reached Destination"), 20);
 
             reachedDestination.click();
 
@@ -166,8 +164,7 @@ public class BCollectorNavigateToCollectionCenterDOPage extends BaseClassMobile 
 
             ExtentTestListener.logStep("Clicking OK Popup...");
 
-            WebElement okButton = waitUntilClickable(
-                    AppiumBy.accessibilityId("OK"), 20);
+            WebElement okButton = waitUntilClickable(AppiumBy.accessibilityId("OK"), 20);
 
             okButton.click();
 
@@ -197,12 +194,11 @@ public class BCollectorNavigateToCollectionCenterDOPage extends BaseClassMobile 
             ExtentTestListener.logStep("Back Button Clicked Successfully | Time Taken : "
                             + String.format("%.2f", duration)
                             + " sec");
-
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
 
             ExtentTestListener.logStep("Error while opening Accepted Delivery Orders: "
-                            + e.getMessage());
-
+                    + e.getMessage());
             throw e;
         }
     }

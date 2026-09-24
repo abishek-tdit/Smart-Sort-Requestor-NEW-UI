@@ -42,7 +42,6 @@ public class DPickupOTPVerificationPage extends BaseClassMobile {
         WebElement verifyBtn = wait.until
                 (ExpectedConditions.visibilityOfElementLocated
                         (AppiumBy.accessibilityId("Verify")));
-
         try {
             verifyBtn.click();
         }
@@ -52,7 +51,6 @@ public class DPickupOTPVerificationPage extends BaseClassMobile {
 
             // Refresh the element
             verifyBtn = driver.findElement(AppiumBy.accessibilityId("Verify"));
-
             // Appium native click
             verifyBtn = driver.findElement(AppiumBy.accessibilityId("Verify"));
 

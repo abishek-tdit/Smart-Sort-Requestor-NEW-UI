@@ -1,5 +1,6 @@
 package com.AndroidTest.KSettingFlow;
 
+import Base.ExtentTestListener;
 import io.appium.java_client.AppiumBy;
 import io.appium.java_client.android.AndroidDriver;
 import org.openqa.selenium.By;
@@ -28,7 +29,7 @@ public class DPrivacyPolicyPage {
         wait.until(ExpectedConditions.elementToBeClickable(privacyPolicy))
                 .click();
 
-        System.out.println("Privacy Policy clicked successfully");
+        ExtentTestListener.logStep("Privacy Policy clicked successfully");
 
         // Wait 3 seconds after opening Privacy Policy
         try {
@@ -37,7 +38,7 @@ public class DPrivacyPolicyPage {
             Thread.currentThread().interrupt();
         }
 
-        System.out.println("Privacy Policy page opened - waiting completed");
+        ExtentTestListener.logStep("Privacy Policy page opened - waiting completed");
 
         // Go back
         driver.navigate().back();
@@ -45,6 +46,6 @@ public class DPrivacyPolicyPage {
         // Wait until Privacy Policy option is visible again
         wait.until(ExpectedConditions.visibilityOfElementLocated(privacyPolicy));
 
-        System.out.println("Returned to Settings page");
+        ExtentTestListener.logStep("Returned to Settings page");
     }
 }

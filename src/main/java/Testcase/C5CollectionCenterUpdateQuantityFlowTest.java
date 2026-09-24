@@ -13,18 +13,20 @@ public class C5CollectionCenterUpdateQuantityFlowTest extends BaseClassMobile {
     @Test(priority = 7)
     public void collectionCenterQuantityUpdateTest() throws Exception {
 
-        //TTFVaasan : 0500123001
+        // TTFVaasan : 0500123001
 
-        //Login:
+        // Login
         ALoginPage loginPage = new ALoginPage();
         loginPage.login("0500123001",
-                               generatedPassword);
+                generatedPassword);
 
-        //Pickup Quantity - Orders:
-        BPickupQuantityOrdersPage pickupQuantityOrdersPage = new BPickupQuantityOrdersPage();
+
+        // Pickup Quantity - Orders
+        BPickupQuantityOrdersPage pickupQuantityOrdersPage =
+                new BPickupQuantityOrdersPage();
+
         pickupQuantityOrdersPage.clickPickupQuantityOrders();
 
         ExtentTestListener.logStep("Collection Center Update Quantity 4th Flow Completed");
-
     }
 }

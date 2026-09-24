@@ -75,8 +75,8 @@ public class FChangePasswordPage {
     // CLICK ACCOUNT
     // =========================================================
 
-    public void clickAccount() {
-
+    public void clickAccount() throws InterruptedException {
+Thread.sleep(5000);
         wait.until(
                 ExpectedConditions.elementToBeClickable(account)
         ).click();

@@ -1,106 +1,78 @@
 package com.AndroidTest.D1RequestorDirectDeliveryOrderPlacingFlow;
 
 import Base.BaseClassMobile;
+import Base.ExtentTestListener;
 import io.appium.java_client.AppiumBy;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
-
-import java.time.Duration;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.Locale;
+import utilities.StepTimer;
 
 public class CScheduleDatePage extends BaseClassMobile {
 
-    private final WebDriverWait wait =
-            new WebDriverWait(driver, Duration.ofSeconds(15));
+    // Next hour arrow
+    private final By NEXT_HOUR = AppiumBy.xpath(
+            "//android.view.View[@content-desc='Hour']" +
+                    "/following-sibling::android.view.View[1]" +
+                    "/android.view.View[1]"
+    );
 
-    private final By confirmButton =
+    // Confirm button
+    private final By CONFIRM_BUTTON =
             AppiumBy.accessibilityId("Confirm");
 
-    private final By okButton =
+    // OK popup
+    private final By OK_BUTTON =
             AppiumBy.accessibilityId("OK");
 
-    public void selectTodayDate() {
+
+    public void clickNextHour() {
         scrollDown();
-        LocalDate today = LocalDate.now();
-
-        String month = today.format(
-                DateTimeFormatter.ofPattern("MMMM", Locale.ENGLISH));
-
-        String day = String.valueOf(today.getDayOfMonth());
-
-        String weekDay = today.format(
-                DateTimeFormatter.ofPattern("EEE", Locale.ENGLISH));
-
-        String dateDescription =
-                month + "\n" + day + "\n" + weekDay;
-
-        By dateLocator = AppiumBy.xpath(
-                "//android.view.View[@content-desc='" +
-                        dateDescription + "']"
-        );
-
-        wait.until(
-                        ExpectedConditions.elementToBeClickable(dateLocator))
-                .click();
-
-        System.out.println(
-                "Schedule Date Selected : " +
-                        month + " " + day + " " + weekDay);
-    }
-
-    public void selectTime() {
-
         scrollDown();
+        StepTimer.startStep();
 
-        By nextHour = AppiumBy.xpath(
-                "//android.view.View[@content-desc='10']/android.view.View[1]"
+        WebElement nextHour =
+                waitUntilClickable(NEXT_HOUR, 10);
+
+        nextHour.click();
+
+        ExtentTestListener.getTest().info(
+                "Next hour selected | Time Taken : "
+                        + StepTimer.endStep()
+                        + " sec"
         );
-
-        WebElement hourButton = wait.until(
-                ExpectedConditions.elementToBeClickable(nextHour)
-        );
-
-        hourButton.click();
-
-        System.out.println("Next Hour Selected");
     }
 
-    public void confirmTime() {
 
-        wait.until(driver -> {
-            WebElement button = driver.findElement(confirmButton);
+    public void clickConfirm() {
 
-            return button.isDisplayed()
-                    && button.isEnabled()
-                    && button.isEnabled();
-        });
+        StepTimer.startStep();
 
-        driver.findElement(confirmButton).click();
+        WebElement confirm =
+                waitUntilClickable(CONFIRM_BUTTON, 10);
 
-        System.out.println("Schedule Time Confirmed");
+        confirm.click();
+
+        ExtentTestListener.getTest().info(
+                "Confirm button clicked | Time Taken : "
+                        + StepTimer.endStep()
+                        + " sec"
+        );
     }
+
 
     public void clickOK() {
 
-        wait.until(
-                        ExpectedConditions.elementToBeClickable(okButton))
-                .click();
+        StepTimer.startStep();
 
-        System.out.println("OK Popup Clicked");
-    }
+        WebElement ok =
+                waitUntilClickable(OK_BUTTON, 10);
 
-    public void selectTodayDateAndConfirm() {
+        ok.click();
 
-        selectTodayDate();
-        selectTime();
-        confirmTime();
-        clickOK();
-
-        System.out.println(
-                "Schedule Date & Time Completed Successfully");
+        ExtentTestListener.getTest().info(
+                "OK button clicked | Time Taken : "
+                        + StepTimer.endStep()
+                        + " sec"
+        );
     }
 }

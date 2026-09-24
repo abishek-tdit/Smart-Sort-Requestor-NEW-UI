@@ -1,5 +1,6 @@
 package com.AndroidTest.KSettingFlow;
 
+import Base.ExtentTestListener;
 import io.appium.java_client.AppiumBy;
 import io.appium.java_client.android.AndroidDriver;
 import org.openqa.selenium.By;
@@ -89,9 +90,7 @@ public class FAboutUsPage {
 
         driver.navigate().back();
 
-        driver.navigate().back();
-
-        System.out.println("Returned to Settings from About Us.");
+        ExtentTestListener.logStep("Returned to Settings from About Us.");
     }
 
     /**

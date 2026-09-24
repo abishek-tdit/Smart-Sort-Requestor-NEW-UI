@@ -26,7 +26,7 @@ public class ERequestorRedeemFlowTest extends BaseClassMobile {
         //Click Redeem Now  A2:
         Thread.sleep(5000);
         A2RedeemNow redeemNow1 = new A2RedeemNow(driver);
-        redeemNow1.redeemNow();
+        redeemNow1.clickRedeemExcitingRewards();
         ExtentTestListener.logStep("STEP 2 COMPLETED : Redeem Now Clicked");
 
         //Redeem Partner Store A3:
@@ -44,7 +44,8 @@ public class ERequestorRedeemFlowTest extends BaseClassMobile {
         //Click Redeem Now  B2:
         Thread.sleep(5000);
         B2RedeemNow redeemNow2 = new B2RedeemNow(driver);
-        redeemNow2.redeemNow();
+
+        redeemNow2.clickRedeemExcitingRewards();
         ExtentTestListener.logStep("STEP 5 COMPLETED : Redeem Now Clicked");
 
         //Redeem Voucher  B3:
@@ -61,7 +62,8 @@ public class ERequestorRedeemFlowTest extends BaseClassMobile {
         //Click Redeem Now  C2:
         Thread.sleep(5000);
         C2RedeemNow redeemNow3 = new C2RedeemNow(driver);
-        redeemNow3.redeemNow();
+
+        redeemNow3.clickRedeemExcitingRewards();
         ExtentTestListener.logStep("STEP 8 COMPLETED : Redeem Now Clicked");
 
         //Redeem Voucher  C3:

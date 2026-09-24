@@ -1,6 +1,7 @@
 package com.AndroidTest.C2CollectorUtilityOrderCompleteFlow;
 
 import Base.BaseClassMobile;
+import Base.ExtentTestListener;
 import io.appium.java_client.AppiumBy;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -18,20 +19,19 @@ public class ERequestOrderROPage2 extends BaseClassMobile {
         this.wait = new WebDriverWait(driver, Duration.ofSeconds(20));
     }
 
-    // Request Orders (RO)
-    private final By requestOrders =
-            AppiumBy.accessibilityId("Request Orders (RO)");
+    // Request Orders (RO):
+    private final By requestOrders = AppiumBy.accessibilityId("Request Orders (RO)");
 
-    // Click Request Orders (RO)
+    // Click Request Orders (RO):
     public void clickRequestOrders() {
 
         wait.until(ExpectedConditions.visibilityOfElementLocated(requestOrders));
         wait.until(ExpectedConditions.elementToBeClickable(requestOrders)).click();
 
-        System.out.println("Request Orders (RO) Clicked Successfully");
+        ExtentTestListener.logStep("Request Orders (RO) Clicked Successfully");
     }
 
-    // Click saved Request Order
+    // Click saved Request Order:
     public void clickSavedOrder() {
 
         String orderNumber = AOrderDataDoorPickup.orderNumberDoorPickup;
@@ -42,22 +42,17 @@ public class ERequestOrderROPage2 extends BaseClassMobile {
 
         System.out.println("Searching Saved Order : " + orderNumber);
 
-        By savedOrder = AppiumBy.xpath(
-                "//android.view.View[contains(@content-desc,'" + orderNumber + "')]"
-        );
+        By savedOrder = AppiumBy.xpath
+                ("//android.view.View[contains(@content-desc,'" + orderNumber + "')]");
 
-        // Wait until saved order is displayed
+        // Wait until saved order is displayed:
         wait.until(ExpectedConditions.visibilityOfElementLocated(savedOrder));
 
         System.out.println("Saved Order Found : " + orderNumber);
 
-        // Wait until clickable and click
+        // Wait until clickable and click:
         wait.until(ExpectedConditions.elementToBeClickable(savedOrder)).click();
 
-        System.out.println(
-                "Saved Request Order Clicked Successfully : " + orderNumber
-        );
-
-
+        ExtentTestListener.logStep("Saved Request Order Clicked Successfully : " + orderNumber);
     }
 }

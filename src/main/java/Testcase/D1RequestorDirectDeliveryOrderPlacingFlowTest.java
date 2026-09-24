@@ -35,7 +35,10 @@ public class D1RequestorDirectDeliveryOrderPlacingFlowTest
 
         //Schedule Date & Time
         CScheduleDatePage scheduleDatePage = new CScheduleDatePage();
-        scheduleDatePage.selectTodayDateAndConfirm();
+
+        scheduleDatePage.clickNextHour();
+        scheduleDatePage.clickConfirm();
+        scheduleDatePage.clickOK();
 
         ExtentTestListener.logStep("Direct Delivery Order Created Successfully");
 

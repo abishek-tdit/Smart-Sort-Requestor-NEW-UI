@@ -3,6 +3,7 @@ package com.AndroidTest.C1RequestorOrderPlacingFlow;
 import java.time.Duration;
 import java.util.Map;
 
+import Base.ExtentTestListener;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -21,16 +22,13 @@ public class DDoorPickupPage {
     // =========================================================
 
     // Doorstep Pickup - Home Screen
-    private final By requestNow =
-            AppiumBy.accessibilityId("Request Now");
+    private final By requestNow = AppiumBy.accessibilityId("Request Now");
 
     // Checkbox
-    private final By materialCheckBox =
-            AppiumBy.className("android.widget.CheckBox");
+    private final By materialCheckBox = AppiumBy.className("android.widget.CheckBox");
 
     // Continue
-    private final By continueButton =
-            AppiumBy.accessibilityId("Continue");
+    private final By continueButton = AppiumBy.accessibilityId("Continue");
 
 
     // =========================================================
@@ -41,10 +39,7 @@ public class DDoorPickupPage {
 
         this.driver = driver;
 
-        this.wait = new WebDriverWait(
-                driver,
-                Duration.ofSeconds(30)
-        );
+        this.wait = new WebDriverWait(driver, Duration.ofSeconds(30));
     }
 
 
@@ -55,77 +50,51 @@ public class DDoorPickupPage {
     public void selectDoorstepPickupFlow() {
 
         System.out.println("==============================================");
-        System.out.println("Doorstep Pickup Flow Started");
+        ExtentTestListener.logStep("Doorstep Pickup Flow Started");
         System.out.println("==============================================");
 
         // =====================================================
         // 1. WAIT FOR HOME SCREEN
         // =====================================================
 
-        System.out.println("Waiting for Home screen to load...");
+        ExtentTestListener.logStep("Waiting for Home screen to load...");
 
         //REQUEST NOW
-        WebElement requestNowButton = wait.until(
-                ExpectedConditions.elementToBeClickable(requestNow)
-        );
+        WebElement requestNowButton =
+                wait.until(ExpectedConditions.elementToBeClickable(requestNow));
 
         requestNowButton.click();
 
-        System.out.println("Request Now clicked successfully");
+        ExtentTestListener.logStep("Request Now clicked successfully");
 
 
         // =====================================================
         // 4. CLICK CHECKBOX
         // =====================================================
 
-        WebElement checkbox = wait.until(
-                ExpectedConditions.elementToBeClickable(
-                        materialCheckBox
-                )
-        );
+        WebElement checkbox =
+                wait.until(ExpectedConditions.elementToBeClickable(materialCheckBox));
 
         checkbox.click();
 
-        System.out.println("Checkbox Selected");
+        ExtentTestListener.logStep("Checkbox Selected");
 
 
         // =====================================================
         // 5. CLICK CONTINUE
         // =====================================================
 
-        WebElement continueBtn = wait.until(
-                ExpectedConditions.elementToBeClickable(
-                        continueButton
-                )
-        );
+        WebElement continueBtn =
+                wait.until(ExpectedConditions.elementToBeClickable(continueButton));
 
         continueBtn.click();
 
-        System.out.println("Continue clicked");
+        ExtentTestListener.logStep("Continue clicked");
 
 
         System.out.println("==============================================");
-        System.out.println("Doorstep Pickup Flow Completed");
+        ExtentTestListener.logStep("Doorstep Pickup Flow Completed");
         System.out.println("==============================================");
-    }
 
-
-    // =========================================================
-    // SMALL SCROLL
-    // =========================================================
-
-    private void scrollLittleDown() {
-
-        driver.executeScript(
-                "mobile: scrollGesture",
-                Map.of(
-                        "left", 50,
-                        "top", 300,
-                        "width", 620,
-                        "height", 900,
-                        "direction", "down",
-                        "percent", 0.35
-                )
-        );
     }
 }

@@ -37,21 +37,21 @@ public class CNavigationPage extends BaseClassMobile {
 
         try {
 
-            // =================================================
-            // STEP 1
+            // ================================================
             // Scroll down until FIRST Start Navigation
             // =================================================
 
-            ExtentTestListener.logStep("Scrolling down until 1st Start Navigation is visible...");
+            ExtentTestListener.logStep
+                    ("Scrolling down until 1st Start Navigation is visible...");
 
             Thread.sleep(3000);
-            WebElement firstStartNavigation = scrollUntilVisible(START_NAVIGATION, 10);
+            WebElement firstStartNavigation =
+                    scrollUntilVisible(START_NAVIGATION, 10);
 
             ExtentTestListener.logStep("1st Start Navigation found successfully");
 
 
             // =================================================
-            // STEP 2
             // Click FIRST Start Navigation
             // =================================================
             Thread.sleep(3000);
@@ -61,65 +61,47 @@ public class CNavigationPage extends BaseClassMobile {
 
 
             // =================================================
-            // STEP 3
             // Wait for NEXT page
             // =================================================
 
             ExtentTestListener.logStep("Waiting for next Navigation page...");
             Thread.sleep(3000);
-            WebDriverWait wait =
-                    new WebDriverWait(driver, Duration.ofSeconds(20));
+            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20));
 
-            WebElement secondStartNavigation =
-                    wait.until(ExpectedConditions.elementToBeClickable
-                            (
-                            START_NAVIGATION));
+            WebElement secondStartNavigation = wait.until
+                    (ExpectedConditions.elementToBeClickable(START_NAVIGATION));
 
             ExtentTestListener.logStep("2nd Start Navigation found on next page");
 
 
             // =================================================
-            // STEP 4
             // Click SECOND Start Navigation
             // =================================================
 
             clickElement(secondStartNavigation);
 
-            ExtentTestListener.logStep(
-                    "2nd Start Navigation clicked successfully"
-            );
+            ExtentTestListener.logStep("2nd Start Navigation clicked successfully");
 
 
             // =================================================
-            // STEP 5
             // Wait for OK popup
             // =================================================
 
-            ExtentTestListener.logStep(
-                    "Waiting for OK popup..."
-            );
+            ExtentTestListener.logStep("Waiting for OK popup...");
 
-            WebElement okButton = wait.until(
-                    ExpectedConditions.elementToBeClickable(
-                            OK_BUTTON
-                    )
-            );
+            WebElement okButton =
+                    wait.until(ExpectedConditions.elementToBeClickable(OK_BUTTON));
 
-            ExtentTestListener.logStep(
-                    "OK popup displayed successfully"
-            );
+            ExtentTestListener.logStep("OK popup displayed successfully");
 
 
             // =================================================
-            // STEP 6
             // Click OK
             // =================================================
 
             clickElement(okButton);
 
-            ExtentTestListener.logStep(
-                    "OK clicked successfully"
-            );
+            ExtentTestListener.logStep("OK clicked successfully");
 
 
             // =================================================
@@ -127,51 +109,34 @@ public class CNavigationPage extends BaseClassMobile {
             // Wait for Reached button
             // =================================================
 
-            ExtentTestListener.logStep(
-                    "Waiting for Reached button..."
-            );
+            ExtentTestListener.logStep("Waiting for Reached button...");
 
-            WebElement reachedButton = wait.until(
-                    ExpectedConditions.elementToBeClickable(
-                            REACHED_BUTTON
-                    )
-            );
+            WebElement reachedButton =
+                    wait.until(ExpectedConditions.elementToBeClickable(REACHED_BUTTON));
 
-            ExtentTestListener.logStep(
-                    "Reached button displayed successfully"
-            );
+            ExtentTestListener.logStep("Reached button displayed successfully");
 
 
             // =================================================
-            // STEP 8
             // Click Reached
             // =================================================
 
             clickElement(reachedButton);
 
-            ExtentTestListener.logStep(
-                    "Reached button clicked successfully"
-            );
+            ExtentTestListener.logStep("Reached button clicked successfully");
 
 
             // =================================================
             // FLOW COMPLETED
             // =================================================
 
-            ExtentTestListener.logStep(
-                    "Navigation Flow completed successfully"
-            );
+            ExtentTestListener.logStep("Navigation Flow completed successfully");
+        }
+        catch (Exception e)
+        {
+            ExtentTestListener.logStep("Navigation Flow Failed : " + e.getMessage());
 
-        } catch (Exception e) {
-
-            ExtentTestListener.logStep(
-                    "Navigation Flow Failed : " + e.getMessage()
-            );
-
-            throw new RuntimeException(
-                    "Navigation Flow Failed",
-                    e
-            );
+            throw new RuntimeException("Navigation Flow Failed", e);
         }
     }
 
@@ -180,10 +145,8 @@ public class CNavigationPage extends BaseClassMobile {
     // REAL PHYSICAL SCROLL
     // =========================================================
 
-    private WebElement scrollUntilVisible(
-            AppiumBy locator,
-            int maxScrolls
-    ) {
+    private WebElement scrollUntilVisible(AppiumBy locator,
+            int maxScrolls) {
 
         for (int i = 1; i <= maxScrolls; i++) {
 
@@ -193,27 +156,20 @@ public class CNavigationPage extends BaseClassMobile {
                 // Check whether element is currently visible
                 // ---------------------------------------------
 
-                List<WebElement> elements =
-                        driver.findElements(locator);
+                List<WebElement> elements = driver.findElements(locator);
 
                 if (!elements.isEmpty()) {
-
                     for (WebElement element : elements) {
-
                         try {
-
                             if (element.isDisplayed()) {
 
-                                ExtentTestListener.logStep(
-                                        "Start Navigation visible after scroll attempt "
-                                                + i
-                                );
+                                ExtentTestListener.logStep("Start Navigation visible after scroll attempt " + i);
 
                                 return element;
                             }
-
-                        } catch (Exception ignored) {
-                            // Element became stale; continue
+                        }
+                        catch (Exception ignored)
+                        {
                         }
                     }
                 }
@@ -222,8 +178,7 @@ public class CNavigationPage extends BaseClassMobile {
                 // Element not visible -> REAL SWIPE UP
                 // ---------------------------------------------
 
-                Dimension screenSize =
-                        driver.manage().window().getSize();
+                Dimension screenSize = driver.manage().window().getSize();
 
                 int width = screenSize.getWidth();
                 int height = screenSize.getHeight();
@@ -234,77 +189,53 @@ public class CNavigationPage extends BaseClassMobile {
                 int scrollWidth = width;
                 int scrollHeight = height - 200;
 
-                ExtentTestListener.logStep(
-                        "Performing swipe up : attempt " + i
-                );
+                ExtentTestListener.logStep("Performing swipe up : attempt " + i);
 
-                Boolean canScroll = (Boolean) driver.executeScript(
-                        "mobile: swipeGesture",
-                        Map.of(
-                                "left", left,
+                Boolean canScroll = (Boolean) driver.executeScript("mobile: swipeGesture",
+                        Map.of("left", left,
                                 "top", top,
                                 "width", scrollWidth,
                                 "height", scrollHeight,
                                 "direction", "up",
-                                "percent", 0.80
-                        )
-                );
+                                "percent", 0.80));
 
-                ExtentTestListener.logStep(
-                        "Swipe completed : attempt "
+                ExtentTestListener.logStep("Swipe completed : attempt "
                                 + i
                                 + " | canScroll = "
-                                + canScroll
-                );
-
-                // ---------------------------------------------
-                // Small wait for UI to settle
-                // ---------------------------------------------
+                                + canScroll);
 
                 Thread.sleep(300);
 
-                // ---------------------------------------------
                 // If Android says it cannot scroll anymore,
                 // check one final time before failing.
-                // ---------------------------------------------
-
                 if (Boolean.FALSE.equals(canScroll)) {
 
-                    List<WebElement> finalElements =
-                            driver.findElements(locator);
+                    List<WebElement> finalElements = driver.findElements(locator);
 
                     for (WebElement element : finalElements) {
-
                         try {
-
                             if (element.isDisplayed()) {
-
                                 return element;
                             }
-
-                        } catch (Exception ignored) {
+                        }
+                        catch (Exception ignored) {
                         }
                     }
-
                     break;
                 }
-
-            } catch (Exception e) {
-
-                ExtentTestListener.logStep(
-                        "Scroll attempt "
+            }
+            catch (Exception e)
+            {
+                ExtentTestListener.logStep("Scroll attempt "
                                 + i
                                 + " failed : "
-                                + e.getMessage()
-                );
+                                + e.getMessage());
             }
         }
 
-        throw new RuntimeException(
-                "Start Navigation was NOT found after "
+        throw new RuntimeException("Start Navigation was NOT found after "
                         + maxScrolls
-                        + " scroll attempts"
-        );
+                        + " scroll attempts");
     }
 
 
@@ -316,20 +247,11 @@ public class CNavigationPage extends BaseClassMobile {
 
         try {
 
-            driver.executeScript(
-                    "mobile: clickGesture",
-                    Map.of(
-                            "elementId",
-                            ((RemoteWebElement) element).getId()
-                    )
-            );
-
-        } catch (Exception e) {
-
-            // ---------------------------------------------
-            // Fallback to normal Selenium/Appium click
-            // ---------------------------------------------
-
+            driver.executeScript("mobile: clickGesture",
+                    Map.of("elementId", ((RemoteWebElement) element).getId()));
+        }
+        catch (Exception e)
+        {
             element.click();
         }
     }

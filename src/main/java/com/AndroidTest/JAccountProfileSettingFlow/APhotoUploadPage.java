@@ -1,6 +1,5 @@
 package com.AndroidTest.JAccountProfileSettingFlow;
 
-import Base.BaseClassMobile;
 import io.appium.java_client.AppiumBy;
 import io.appium.java_client.android.AndroidDriver;
 import org.openqa.selenium.By;
@@ -9,8 +8,9 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.time.Duration;
+import java.util.Map;
 
-public class APhotoUploadPage  {
+public class APhotoUploadPage {
 
     private final AndroidDriver driver;
     private final WebDriverWait wait;
@@ -24,21 +24,30 @@ public class APhotoUploadPage  {
     // LOCATORS
     // =========================================================
 
+    // Account
     private final By account =
             AppiumBy.accessibilityId("Account");
 
-    // More stable than exact accessibilityId
+    // User name / email
     private final By userName =
             AppiumBy.xpath(
                     "//*[contains(@content-desc,'abishek251295@gmail.com')]"
             );
 
+    // =========================================================
+    // PHOTO UPLOAD ICON
+    // NEW XPATH PROVIDED
+    // =========================================================
     private final By photoUploadIcon =
-            AppiumBy.xpath("//android.widget.ScrollView/android.view.View[2]");
+            AppiumBy.xpath(
+                    "//android.widget.ScrollView/android.view.View[1]"
+            );
 
+    // Gallery
     private final By gallery =
             AppiumBy.accessibilityId("Gallery");
 
+    // Done button
     private final By doneButton =
             AppiumBy.xpath(
                     "//androidx.compose.ui.platform.ComposeView" +
@@ -52,17 +61,23 @@ public class APhotoUploadPage  {
                             "/android.widget.Button"
             );
 
+    // OK popup
     private final By okButton =
             AppiumBy.accessibilityId("OK");
+
+
     // =========================================================
     // CLICK ACCOUNT
     // =========================================================
 
     public void clickAccount() {
 
-        wait.until(
-                ExpectedConditions.elementToBeClickable(account)
-        ).click();
+        WebElement accountElement =
+                wait.until(
+                        ExpectedConditions.elementToBeClickable(account)
+                );
+
+        accountElement.click();
 
         System.out.println("Account clicked successfully");
     }
@@ -74,7 +89,9 @@ public class APhotoUploadPage  {
 
     public void clickUserName() {
 
+        // -----------------------------------------------------
         // First try without scrolling
+        // -----------------------------------------------------
         if (isElementVisible(userName)) {
 
             wait.until(
@@ -85,7 +102,9 @@ public class APhotoUploadPage  {
             return;
         }
 
+        // -----------------------------------------------------
         // If not visible, scroll down
+        // -----------------------------------------------------
         for (int i = 0; i < 5; i++) {
 
             scrollDown();
@@ -110,11 +129,21 @@ public class APhotoUploadPage  {
     // =========================================================
     // CLICK PHOTO UPLOAD ICON
     // =========================================================
-        public void clickPhotoUploadIcon() {
 
-        wait.until( ExpectedConditions.elementToBeClickable(photoUploadIcon) ).click();
+    public void clickPhotoUploadIcon() {
 
-            System.out.println("Photo upload icon clicked successfully");
+        WebElement photoIcon =
+                wait.until(
+                        ExpectedConditions.elementToBeClickable(
+                                photoUploadIcon
+                        )
+                );
+
+        photoIcon.click();
+
+        System.out.println(
+                "Photo upload icon clicked successfully"
+        );
     }
 
 
@@ -124,40 +153,52 @@ public class APhotoUploadPage  {
 
     public void clickGallery() {
 
-        wait.until(
-                ExpectedConditions.elementToBeClickable(gallery)
-        ).click();
+        WebElement galleryElement =
+                wait.until(
+                        ExpectedConditions.elementToBeClickable(gallery)
+                );
 
-        System.out.println("Gallery opened successfully");
-    }
-
-
-    // =========================================================
-    // WAIT FOR MANUAL IMAGE SELECTION AND CLICK DONE
-    // =========================================================
-
-    public void clickDoneAfterImageSelection() {
+        galleryElement.click();
 
         System.out.println(
-                "Waiting for manual image selection..."
-        );
-
-        // Give enough time to manually select image
-        WebDriverWait doneWait =
-                new WebDriverWait(driver, Duration.ofSeconds(60));
-
-        doneWait.until(
-                ExpectedConditions.elementToBeClickable(doneButton)
-        ).click();
-
-        System.out.println(
-                "Done button clicked successfully"
+                "Gallery opened successfully"
         );
     }
 
+
+//    // =========================================================
+//    // WAIT FOR MANUAL IMAGE SELECTION
+//    // THEN CLICK DONE
+//    // =========================================================
+//
+//    public void clickDoneAfterImageSelection() {
+//
+//        System.out.println(
+//                "Waiting for manual image selection..."
+//        );
+//
+//        // -----------------------------------------------------
+//        // Allow 60 seconds for manual image selection
+//        // -----------------------------------------------------
+//        WebDriverWait doneWait =
+//                new WebDriverWait(
+//                        driver,
+//                        Duration.ofSeconds(60)
+//                );
+//
+//        doneWait.until(
+//                ExpectedConditions.elementToBeClickable(doneButton)
+//        ).click();
+//
+//        System.out.println(
+//                "Done button clicked successfully"
+//        );
+//    }
+
+
     // =========================================================
-// CLICK OK POPUP
-// =========================================================
+    // CLICK OK POPUP
+    // =========================================================
 
     public void clickOkPopup() {
 
@@ -165,8 +206,11 @@ public class APhotoUploadPage  {
                 ExpectedConditions.elementToBeClickable(okButton)
         ).click();
 
-        System.out.println("OK popup clicked successfully");
+        System.out.println(
+                "OK popup clicked successfully"
+        );
     }
+
 
     // =========================================================
     // SCROLL DOWN
@@ -176,7 +220,7 @@ public class APhotoUploadPage  {
 
         driver.executeScript(
                 "mobile: scrollGesture",
-                java.util.Map.of(
+                Map.of(
                         "left", 100,
                         "top", 300,
                         "width", 520,
@@ -213,11 +257,17 @@ public class APhotoUploadPage  {
     // =========================================================
 
     public void uploadPhoto() {
+
         clickAccount();
+
         clickUserName();
+
         clickPhotoUploadIcon();
+
         clickGallery();
-        clickDoneAfterImageSelection();
+
+//        clickDoneAfterImageSelection();
+
         clickOkPopup();
     }
 }

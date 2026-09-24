@@ -31,26 +31,20 @@ public class ISaveDoNumberPage extends BaseClassMobile {
             By.xpath("//*[@content-desc='Delivery Orders (DO)']");
 
     private final By deliveryOrdersContains =
-            By.xpath(
-                    "//*[contains(@content-desc,'Delivery Orders') " +
-                            "or contains(@text,'Delivery Orders')]"
-            );
+            By.xpath("//*[contains(@content-desc,'Delivery Orders') " +
+                            "or contains(@text,'Delivery Orders')]");
 
     // Extra Android UIAutomator fallback
     private final By deliveryOrdersUiAutomator =
-            AppiumBy.androidUIAutomator(
-                    "new UiSelector().textContains(\"Delivery Orders\")"
-            );
+            AppiumBy.androidUIAutomator("new UiSelector().textContains(\"Delivery Orders\")");
 
     // =========================================================
     // Delivery Order Card
     // =========================================================
 
     private final By doCards =
-            AppiumBy.xpath(
-                    "//*[contains(@content-desc,'AB-DO-') " +
-                            "or contains(@text,'AB-DO-')]"
-            );
+            AppiumBy.xpath("//*[contains(@content-desc,'AB-DO-') "
+                    + "or contains(@text,'AB-DO-')]");
 
     // =========================================================
     // Constructor
@@ -74,86 +68,60 @@ public class ISaveDoNumberPage extends BaseClassMobile {
 
         try {
 
-            System.out.println(
-                    "Waiting for Delivery Orders (DO)..."
-            );
+            System.out.println("Waiting for Delivery Orders (DO)...");
 
-            WebElement deliveryOrders =
-                    waitForDeliveryOrdersButton();
+            WebElement deliveryOrders = waitForDeliveryOrdersButton();
 
             if (deliveryOrders == null) {
-                throw new RuntimeException(
-                        "Delivery Orders (DO) button not found"
-                );
+                throw new RuntimeException("Delivery Orders (DO) button not found");
             }
 
-            System.out.println(
-                    "Delivery Orders (DO) found successfully"
-            );
+            System.out.println("Delivery Orders (DO) found successfully");
 
             // Re-check element before clicking
             try {
                 if (!deliveryOrders.isDisplayed()) {
-                    throw new RuntimeException(
-                            "Delivery Orders (DO) is not displayed"
-                    );
+                    throw new RuntimeException("Delivery Orders (DO) is not displayed");
                 }
 
                 if (!deliveryOrders.isEnabled()) {
-                    throw new RuntimeException(
-                            "Delivery Orders (DO) is not enabled"
-                    );
+                    throw new RuntimeException("Delivery Orders (DO) is not enabled");
                 }
 
                 deliveryOrders.click();
 
             } catch (StaleElementReferenceException e) {
 
-                System.out.println(
-                        "Delivery Orders element became stale. Re-finding..."
-                );
+                System.out.println("Delivery Orders element became stale. Re-finding...");
 
                 WebElement retryElement =
                         waitForDeliveryOrdersButton();
 
                 if (retryElement == null) {
-                    throw new RuntimeException(
-                            "Delivery Orders (DO) disappeared before click"
-                    );
+                    throw new RuntimeException("Delivery Orders (DO) disappeared before click");
                 }
 
                 retryElement.click();
             }
-
-            // Wait until DO page/cards start loading
             waitForDOPage();
 
             double duration = StepTimer.endStep();
 
-            ExtentTestListener.logStep(
-                    "Delivery Orders (DO) Clicked Successfully | Time Taken : "
+            ExtentTestListener.logStep("Delivery Orders (DO) Clicked Successfully | Time Taken : "
                             + String.format("%.2f", duration)
-                            + " sec"
-            );
+                            + " sec");
 
-            System.out.println(
-                    "Delivery Orders (DO) clicked successfully"
-            );
-
-        } catch (Exception e) {
-
+            System.out.println("Delivery Orders (DO) clicked successfully");
+        }
+        catch (Exception e)
+        {
             double duration = StepTimer.endStep();
 
-            ExtentTestListener.logStep(
-                    "Failed to click Delivery Orders (DO) | Time Taken : "
+            ExtentTestListener.logStep("Failed to click Delivery Orders (DO) | Time Taken : "
                             + String.format("%.2f", duration)
-                            + " sec"
-            );
+                            + " sec");
 
-            throw new RuntimeException(
-                    "Delivery Orders (DO) button not found",
-                    e
-            );
+            throw new RuntimeException("Delivery Orders (DO) button not found", e);
         }
 
 
@@ -162,21 +130,14 @@ public class ISaveDoNumberPage extends BaseClassMobile {
         // =====================================================
 
         StepTimer.startStep();
-
         try {
+            System.out.println("Waiting for Delivery Order cards...");
 
-            System.out.println(
-                    "Waiting for Delivery Order cards..."
-            );
-
-            WebElement firstDO =
-                    waitForFirstDOCard();
+            WebElement firstDO = waitForFirstDOCard();
 
             if (firstDO == null) {
 
-                throw new RuntimeException(
-                        "No Delivery Order card found"
-                );
+                throw new RuntimeException("No Delivery Order card found");
             }
 
             // =================================================
@@ -188,36 +149,27 @@ public class ISaveDoNumberPage extends BaseClassMobile {
             try {
                 contentDescription =
                         firstDO.getAttribute("content-desc");
-            } catch (Exception ignored) {
             }
-
+            catch (Exception ignored) {
+            }
             String text = null;
-
             try {
                 text = firstDO.getAttribute("text");
-            } catch (Exception ignored) {
+            }
+            catch (Exception ignored) {
             }
 
-            System.out.println(
-                    "First DO Content Description : "
-                            + contentDescription
-            );
+            System.out.println("First DO Content Description : " + contentDescription);
 
-            System.out.println(
-                    "First DO Text : "
-                            + text
-            );
+            System.out.println("First DO Text : " + text);
 
-            ExtentTestListener.logStep(
-                    "First Delivery Order Card Found"
-            );
+            ExtentTestListener.logStep("First Delivery Order Card Found");
 
             // =================================================
             // Extract DO Number
             // =================================================
 
-            String doNumber =
-                    extractDONumber(contentDescription);
+            String doNumber = extractDONumber(contentDescription);
 
             // Fallback to text
             if (doNumber == null || doNumber.isEmpty()) {
@@ -226,32 +178,22 @@ public class ISaveDoNumberPage extends BaseClassMobile {
 
             // Final fallback: inspect all visible DO elements
             if (doNumber == null || doNumber.isEmpty()) {
-
                 doNumber = findDONumberFromScreen();
             }
 
             if (doNumber == null || doNumber.isEmpty()) {
-
                 double duration = StepTimer.endStep();
 
-                ExtentTestListener.logStep(
-                        "DO Number could not be extracted | Time Taken : "
+                ExtentTestListener.logStep("DO Number could not be extracted | Time Taken : "
                                 + String.format("%.2f", duration)
-                                + " sec"
-                );
+                                + " sec");
 
-                throw new RuntimeException(
-                        "DO Number not found in DO card"
-                );
+                throw new RuntimeException("DO Number not found in DO card");
             }
 
-            System.out.println(
-                    "First DO Number : " + doNumber
-            );
+            System.out.println("First DO Number : " + doNumber);
 
-            ExtentTestListener.logStep(
-                    "DO Number Found : " + doNumber
-            );
+            ExtentTestListener.logStep("DO Number Found : " + doNumber);
 
             // =================================================
             // Save DO Number
@@ -261,33 +203,24 @@ public class ISaveDoNumberPage extends BaseClassMobile {
 
             double duration = StepTimer.endStep();
 
-            ExtentTestListener.logStep(
-                    "DO Number Saved : "
+            ExtentTestListener.logStep("DO Number Saved : "
                             + doNumber
                             + " | Time Taken : "
                             + String.format("%.2f", duration)
-                            + " sec"
-            );
+                            + " sec");
 
-            System.out.println(
-                    "DO Number Saved Successfully : "
-                            + doNumber
-            );
+            System.out.println("DO Number Saved Successfully : " + doNumber);
 
-        } catch (Exception e) {
-
+        }
+        catch (Exception e)
+        {
             double duration = StepTimer.endStep();
 
-            ExtentTestListener.logStep(
-                    "Failed to find/save Delivery Order Number | Time Taken : "
+            ExtentTestListener.logStep("Failed to find/save Delivery Order Number | Time Taken : "
                             + String.format("%.2f", duration)
-                            + " sec"
-            );
+                            + " sec");
 
-            throw new RuntimeException(
-                    "Unable to save Delivery Order Number",
-                    e
-            );
+            throw new RuntimeException("Unable to save Delivery Order Number", e);
         }
     }
 
@@ -298,14 +231,11 @@ public class ISaveDoNumberPage extends BaseClassMobile {
 
     private WebElement waitForDeliveryOrdersButton() {
 
-        System.out.println(
-                "Searching for Delivery Orders (DO)..."
-        );
+        System.out.println("Searching for Delivery Orders (DO)...");
 
         final long timeoutSeconds = 15;
 
-        long endTime =
-                System.currentTimeMillis()
+        long endTime = System.currentTimeMillis()
                         + Duration.ofSeconds(timeoutSeconds).toMillis();
 
         boolean scrolled = false;
@@ -316,14 +246,11 @@ public class ISaveDoNumberPage extends BaseClassMobile {
             // 1. Accessibility ID
             // -------------------------------------------------
 
-            WebElement element =
-                    findVisibleEnabled(deliveryOrdersAccessibility);
+            WebElement element = findVisibleEnabled(deliveryOrdersAccessibility);
 
             if (element != null) {
 
-                System.out.println(
-                        "Delivery Orders found using Accessibility ID"
-                );
+                System.out.println("Delivery Orders found using Accessibility ID");
 
                 return element;
             }
@@ -332,15 +259,11 @@ public class ISaveDoNumberPage extends BaseClassMobile {
             // 2. Exact Text
             // -------------------------------------------------
 
-            element =
-                    findVisibleEnabled(deliveryOrdersText);
+            element = findVisibleEnabled(deliveryOrdersText);
 
             if (element != null) {
 
-                System.out.println(
-                        "Delivery Orders found using Text"
-                );
-
+                System.out.println("Delivery Orders found using Text");
                 return element;
             }
 
@@ -348,14 +271,11 @@ public class ISaveDoNumberPage extends BaseClassMobile {
             // 3. Content Description
             // -------------------------------------------------
 
-            element =
-                    findVisibleEnabled(deliveryOrdersContentDesc);
+            element = findVisibleEnabled(deliveryOrdersContentDesc);
 
             if (element != null) {
 
-                System.out.println(
-                        "Delivery Orders found using Content Description"
-                );
+                System.out.println("Delivery Orders found using Content Description");
 
                 return element;
             }
@@ -364,14 +284,11 @@ public class ISaveDoNumberPage extends BaseClassMobile {
             // 4. Partial Text / Content Description
             // -------------------------------------------------
 
-            element =
-                    findVisibleEnabled(deliveryOrdersContains);
+            element = findVisibleEnabled(deliveryOrdersContains);
 
             if (element != null) {
 
-                System.out.println(
-                        "Delivery Orders found using Partial Locator"
-                );
+                System.out.println("Delivery Orders found using Partial Locator");
 
                 return element;
             }
@@ -380,14 +297,11 @@ public class ISaveDoNumberPage extends BaseClassMobile {
             // 5. Android UIAutomator
             // -------------------------------------------------
 
-            element =
-                    findVisibleEnabled(deliveryOrdersUiAutomator);
+            element = findVisibleEnabled(deliveryOrdersUiAutomator);
 
             if (element != null) {
 
-                System.out.println(
-                        "Delivery Orders found using UiAutomator"
-                );
+                System.out.println("Delivery Orders found using UiAutomator");
 
                 return element;
             }
@@ -397,29 +311,21 @@ public class ISaveDoNumberPage extends BaseClassMobile {
             // -------------------------------------------------
 
             if (!scrolled) {
-
-                System.out.println(
-                        "Delivery Orders not visible. Scrolling..."
-                );
-
+                System.out.println("Delivery Orders not visible. Scrolling...");
                 scrollDown1();
-
                 scrolled = true;
             }
-
-            // Small polling interval without Thread.sleep
-            try {
+            try
+            {
                 Thread.sleep(200);
-            } catch (InterruptedException e) {
+            }
+            catch (InterruptedException e)
+            {
                 Thread.currentThread().interrupt();
                 break;
             }
         }
-
-        System.out.println(
-                "Delivery Orders (DO) could not be found"
-        );
-
+        System.out.println("Delivery Orders (DO) could not be found");
         return null;
     }
 
@@ -429,64 +335,43 @@ public class ISaveDoNumberPage extends BaseClassMobile {
     // =========================================================
 
     private WebElement findVisibleEnabled(By locator) {
-
         try {
-
-            List<WebElement> elements =
-                    driver.findElements(locator);
-
+            List<WebElement> elements = driver.findElements(locator);
             for (WebElement element : elements) {
-
                 try {
-
                     if (element.isDisplayed()
                             && element.isEnabled()) {
-
                         return element;
                     }
-
-                } catch (StaleElementReferenceException ignored) {
-                } catch (Exception ignored) {
+                }
+                catch (StaleElementReferenceException ignored)
+                {
+                }
+                catch (Exception ignored) {
                 }
             }
-
-        } catch (Exception ignored) {
         }
-
+        catch (Exception ignored) {
+        }
         return null;
     }
 
-
-    // =========================================================
     // Scroll Down
-    // =========================================================
-
     private void scrollDown1() {
-
         try {
-
-            driver.executeScript(
-                    "mobile: scrollGesture",
-                    java.util.Map.of(
-                            "left", 50,
+            driver.executeScript("mobile: scrollGesture",
+                    java.util.Map.of("left", 50,
                             "top", 300,
                             "width", 620,
                             "height", 1100,
                             "direction", "down",
-                            "percent", 0.65
-                    )
-            );
+                            "percent", 0.6));
 
-            System.out.println(
-                    "Dashboard scroll completed"
-            );
-
-        } catch (Exception e) {
-
-            System.out.println(
-                    "Scroll failed : "
-                            + e.getMessage()
-            );
+            System.out.println("Dashboard scroll completed");
+        }
+        catch (Exception e)
+        {
+            System.out.println("Scroll failed : " + e.getMessage());
         }
     }
 
@@ -497,36 +382,25 @@ public class ISaveDoNumberPage extends BaseClassMobile {
 
     private void waitForDOPage() {
 
-        System.out.println(
-                "Waiting for Delivery Orders page..."
-        );
-
+        System.out.println("Waiting for Delivery Orders page...");
         try {
-
             wait.until(driver -> {
-
                 try {
-
-                    List<WebElement> cards =
-                            driver.findElements(doCards);
+                    List<WebElement> cards = driver.findElements(doCards);
 
                     return !cards.isEmpty();
-
-                } catch (Exception e) {
-
+                }
+                catch (Exception e)
+                {
                     return false;
                 }
             });
 
-            System.out.println(
-                    "Delivery Orders page loaded successfully"
-            );
-
-        } catch (TimeoutException e) {
-
-            System.out.println(
-                    "DO cards not immediately visible. Continuing..."
-            );
+            System.out.println("Delivery Orders page loaded successfully");
+        }
+        catch (TimeoutException e)
+        {
+            System.out.println("DO cards not immediately visible. Continuing...");
         }
     }
 
@@ -537,63 +411,49 @@ public class ISaveDoNumberPage extends BaseClassMobile {
 
     private WebElement waitForFirstDOCard() {
 
-        long endTime =
-                System.currentTimeMillis()
-                        + Duration.ofSeconds(15).toMillis();
+        long endTime = System.currentTimeMillis()
+                + Duration.ofSeconds(15).toMillis();
 
         while (System.currentTimeMillis() < endTime) {
 
             try {
 
-                List<WebElement> cards =
-                        driver.findElements(doCards);
+                List<WebElement> cards = driver.findElements(doCards);
 
                 for (WebElement card : cards) {
-
                     try {
-
                         if (card.isDisplayed()) {
 
-                            System.out.println(
-                                    "First Delivery Order found"
-                            );
-
+                            System.out.println("First Delivery Order found");
                             return card;
                         }
-
-                    } catch (StaleElementReferenceException ignored) {
+                    }
+                    catch (StaleElementReferenceException ignored) {
                     }
                 }
-
-            } catch (Exception ignored) {
             }
-
-            // Scroll if cards are not visible
+            catch (Exception ignored) {
+            }
             try {
-
-                driver.executeScript(
-                        "mobile: scrollGesture",
-                        java.util.Map.of(
-                                "left", 50,
+                driver.executeScript("mobile: scrollGesture",
+                        java.util.Map.of("left", 50,
                                 "top", 300,
                                 "width", 620,
                                 "height", 1100,
                                 "direction", "down",
-                                "percent", 0.50
-                        )
-                );
-
-            } catch (Exception ignored) {
+                                "percent", 0.50));
+            }
+            catch (Exception ignored) {
             }
 
             try {
                 Thread.sleep(200);
-            } catch (InterruptedException e) {
+            }
+            catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
                 break;
             }
         }
-
         return null;
     }
 
@@ -606,49 +466,36 @@ public class ISaveDoNumberPage extends BaseClassMobile {
 
         try {
 
-            List<WebElement> elements =
-                    driver.findElements(
-                            By.xpath(
-                                    "//*[contains(@content-desc,'AB-DO-') " +
-                                            "or contains(@text,'AB-DO-')]"
-                            )
-                    );
-
-            for (WebElement element : elements) {
-
+            List<WebElement> elements = driver.findElements
+                    (By.xpath("//*[contains(@content-desc,'AB-DO-') " +
+                                            "or contains(@text,'AB-DO-')]"));
+            for (WebElement element : elements)
+            {
                 try {
 
-                    String contentDesc =
-                            element.getAttribute("content-desc");
+                    String contentDesc = element.getAttribute("content-desc");
 
-                    String doNumber =
-                            extractDONumber(contentDesc);
+                    String doNumber = extractDONumber(contentDesc);
 
-                    if (doNumber != null
-                            && !doNumber.isEmpty()) {
-
+                    if (doNumber != null && !doNumber.isEmpty()) {
                         return doNumber;
                     }
 
-                    String text =
-                            element.getAttribute("text");
+                    String text = element.getAttribute("text");
 
-                    doNumber =
-                            extractDONumber(text);
+                    doNumber = extractDONumber(text);
 
                     if (doNumber != null
                             && !doNumber.isEmpty()) {
-
                         return doNumber;
                     }
-
-                } catch (StaleElementReferenceException ignored) {
+                }
+                catch (StaleElementReferenceException ignored) {
                 }
             }
-
-        } catch (Exception ignored) {
         }
-
+        catch (Exception ignored) {
+        }
         return null;
     }
 
@@ -659,8 +506,7 @@ public class ISaveDoNumberPage extends BaseClassMobile {
 
     private String extractDONumber(String value) {
 
-        if (value == null
-                || value.trim().isEmpty()) {
+        if (value == null || value.trim().isEmpty()) {
 
             return null;
         }
@@ -669,19 +515,15 @@ public class ISaveDoNumberPage extends BaseClassMobile {
         // Split lines
         // -----------------------------------------------------
 
-        String[] lines =
-                value.split("\\r?\\n");
+        String[] lines = value.split("\\r?\\n");
 
         for (String line : lines) {
 
-            String text =
-                    line.trim();
+            String text = line.trim();
 
             if (text.startsWith("AB-DO-")) {
 
-                // Remove extra text after whitespace
-                String[] parts =
-                        text.split("\\s+");
+                String[] parts = text.split("\\s+");
 
                 return parts[0].trim();
             }
@@ -691,33 +533,27 @@ public class ISaveDoNumberPage extends BaseClassMobile {
         // Fallback: Find AB-DO- anywhere
         // -----------------------------------------------------
 
-        int start =
-                value.indexOf("AB-DO-");
+        int start = value.indexOf("AB-DO-");
 
         if (start >= 0) {
 
-            String result =
-                    value.substring(start);
+            String result = value.substring(start);
 
             // Stop at newline
-            int newline =
-                    result.indexOf("\n");
+            int newline = result.indexOf("\n");
 
             if (newline > 0) {
-                result =
-                        result.substring(0, newline);
+                result = result.substring(0, newline);
             }
 
             // Stop at whitespace
-            String[] parts =
-                    result.trim().split("\\s+");
+            String[] parts = result.trim().split("\\s+");
 
             if (parts.length > 0) {
 
                 return parts[0].trim();
             }
         }
-
         return null;
     }
 }

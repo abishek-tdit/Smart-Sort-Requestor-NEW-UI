@@ -1,5 +1,6 @@
 package com.AndroidTest.KSettingFlow;
 
+import Base.ExtentTestListener;
 import io.appium.java_client.AppiumBy;
 import io.appium.java_client.android.AndroidDriver;
 import org.openqa.selenium.By;
@@ -35,13 +36,13 @@ public class CThemePage {
                 ExpectedConditions.visibilityOfElementLocated(themeMenu));
 
         theme.click();
-        System.out.println("Theme menu clicked");
+        ExtentTestListener.logStep("Theme menu clicked");
 
         WebElement dark = wait.until(
                 ExpectedConditions.elementToBeClickable(darkButton));
 
         dark.click();
-        System.out.println("Dark selected");
+        ExtentTestListener.logStep("Dark selected");
 
         Thread.sleep(2000);
     }
@@ -52,13 +53,13 @@ public class CThemePage {
                 ExpectedConditions.visibilityOfElementLocated(themeMenu));
 
         theme.click();
-        System.out.println("Theme menu clicked");
+        ExtentTestListener.logStep("Theme menu clicked");
 
         WebElement light = wait.until(
                 ExpectedConditions.elementToBeClickable(lightButton));
 
         light.click();
-        System.out.println("Light selected");
+        ExtentTestListener.logStep("Light selected");
 
         Thread.sleep(2000);
     }

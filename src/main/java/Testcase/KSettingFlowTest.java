@@ -11,37 +11,36 @@ public class KSettingFlowTest extends BaseClassMobile {
 
         System.out.println("========== LANGUAGE FLOW STARTED ==========");
 
-//        //
-//        ALanguagePage languagePage = new ALanguagePage(driver);
-//        languagePage.completeLanguageFlow();
-//
-//        //NOTIFICATION:
-//        BNotificationPage notificationPage = new BNotificationPage(driver);
-//        notificationPage.openAndValidateNotifications();
-//
-//        //
-//        CThemePage themePage = new CThemePage(driver);
-//        themePage.selectDarkTheme();
-//        Thread.sleep(3000);
-//        themePage.selectLightTheme();
-//
-//        //
-//        DPrivacyPolicyPage privacyPolicyPage = new DPrivacyPolicyPage(driver);
-//        privacyPolicyPage.clickPrivacyPolicyAndGoBack();
-//
-//        //
-//        ETermsAndConditionsPage termsPage = new ETermsAndConditionsPage(driver);
-//        termsPage.openValidateAndGoBack();
-//
-//        //
-//        FAboutUsPage aboutUsPage = new FAboutUsPage(driver);
-//        aboutUsPage.openAboutUsAndBack();
+        //Language
+        ALanguagePage languagePage = new ALanguagePage(driver);
+        languagePage.completeLanguageFlow();
 
-        //
-        GReportsPage reportsPage = new GReportsPage(driver);
-        reportsPage.clickReport();
-        reportsPage.validateReportPage();
-        reportsPage.openAndValidateReport();
+        //NOTIFICATION:
+        BNotificationPage notificationPage = new BNotificationPage(driver);
+        notificationPage.openAndValidateNotifications();
+
+        //Theme
+        CThemePage themePage = new CThemePage(driver);
+        themePage.selectDarkTheme();
+        Thread.sleep(3000);
+        themePage.selectLightTheme();
+
+        //PrivacyPolicy
+        DPrivacyPolicyPage privacyPolicyPage = new DPrivacyPolicyPage(driver);
+        privacyPolicyPage.clickPrivacyPolicyAndGoBack();
+
+        //TermsAndConditions
+        ETermsAndConditionsPage termsPage = new ETermsAndConditionsPage(driver);
+        termsPage.openValidateAndGoBack();
+
+        //AboutUs
+        FAboutUsPage aboutUsPage = new FAboutUsPage(driver);
+        aboutUsPage.openAboutUsAndBack();
+        driver.navigate().back();
+
+//        //Reports
+//        GReportsPage reportsPage = new GReportsPage(driver);
+//        reportsPage.validateReportsPage();
 
         System.out.println("========== SETTING FLOW COMPLETED ==========");
     }

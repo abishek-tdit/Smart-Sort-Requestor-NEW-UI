@@ -14,7 +14,7 @@ import static utilities.AOrderDataDoorPickup.orderNumberDoorPickup;
 
 public class HDeliveryOrderAssignToCollectionCenterPage extends BaseClassMobile {
 
-    AndroidDriver driver;
+    private final AndroidDriver driver;
 
     public HDeliveryOrderAssignToCollectionCenterPage(AndroidDriver driver) {
         this.driver = driver;
@@ -22,150 +22,171 @@ public class HDeliveryOrderAssignToCollectionCenterPage extends BaseClassMobile 
 
     public void openRequestOrdersAndRODO() {
 
-        // Click Request Orders (RO)
+        double duration;
+
+        // CLICK REQUEST ORDERS (RO)
         StepTimer.startStep();
 
-        WebElement requestOrders = waitUntilClickable(
-                AppiumBy.accessibilityId("Request Orders (RO)"), 20);
+        WebElement requestOrders =
+                waitUntilClickable(AppiumBy.accessibilityId("Request Orders (RO)"), 20);
+
         requestOrders.click();
 
-        double duration = StepTimer.endStep();
+        duration = StepTimer.endStep();
 
-        ExtentTestListener.logStep(
-                "Clicked Request Orders (RO) | Time Taken : "
-                        + String.format("%.2f", duration)
-                        + " sec");
+        ExtentTestListener.logStep("Clicked Request Orders (RO) | Time Taken : "
+                + String.format("%.2f", duration)
+                + " sec");
 
 
-        // Click RO - DO Tab
+        // =====================================================
+        // CLICK RO - DO TAB
+        // =====================================================
+
         StepTimer.startStep();
 
-        WebElement roDoTab = waitUntilClickable(
-                AppiumBy.accessibilityId("RO - DO\nTab 3 of 3"), 20);
+        WebElement roDoTab = waitUntilClickable
+                (AppiumBy.accessibilityId("RO - DO\nTab 3 of 3"), 20);
+
         roDoTab.click();
 
         duration = StepTimer.endStep();
 
-        ExtentTestListener.logStep(
-                "Clicked RO - DO Tab | Time Taken : "
+        ExtentTestListener.logStep("Clicked RO - DO Tab | Time Taken : "
                         + String.format("%.2f", duration)
                         + " sec");
 
-        ExtentTestListener.getTest().info(
-                "Request Orders and RO-DO Tab clicked successfully");
 
+        // =====================================================
+        // CLICK ORDER CHECKBOX
+        // =====================================================
 
-        // TIC-CHECKBOX
         StepTimer.startStep();
 
-        WebElement firstOrderCheckbox = waitUntilClickable(
-                AppiumBy.androidUIAutomator(
-                        "new UiSelector().className(\"android.widget.CheckBox\").instance(0)"), 20);
+        WebElement firstOrderCheckbox =
+                waitUntilClickable(AppiumBy.androidUIAutomator
+                                ("new UiSelector()" +
+                                ".className(\"android.widget.CheckBox\")" +
+                                ".instance(0)"), 20);
 
         firstOrderCheckbox.click();
 
         duration = StepTimer.endStep();
 
-        ExtentTestListener.logStep(
-                "Checkbox clicked for Order : "
+        ExtentTestListener.logStep("Checkbox clicked for Order : "
                         + orderNumberDoorPickup
                         + " | Time Taken : "
                         + String.format("%.2f", duration)
                         + " sec");
 
 
-        // Click Assign to CC
+        // =====================================================
+        // CLICK ASSIGN TO CC
+        // =====================================================
+
         StepTimer.startStep();
 
-        WebElement assignToCC = waitUntilClickable(
-                AppiumBy.accessibilityId("Assign to CC"), 20);
+        WebElement assignToCC =
+                waitUntilClickable(AppiumBy.accessibilityId("Assign to CC"), 20);
+
         assignToCC.click();
 
         duration = StepTimer.endStep();
 
-        ExtentTestListener.logStep(
-                "Clicked Assign to CC | Time Taken : "
+        ExtentTestListener.logStep("Clicked Assign to CC | Time Taken : "
                         + String.format("%.2f", duration)
                         + " sec");
 
 
-        // Select Collection Center
+        // =====================================================
+        // SELECT COLLECTION CENTER
+        // =====================================================
+
         StepTimer.startStep();
 
-        WebElement cc = waitUntilClickable(
-                AppiumBy.androidUIAutomator(
-                        "new UiSelector().descriptionContains(\"TTFVaasan\")"), 20);
+        WebElement cc = waitUntilClickable(AppiumBy.androidUIAutomator
+                ("new UiSelector()" +
+                        ".descriptionContains(\"TTFVaasan\")"), 20);
 
-        driver.executeScript(
-                "mobile: clickGesture",
-                Map.of(
-                        "elementId",
-                        ((RemoteWebElement) cc).getId()));
+        driver.executeScript("mobile: clickGesture",
+                Map.of("elementId", ((RemoteWebElement) cc).getId()));
 
         duration = StepTimer.endStep();
 
-        ExtentTestListener.logStep(
-                "Selected Collection Center - TTFVaasan | Time Taken : "
+        ExtentTestListener.logStep("Selected Collection Center - TTFVaasan | Time Taken : "
                         + String.format("%.2f", duration)
                         + " sec");
 
 
-        // Click Assign Button
+        // =====================================================
+        // CLICK ASSIGN
+        // =====================================================
+
         StepTimer.startStep();
 
-        WebElement assignBtn = waitUntilClickable(
-                AppiumBy.accessibilityId("Assign"), 20);
+        WebElement assignBtn =
+                waitUntilClickable(AppiumBy.accessibilityId("Assign"), 20);
+
         assignBtn.click();
 
         duration = StepTimer.endStep();
 
-        ExtentTestListener.logStep(
-                "Clicked Assign | Time Taken : "
+        ExtentTestListener.logStep("Clicked Assign | Time Taken : "
                         + String.format("%.2f", duration)
                         + " sec");
 
 
-        // Click OK Popup
+        // =====================================================
+        // CLICK OK POPUP
+        // =====================================================
+
         StepTimer.startStep();
 
-        WebElement okBtn = waitUntilVisible(
-                AppiumBy.androidUIAutomator(
-                        "new UiSelector().description(\"OK\")"), 20);
+        WebElement okBtn =
+                waitUntilVisible(AppiumBy.androidUIAutomator
+                        ("new UiSelector().description(\"OK\")"),20);
 
         okBtn.click();
 
         duration = StepTimer.endStep();
 
-        ExtentTestListener.logStep(
-                "Clicked OK Popup | Time Taken : "
+        ExtentTestListener.logStep("Clicked OK Popup | Time Taken : "
                         + String.format("%.2f", duration)
                         + " sec");
 
 
-        // Back Button
-        StepTimer.startStep();
-
-        WebElement backBtn = waitUntilClickable(
-                AppiumBy.androidUIAutomator(
-                        "new UiSelector().className(\"android.view.View\").instance(6)"), 20);
-
-        backBtn.click();
-
-        duration = StepTimer.endStep();
-
-        ExtentTestListener.logStep("Clicked Back Button | Time Taken : "
-                        + String.format("%.2f", duration) + " sec");
-
+        // =====================================================
+        // BACK TO PREVIOUS SCREEN
+        // =====================================================
 
         StepTimer.startStep();
 
-        driver.navigate().back();
+        try {
+            WebElement backBtn = waitUntilClickable(AppiumBy.androidUIAutomator
+                    ("new UiSelector()"
+                            + ".className(\"android.view.View\")"
+                            + ".instance(6)"), 10);
+
+            backBtn.click();
+
+            ExtentTestListener.getTest().info("App Back Button clicked successfully");
+        }
+        catch (Exception e)
+        {
+            ExtentTestListener.getTest().fail
+                    ("Unable to click App Back Button: " + e.getMessage());
+            throw e;
+        }
 
         duration = StepTimer.endStep();
 
-        ExtentTestListener.logStep("System Back Navigation Completed | Time Taken : "
-                        + String.format("%.2f", duration) + " sec");
+        ExtentTestListener.logStep("Returned to previous Utility screen | Time Taken : "
+                        + String.format("%.2f", duration)
+                        + " sec");
 
-        ExtentTestListener.getTest().info("Order selected, assigned to Collection Center, and confirmed successfully");
+        ExtentTestListener.getTest().info
+                ("Delivery Order Assignment Completed Successfully");
+
+        ExtentTestListener.getTest().info("Utility App remains open");
     }
 }

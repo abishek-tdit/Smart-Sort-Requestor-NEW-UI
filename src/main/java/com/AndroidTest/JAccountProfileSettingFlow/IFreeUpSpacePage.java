@@ -1,5 +1,6 @@
 package com.AndroidTest.JAccountProfileSettingFlow;
 
+import Base.BaseClassMobile;
 import io.appium.java_client.AppiumBy;
 import io.appium.java_client.android.AndroidDriver;
 import org.openqa.selenium.By;
@@ -10,7 +11,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import java.time.Duration;
 import java.util.Map;
 
-public class IFreeUpSpacePage {
+public class IFreeUpSpacePage extends BaseClassMobile {
 
     private final AndroidDriver driver;
     private final WebDriverWait wait;
@@ -37,7 +38,7 @@ public class IFreeUpSpacePage {
     // SCROLL UNTIL FREE UP SPACE IS FOUND
     // =========================================================
     private void scrollToFreeUpSpace() {
-
+        scrollDown();
         System.out.println("Searching for Free up space...");
 
         for (int i = 0; i < 10; i++) {
@@ -150,6 +151,7 @@ public class IFreeUpSpacePage {
     // =========================================================
     public void goBack() {
 
+        driver.navigate().back();
         driver.navigate().back();
 
         System.out.println("Navigated back successfully.");

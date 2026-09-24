@@ -5,140 +5,243 @@ import Base.ExtentTestListener;
 import io.appium.java_client.AppiumBy;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.PointerInput;
+import org.openqa.selenium.interactions.Sequence;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+
+import java.time.Duration;
+import java.util.Collections;
 
 public class A3RedeemPartnerStore extends BaseClassMobile {
 
-    //=========================================================
-    // Locators
-    //=========================================================
+    // =========================================================
+    // LOCATORS
+    // =========================================================
+    private final By AGREE_CHECKBOX =
+            AppiumBy.xpath("//android.widget.CheckBox[@checkable='true']");
 
-    // Checkbox
-    private final By checkBox =
-            AppiumBy.className("android.widget.CheckBox");
-
-    // Most Popular
-    private final By mostPopular =
-            AppiumBy.accessibilityId("Most Popular");
-
-    // Search Box
-    private final By searchBox =
-            AppiumBy.xpath("//android.widget.EditText");
-
-    // Redeem Button
-    private final By redeemBtn =
-            AppiumBy.accessibilityId("Redeem");
-
-    // Redeem Gift Button
-    private final By redeemGiftBtn =
-            AppiumBy.accessibilityId("Redeem Gift");
-
-    // OK Popup Button
-    private final By okBtn =
+    private final By OK_BUTTON =
             AppiumBy.accessibilityId("OK");
 
+    private final By MOST_POPULAR =
+            AppiumBy.accessibilityId("Most Popular");
 
-    //=========================================================
-    // Redeem Partner Store
-    //=========================================================
+    private final By SEARCH_BOX =
+            AppiumBy.xpath("//android.widget.EditText");
 
-    public void proceedRedeem() {
+    private final By REDEEM_BUTTON =
+            AppiumBy.accessibilityId("Redeem");
+
+    private final By REDEEM_GIFT_BUTTON =
+            AppiumBy.accessibilityId("Redeem Gift");
+
+
+    // =========================================================
+    // CHECKBOX COORDINATES
+    // =========================================================
+
+    private static final int CHECKBOX_X = 144;
+    private static final int CHECKBOX_Y = 730;
+
+
+    // =========================================================
+    // REDEEM PARTNER STORE
+    // =========================================================
+
+    public void proceedRedeem() throws InterruptedException {
+
+        ExtentTestListener.logStep("========== REDEEM PARTNER STORE STARTED ==========");
+
+        // =====================================================
+        // 1. SELECT TERMS AND CONDITIONS
+        // =====================================================
+
+        ExtentTestListener.logStep("Waiting for Terms and Conditions checkbox...");
+
+        WebElement checkbox = wait.until
+                (ExpectedConditions.presenceOfElementLocated(AGREE_CHECKBOX));
+
+        ExtentTestListener.logStep("Terms and Conditions checkbox displayed");
+
+
+        // =====================================================
+        // 2. CHECK CURRENT CHECKBOX STATUS
+        // =====================================================
+
+        String checkedStatus = checkbox.getAttribute("checked");
+
+        ExtentTestListener.logStep("Checkbox current status: " + checkedStatus);
+
+
+        // =====================================================
+        // 3. TAP ACTUAL VISIBLE CHECKBOX
+        // =====================================================
+
+        if (!"true".equalsIgnoreCase(checkedStatus)) {
+
+            ExtentTestListener.logStep(
+                    "Tapping actual visible checkbox at X="
+                            + CHECKBOX_X
+                            + ", Y="
+                            + CHECKBOX_Y
+            );
+
+            tapAtCoordinates(
+                    CHECKBOX_X,
+                    CHECKBOX_Y
+            );
+
+
+            // =================================================
+            // 4. VERIFY CHECKBOX IS SELECTED
+            // =================================================
+
+            wait.until(driver -> {
+
+                try {
+
+                    WebElement currentCheckbox =
+                            driver.findElement(AGREE_CHECKBOX);
+
+                    return "true".equalsIgnoreCase(
+                            currentCheckbox.getAttribute("checked")
+                    );
+
+                } catch (Exception e) {
+
+                    return false;
+                }
+            });
+
+            ExtentTestListener.logStep(
+                    "I agree checkbox selected successfully"
+            );
+
+        } else {
+
+            ExtentTestListener.logStep(
+                    "I agree checkbox was already selected"
+            );
+        }
+
+
+        // =====================================================
+        // 5. WAIT FOR OK BUTTON TO BECOME ENABLED
+        // =====================================================
 
         ExtentTestListener.logStep(
-                "========== REDEEM PARTNER STORE STARTED ==========");
+                "Waiting for OK button..."
+        );
 
-
-        //=====================================================
-        // 1. Select Checkbox
-        //=====================================================
-
-        WebElement checkbox = waitUntilClickable(checkBox, WAIT_TIME);
-
-        checkbox.click();
+        WebElement okButton =
+                waitUntilClickable(
+                        OK_BUTTON,
+                        WAIT_TIME
+                );
 
         ExtentTestListener.logStep(
-                "Checkbox Selected");
+                "OK button is enabled"
+        );
 
 
-        //=====================================================
-        // 2. Click Most Popular
-        //=====================================================
+        // =====================================================
+        // 6. CLICK OK
+        // =====================================================
 
-        WebElement popular = waitUntilClickable(mostPopular, WAIT_TIME);
+        okButton.click();
+
+        ExtentTestListener.logStep(
+                "OK button clicked"
+        );
+
+
+        // =====================================================
+        // 7. CLICK MOST POPULAR
+        // =====================================================
+
+        WebElement popular =
+                waitUntilClickable(
+                        MOST_POPULAR,
+                        WAIT_TIME
+                );
 
         popular.click();
 
         ExtentTestListener.logStep(
-                "Clicked Most Popular");
+                "Clicked Most Popular"
+        );
 
 
-        //=====================================================
-        // 3. Enter Amazon in Search Box
-        //=====================================================
+        // =====================================================
+        // 8. SEARCH AMAZON
+        // =====================================================
 
         WebElement search =
-                waitUntilVisible(searchBox, WAIT_TIME);
+                waitUntilVisible(
+                        SEARCH_BOX,
+                        WAIT_TIME
+                );
 
         search.click();
 
         ExtentTestListener.logStep(
-                "Search Box Clicked");
+                "Search Box Clicked"
+        );
 
         search.clear();
 
         search.sendKeys("Amazon");
 
         ExtentTestListener.logStep(
-                "Entered Amazon in Search Box");
+                "Entered Amazon in Search Box"
+        );
 
 
-        //=====================================================
-        // 4. Hide Keyboard
-        //=====================================================
+        // =====================================================
+        // 9. HIDE KEYBOARD
+        // =====================================================
 
-        try {
-
-            driver.hideKeyboard();
-
-            ExtentTestListener.logStep(
-                    "Keyboard Hidden");
-
-        } catch (Exception e) {
-
-            ExtentTestListener.logStep(
-                    "Keyboard Already Hidden");
-        }
+        hideKeyboardSafely(
+                "Keyboard Hidden",
+                "Keyboard Already Hidden"
+        );
 
 
-        //=====================================================
-        // 5. Scroll Down
-        //=====================================================
+        // =====================================================
+        // 10. SCROLL DOWN
+        // =====================================================
 
         scrollDown();
 
         ExtentTestListener.logStep(
-                "Scrolled Down");
+                "Scrolled Down"
+        );
 
 
-        //=====================================================
-        // 6. Click Redeem
-        //=====================================================
+        // =====================================================
+        // 11. CLICK REDEEM
+        // =====================================================
 
         WebElement redeem =
-                waitUntilClickable(redeemBtn, WAIT_TIME);
+                waitUntilClickable(
+                        REDEEM_BUTTON,
+                        WAIT_TIME
+                );
 
         redeem.click();
 
         ExtentTestListener.logStep(
-                "Clicked Redeem");
+                "Clicked Redeem"
+        );
 
 
-        //=====================================================
-        // 7. Enter SAR Amount
-        //=====================================================
+        // =====================================================
+        // 12. ENTER SAR AMOUNT
+        // =====================================================
 
         WebElement amountField =
                 waitUntilVisible(
-                        AppiumBy.xpath("//android.widget.EditText"),
+                        SEARCH_BOX,
                         WAIT_TIME
                 );
 
@@ -149,67 +252,141 @@ public class A3RedeemPartnerStore extends BaseClassMobile {
         amountField.sendKeys("10");
 
         ExtentTestListener.logStep(
-                "Entered SAR Amount: 10");
+                "Entered SAR Amount: 10"
+        );
 
 
-        //=====================================================
-        // 8. Hide Keyboard
-        //=====================================================
+        // =====================================================
+        // 13. HIDE KEYBOARD
+        // =====================================================
 
-        try {
-
-            driver.hideKeyboard();
-
-            ExtentTestListener.logStep(
-                    "Keyboard Hidden After Amount Entry");
-
-        } catch (Exception e) {
-
-            ExtentTestListener.logStep(
-                    "Keyboard Already Hidden");
-        }
+        hideKeyboardSafely(
+                "Keyboard Hidden After Amount Entry",
+                "Keyboard Already Hidden"
+        );
 
 
-        //=====================================================
-        // 9. Click Redeem Gift
-        //=====================================================
+        // =====================================================
+        // 14. CLICK REDEEM GIFT
+        // =====================================================
 
         WebElement redeemGift =
                 waitUntilClickable(
-                        redeemGiftBtn,
+                        REDEEM_GIFT_BUTTON,
                         WAIT_TIME
                 );
 
         redeemGift.click();
 
         ExtentTestListener.logStep(
-                "Clicked Redeem Gift");
+                "Clicked Redeem Gift"
+        );
 
 
-        //=====================================================
-        // 10. Wait For OK Popup
-        //=====================================================
+        // =====================================================
+        // 15. WAIT FOR FINAL OK POPUP
+        // =====================================================
 
-        WebElement okPopup = waitUntilClickable
-                        (okBtn,
-                        WAIT_TIME );
+        ExtentTestListener.logStep(
+                "Waiting for final OK popup..."
+        );
 
-        ExtentTestListener.logStep("OK Popup Displayed");
+        WebElement finalOk =
+                waitUntilClickable(
+                        OK_BUTTON,
+                        WAIT_TIME
+                );
+
+        ExtentTestListener.logStep(
+                "Final OK Popup Displayed"
+        );
 
 
-        //=====================================================
-        // 11. Click OK
-        //=====================================================
+        // =====================================================
+        // 16. CLICK FINAL OK
+        // =====================================================
 
-        okPopup.click();
+        finalOk.click();
 
-        ExtentTestListener.logStep("Clicked OK Popup");
+        ExtentTestListener.logStep(
+                "Clicked Final OK Popup"
+        );
 
 
-        //=====================================================
+        // =====================================================
         // COMPLETED
-        //=====================================================
+        // =====================================================
 
-        ExtentTestListener.logStep("========== REDEEM PARTNER STORE STEP COMPLETED ==========");
+        ExtentTestListener.logStep(
+                "========== REDEEM PARTNER STORE STEP COMPLETED =========="
+        );
+    }
+
+
+    // =========================================================
+    // TAP AT SCREEN COORDINATES
+    // =========================================================
+
+    private void tapAtCoordinates(int x, int y) {
+
+        PointerInput finger =
+                new PointerInput(
+                        PointerInput.Kind.TOUCH,
+                        "finger"
+                );
+
+        Sequence tap =
+                new Sequence(finger, 1);
+
+        tap.addAction(
+                finger.createPointerMove(
+                        Duration.ZERO,
+                        PointerInput.Origin.viewport(),
+                        x,
+                        y
+                )
+        );
+
+        tap.addAction(
+                finger.createPointerDown(
+                        PointerInput.MouseButton.LEFT.asArg()
+                )
+        );
+
+        tap.addAction(
+                finger.createPointerUp(
+                        PointerInput.MouseButton.LEFT.asArg()
+                )
+        );
+
+        driver.perform(
+                Collections.singletonList(tap)
+        );
+    }
+
+
+    // =========================================================
+    // SAFE KEYBOARD HANDLING
+    // =========================================================
+
+    private void hideKeyboardSafely(
+            String successMessage,
+            String alreadyHiddenMessage
+    ) {
+
+        try {
+
+            driver.hideKeyboard();
+
+            ExtentTestListener.logStep(
+                    successMessage
+            );
+
+        } catch (Exception e) {
+
+            ExtentTestListener.logStep(
+                    alreadyHiddenMessage
+            );
+        }
     }
 }

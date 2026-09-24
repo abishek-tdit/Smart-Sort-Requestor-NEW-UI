@@ -1,73 +1,136 @@
 package com.AndroidTest.D1RequestorDirectDeliveryOrderPlacingFlow;
 
 import Base.BaseClassMobile;
+import Base.ExtentTestListener;
 import io.appium.java_client.AppiumBy;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
+import org.openqa.selenium.remote.RemoteWebElement;
+import utilities.StepTimer;
 
-import java.time.Duration;
+import java.util.Map;
 
-public class BDirectDeliveryPage extends BaseClassMobile {
+public class BDirectDeliveryPage extends Base.BaseClassMobile {
 
-    private final WebDriverWait wait =
-            new WebDriverWait(driver, Duration.ofSeconds(15));
+    // =====================================================
+    // LOCATORS
+    // =====================================================
 
-    // Direct Delivery card on Home screen
-    private final By directDelivery = AppiumBy.accessibilityId(
-            "Direct Delivery\nDeliver your items directly\nLearn More");
+    private final By directDelivery =
+            AppiumBy.accessibilityId(
+                    "Direct Delivery\nDeliver your items directly\nLearn More");
 
-    // Direct Delivery screen
     private final By startDirectDelivery =
             AppiumBy.accessibilityId("Start Direct Delivery");
 
-    // Collection center
     private final By ttfVaasan =
-            AppiumBy.accessibilityId("TTFVaasan 0.02 km away");
+            AppiumBy.accessibilityId("TTFVaasan 0.02 KM away");
 
-    // Checkbox
     private final By checkbox =
             AppiumBy.className("android.widget.CheckBox");
 
 
-    public void selectDirectDelivery() {
+    // =====================================================
+    // DIRECT DELIVERY FLOW
+    // =====================================================
 
-        // STEP 1 - Click Direct Delivery
+    public void selectDirectDelivery() throws InterruptedException {
+
+        double duration;
+
+
+        // =================================================
+        // STEP 1 - DIRECT DELIVERY
+        // =================================================
+
+        StepTimer.startStep();
+
         scrollDown();
 
         WebElement directDeliveryElement =
-                wait.until(ExpectedConditions.elementToBeClickable(directDelivery));
+                waitUntilClickable(directDelivery, 15);
 
         directDeliveryElement.click();
 
-        System.out.println("Direct Delivery Clicked Successfully");
+        duration = StepTimer.endStep();
+
+        ExtentTestListener.logStep(
+                "Direct Delivery Clicked Successfully | Time Taken : "
+                        + String.format("%.2f", duration)
+                        + " sec");
 
 
-        // STEP 2 - Click Start Direct Delivery
+        // =================================================
+        // STEP 2 - START DIRECT DELIVERY
+        // =================================================
+
+        StepTimer.startStep();
+
         WebElement startDeliveryElement =
-                wait.until(ExpectedConditions.elementToBeClickable(startDirectDelivery));
+                waitUntilClickable(startDirectDelivery, 15);
 
         startDeliveryElement.click();
 
-        System.out.println("Start Direct Delivery Clicked Successfully");
+        duration = StepTimer.endStep();
+
+        ExtentTestListener.logStep(
+                "Start Direct Delivery Clicked Successfully | Time Taken : "
+                        + String.format("%.2f", duration)
+                        + " sec");
 
 
-        // STEP 3 - Select TTFVaasan
+        // =================================================
+// STEP 3 - SELECT TTF VAASAN
+// =================================================
+        StepTimer.startStep();
+
         WebElement ttfVaasanElement =
-                wait.until(ExpectedConditions.elementToBeClickable(ttfVaasan));
+                waitUntilClickable(ttfVaasan, 15);
 
-        ttfVaasanElement.click();
+        try {
+            driver.executeScript(
+                    "mobile: clickGesture",
+                    Map.of(
+                            "elementId",
+                            ((RemoteWebElement) ttfVaasanElement).getId()
+                    )
+            );
+        } catch (Exception e) {
+            ttfVaasanElement.click();
+        }
 
-        System.out.println("TTFVaasan Selected Successfully");
+        duration = StepTimer.endStep();
 
+        ExtentTestListener.logStep(
+                "TTFVaasan Selected Successfully | Time Taken : "
+                        + String.format("%.2f", duration)
+                        + " sec"
+        );
 
-        // STEP 4 - Click Checkbox
+        // =================================================
+        // STEP 4 - CHECKBOX
+        // =================================================
+
+        StepTimer.startStep();
+
         WebElement checkboxElement =
-                wait.until(ExpectedConditions.elementToBeClickable(checkbox));
+                waitUntilClickable(checkbox, 15);
 
         checkboxElement.click();
 
-        System.out.println("Checkbox Clicked Successfully");
+        duration = StepTimer.endStep();
+
+        ExtentTestListener.logStep(
+                "Checkbox Clicked Successfully | Time Taken : "
+                        + String.format("%.2f", duration)
+                        + " sec");
+
+
+        // =================================================
+        // COMPLETED
+        // =================================================
+
+        ExtentTestListener.getTest().info(
+                "Direct Delivery Collection Center Selection Completed Successfully");
     }
 }

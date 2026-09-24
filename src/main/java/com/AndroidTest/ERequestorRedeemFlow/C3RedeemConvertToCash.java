@@ -5,7 +5,11 @@ import Base.ExtentTestListener;
 import io.appium.java_client.AppiumBy;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.TimeoutException;
+import org.openqa.selenium.interactions.PointerInput;
+import org.openqa.selenium.interactions.Sequence;
+import java.time.Duration;
+import java.util.List;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 
 import java.util.Map;
 
@@ -15,8 +19,11 @@ public class C3RedeemConvertToCash extends BaseClassMobile {
     // LOCATORS
     // =========================================================
 
-    private final By checkBox =
-            AppiumBy.className("android.widget.CheckBox");
+    private final By AGREE_CHECKBOX =
+            AppiumBy.xpath("//android.widget.CheckBox[@checkable='true']");
+
+    private final By OK_BUTTON =
+            AppiumBy.accessibilityId("OK");
 
     // Use XPath as fallback because accessibility text can vary
     private final By convertToCash =
@@ -50,6 +57,13 @@ public class C3RedeemConvertToCash extends BaseClassMobile {
 
 
     // =========================================================
+    // CHECKBOX COORDINATES
+    // =========================================================
+
+    private static final int CHECKBOX_X = 144;
+    private static final int CHECKBOX_Y = 730;
+
+    // =========================================================
     // MAIN FLOW
     // =========================================================
 
@@ -61,18 +75,129 @@ public class C3RedeemConvertToCash extends BaseClassMobile {
 
         try {
 
-            // =================================================
-            // 1. SELECT CHECKBOX
-            // =================================================
+            // =====================================================
+            // 1. SELECT TERMS AND CONDITIONS
+            // =====================================================
 
-            WebElement checkbox =
-                    waitUntilClickable(checkBox, WAIT_TIME);
+            ExtentTestListener.logStep("Waiting for Terms and Conditions checkbox...");
 
-            checkbox.click();
+            WebElement checkbox = wait.until
+                    (ExpectedConditions.presenceOfElementLocated(AGREE_CHECKBOX));
+
+            ExtentTestListener.logStep("Terms and Conditions checkbox displayed");
+
+
+            // =====================================================
+            // 2. CHECK CURRENT CHECKBOX STATUS
+            // =====================================================
+
+            String checkedStatus = checkbox.getAttribute("checked");
+
+            ExtentTestListener.logStep("Checkbox current status: " + checkedStatus);
+
+
+            // =====================================================
+            // 3. TAP ACTUAL VISIBLE CHECKBOX
+            // =====================================================
+
+            if (!"true".equalsIgnoreCase(checkedStatus)) {
+
+                ExtentTestListener.logStep(
+                        "Tapping actual visible checkbox at X="
+                                + CHECKBOX_X
+                                + ", Y="
+                                + CHECKBOX_Y
+                );
+
+                PointerInput finger = new PointerInput(
+                        PointerInput.Kind.TOUCH,
+                        "finger"
+                );
+
+                Sequence tap = new Sequence(finger, 1);
+
+                tap.addAction(
+                        finger.createPointerMove(
+                                Duration.ZERO,
+                                PointerInput.Origin.viewport(),
+                                CHECKBOX_X,
+                                CHECKBOX_Y
+                        )
+                );
+
+                tap.addAction(
+                        finger.createPointerDown(PointerInput.MouseButton.LEFT.asArg())
+                );
+
+                tap.addAction(
+                        finger.createPointerUp(PointerInput.MouseButton.LEFT.asArg())
+                );
+
+                driver.perform(List.of(tap));
+
+
+                // =================================================
+                // 4. VERIFY CHECKBOX IS SELECTED
+                // =================================================
+
+                wait.until(driver -> {
+
+                    try {
+
+                        WebElement currentCheckbox =
+                                driver.findElement(AGREE_CHECKBOX);
+
+                        return "true".equalsIgnoreCase(
+                                currentCheckbox.getAttribute("checked")
+                        );
+
+                    } catch (Exception e) {
+
+                        return false;
+                    }
+                });
+
+                ExtentTestListener.logStep(
+                        "I agree checkbox selected successfully"
+                );
+
+            } else {
+
+                ExtentTestListener.logStep(
+                        "I agree checkbox was already selected"
+                );
+            }
+
+
+            // =====================================================
+            // 5. WAIT FOR OK BUTTON TO BECOME ENABLED
+            // =====================================================
 
             ExtentTestListener.logStep(
-                    "Checkbox Selected"
+                    "Waiting for OK button..."
             );
+
+            WebElement okButton =
+                    waitUntilClickable(
+                            OK_BUTTON,
+                            WAIT_TIME
+                    );
+
+            ExtentTestListener.logStep(
+                    "OK button is enabled"
+            );
+
+
+            // =====================================================
+            // 6. CLICK OK
+            // =====================================================
+
+            okButton.click();
+
+            ExtentTestListener.logStep(
+                    "OK button clicked"
+            );
+
 
 
             // =================================================

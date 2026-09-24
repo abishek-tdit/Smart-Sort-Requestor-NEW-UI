@@ -1,45 +1,39 @@
 package com.AndroidTest.BSmartSortRegistrationArabicFlow;
 
 import Base.ExtentTestListener;
-import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.remote.RemoteWebElement;
-import utilities.MobileUtilities;
-import utilities.StepTimer;
-
 import io.appium.java_client.AppiumBy;
 import io.appium.java_client.android.AndroidDriver;
-
 import org.openqa.selenium.By;
+import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
-
+import utilities.StepTimer;
 import java.time.Duration;
 import java.util.Map;
 
 public class ASignUpArabicPage {
 
     private final AndroidDriver driver;
-    private final MobileUtilities util;
     private final WebDriverWait wait;
     private final BMobileNumber mobileUtil;
 
-    // ==========================================================
+    // =========================================================
     // CONSTRUCTOR
-    // ==========================================================
+    // =========================================================
 
     public ASignUpArabicPage(AndroidDriver driver) {
 
         this.driver = driver;
-        this.util = new MobileUtilities(driver);
+
         this.wait = new WebDriverWait(driver, Duration.ofSeconds(20));
+
         this.mobileUtil = new BMobileNumber();
     }
 
-
-    // ==========================================================
+    // =========================================================
     // WAIT FOR ELEMENT
-    // ==========================================================
+    // =========================================================
 
     private WebElement waitForElement(By locator) {
 
@@ -48,44 +42,73 @@ public class ASignUpArabicPage {
         );
     }
 
-
-    // ==========================================================
-    // WAIT AND CLICK
-    // ==========================================================
+    // =========================================================
+    // CLICK ELEMENT
+    // =========================================================
 
     private void waitAndClick(By locator) {
 
-        WebElement element = wait.until(
-                ExpectedConditions.visibilityOfElementLocated(locator)
-        );
+        for (int attempt = 1; attempt <= 3; attempt++) {
 
-        wait.until(
-                ExpectedConditions.elementToBeClickable(element)
-        );
+            try {
 
-        element.click();
+                WebElement element = wait.until(ExpectedConditions.elementToBeClickable(locator));
+
+                element.click();
+
+                return;
+
+            } catch (StaleElementReferenceException e) {
+
+                System.out.println("Stale element detected while clicking : "
+                        + locator + " | Attempt : " + attempt);
+
+                if (attempt == 3) {
+                    throw e;
+                }
+            }
+        }
     }
 
+    // =========================================================
+    // SEND KEYS
+    // =========================================================
 
-    // ==========================================================
-    // WAIT AND SEND KEYS
-    // ==========================================================
+    private void waitAndSendKeys(
+            By locator,
+            String text) {
 
-    private void waitAndSendKeys(By locator, String text) {
+        for (int attempt = 1; attempt <= 3; attempt++) {
 
-        WebElement element = wait.until(
-                ExpectedConditions.visibilityOfElementLocated(locator)
-        );
+            try {
 
-        element.click();
-        element.clear();
-        element.sendKeys(text);
+                WebElement element = wait.until(ExpectedConditions.visibilityOfElementLocated(locator));
+
+                element.click();
+
+                element.clear();
+
+                element.sendKeys(text);
+
+                return;
+            }
+            catch (StaleElementReferenceException e)
+            {
+                System.out.println("Stale element detected while entering text : "
+                                + locator
+                                + " | Attempt : "
+                                + attempt);
+
+                if (attempt == 3) {
+                    throw e;
+                }
+            }
+        }
     }
 
-
-    // ==========================================================
-    // OPTIONAL SEND KEYS
-    // ==========================================================
+    // =========================================================
+    // OPTIONAL FIELD
+    // =========================================================
 
     private void sendKeysIfVisible(
             By locator,
@@ -93,720 +116,532 @@ public class ASignUpArabicPage {
             String fieldName) {
 
         try {
+            WebDriverWait shortWait = new WebDriverWait(driver, Duration.ofSeconds(5));
 
-            WebDriverWait shortWait =
-                    new WebDriverWait(driver, Duration.ofSeconds(3));
+            for (int attempt = 1; attempt <= 3; attempt++) {
 
-            WebElement element = shortWait.until(
-                    ExpectedConditions.visibilityOfElementLocated(locator)
-            );
+                try {
 
-            if (element.isDisplayed()) {
+                    WebElement element = shortWait.until
+                            (ExpectedConditions.visibilityOfElementLocated(locator));
 
-                element.click();
-                element.clear();
-                element.sendKeys(text);
+                    element.click();
+                    element.clear();
+                    element.sendKeys(text);
 
-                ExtentTestListener.logStep(
-                        fieldName + " entered successfully"
-                );
+                    ExtentTestListener.logStep(fieldName + " entered successfully");
+
+                    return;
+                }
+                catch (StaleElementReferenceException e)
+                {
+                    if (attempt == 3) {
+                        throw e;
+                    }
+                }
             }
-
-        } catch (Exception e) {
-
-            ExtentTestListener.logStep(
-                    fieldName + " not visible - Skipped"
-            );
+        }
+        catch (Exception e)
+        {
+            ExtentTestListener.logStep(fieldName + " not visible - Skipped");
         }
     }
 
-
-    // ==========================================================
-    // OPTIONAL CLICK
-    // ==========================================================
-
-    private boolean clickIfVisible(
-            By locator,
-            String fieldName) {
-
-        try {
-
-            WebDriverWait shortWait =
-                    new WebDriverWait(driver, Duration.ofSeconds(3));
-
-            WebElement element = shortWait.until(
-                    ExpectedConditions.elementToBeClickable(locator)
-            );
-
-            if (element.isDisplayed()) {
-
-                element.click();
-
-                ExtentTestListener.logStep(
-                        fieldName + " clicked successfully"
-                );
-
-                return true;
-            }
-
-        } catch (Exception e) {
-
-            ExtentTestListener.logStep(
-                    fieldName + " not visible - Skipped"
-            );
-        }
-
-        return false;
-    }
-
-
-    // ==========================================================
+    // =========================================================
     // HIDE KEYBOARD
-    // ==========================================================
+    // =========================================================
 
     private void hideKeyboard() {
 
         try {
-            driver.hideKeyboard();
-        } catch (Exception ignored) {
+            if (driver.isKeyboardShown()) {
+                driver.hideKeyboard();
+            }
+        }
+        catch (Exception ignored) {
         }
     }
 
-
-    // ==========================================================
+    // =========================================================
     // SCROLL UP
-    // ==========================================================
+    // =========================================================
 
     private void scrollUp(double percent) {
 
-        driver.executeScript(
-                "mobile: swipeGesture",
-                Map.of(
-                        "left", 300,
-                        "top", 1200,
+        driver.executeScript("mobile: swipeGesture",
+                Map.of("left", 300,
+                        "top", 1100,
                         "width", 400,
                         "height", 600,
                         "direction", "up",
-                        "percent", percent
-                )
-        );
+                        "percent", percent));
     }
 
+    // =========================================================
+    // WAIT 5 SECONDS
+    // =========================================================
 
-    // ==========================================================
-    // SIGN UP FLOW
-    // ==========================================================
+    private void waitFiveSeconds() {
+
+        long startTime = System.currentTimeMillis();
+
+        WebDriverWait fiveSecondWait = new WebDriverWait(driver, Duration.ofSeconds(6));
+
+        fiveSecondWait.until(driver -> {
+
+            long elapsed = System.currentTimeMillis()
+                    - startTime;
+            return elapsed >= 5000;
+        });
+    }
+
+    // =========================================================
+    // ARABIC SIGN UP FLOW
+    // =========================================================
 
     public void signUp() throws Exception {
 
+        System.out.println("========== ARABIC REGISTRATION FLOW STARTED ==========");
 
-        // CLICK ENGLISH
+        double duration;
+
+        // =====================================================
+        // ENGLISH LANGUAGE BUTTON
+        // =====================================================
         Thread.sleep(6000);
         StepTimer.startStep();
 
-        WebElement englishButton = wait.until(
-                ExpectedConditions.visibilityOfElementLocated(
-                        AppiumBy.accessibilityId("English")));
+        By englishButtonLocator = AppiumBy.accessibilityId("English");
 
-        englishButton.click();
+        waitAndClick(englishButtonLocator);
 
-        double duration = StepTimer.endStep();
+        duration = StepTimer.endStep();
 
         ExtentTestListener.logStep("English language button clicked | Time Taken : "
                         + String.format("%.2f", duration) + " sec");
 
-        // ==========================================================
+        // =====================================================
         // SELECT ARABIC
-        // ==========================================================
+        // =====================================================
 
         StepTimer.startStep();
 
-        By arabicButton = AppiumBy.xpath(
-                        "//android.widget.Button[@content-desc='AR\nالعربية']");
+        By arabicButton = AppiumBy.xpath("//android.widget.Button[@content-desc='AR\nالعربية']");
 
-        WebElement arabic = wait.until(
-                        ExpectedConditions.elementToBeClickable(arabicButton));
-
-        arabic.click();
+        waitAndClick(arabicButton);
 
         duration = StepTimer.endStep();
 
         ExtentTestListener.logStep("Arabic language selected | Time Taken : "
                         + String.format("%.2f", duration) + " sec");
 
+        // =====================================================
+        // WAIT FOR ARABIC START PAGE
+        // =====================================================
 
-        try {
-
-            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20));
-
-            WebElement signUpBtn = wait.until(
-                    ExpectedConditions.visibilityOfElementLocated(
-                            AppiumBy.xpath("//android.view.View[contains(@content-desc,'ليس لديك حساب')]")
-                    )
-            );
-
-            ((JavascriptExecutor) driver).executeScript(
-                    "mobile: clickGesture",
-                    Map.of(
-                            "elementId",
-                            ((RemoteWebElement) signUpBtn).getId()
-                    )
-            );
-
-            System.out.println("Arabic Sign Up button clicked");
-
-        } catch (Exception e) {
-
-            throw new RuntimeException(
-                    "Arabic Sign-Up button not found",
-                    e
-            );
-        }
-
-        // ==========================================================
-        // CITY DROPDOWN
-        // ==========================================================
+        By arabicStartNowLocator = AppiumBy.accessibilityId("ابدأ الآن");
 
         StepTimer.startStep();
 
-        By cityDropdown =
-                AppiumBy.xpath(
-                        "//android.widget.Button[@content-desc='المدينة']"
-                );
+        wait.until
+                (ExpectedConditions.visibilityOfElementLocated(arabicStartNowLocator));
 
-        WebElement cityButton =
-                wait.until(
-                        ExpectedConditions.elementToBeClickable(
-                                cityDropdown
-                        )
-                );
+        duration = StepTimer.endStep();
 
-        cityButton.click();
+        ExtentTestListener.logStep("Arabic Start page loaded | Time Taken : "
+                        + String.format("%.2f", duration) + " sec");
 
-        duration =
-                StepTimer.endStep();
-
-        ExtentTestListener.logStep(
-                "Arabic City dropdown clicked | Time Taken : "
-                        + String.format("%.2f", duration)
-                        + " sec"
-        );
-
-
-        // ==========================================================
-        // SELECT BQAIQ CITY
-        // ==========================================================
+        // =====================================================
+        // ARABIC START NOW
+        // =====================================================
 
         StepTimer.startStep();
 
-        By bqaiqCity =
-                AppiumBy.xpath(
-                        "//android.widget.Button[@content-desc='بقيق']"
-                );
+        waitAndClick(arabicStartNowLocator);
 
-        WebElement cityOption =
-                wait.until(
-                        ExpectedConditions.elementToBeClickable(
-                                bqaiqCity
-                        )
-                );
+        duration = StepTimer.endStep();
 
-        cityOption.click();
-
-        duration =
-                StepTimer.endStep();
-
-        ExtentTestListener.logStep(
-                "Arabic city 'بقيق' selected successfully | Time Taken : "
-                        + String.format("%.2f", duration)
-                        + " sec"
-        );
+        ExtentTestListener.logStep("Arabic Start Now button clicked | Time Taken : "
+                        + String.format("%.2f", duration) + " sec");
 
 
-        // ==========================================================
-        // REQUESTOR TYPE DROPDOWN
-        // ==========================================================
-
+        // =====================================================
+        // OPEN CITY DROPDOWN
+        // =====================================================
+        Thread.sleep(6000);
         StepTimer.startStep();
 
-        By requestorTypeDropdown =
-                AppiumBy.xpath(
-                        "//android.widget.Button[@content-desc='نوع العميل']"
-                );
+        By cityDropdown = AppiumBy.xpath("//android.widget.Button[@content-desc='المدينة']");
 
-        WebElement requestorButton =
-                wait.until(
-                        ExpectedConditions.elementToBeClickable(
-                                requestorTypeDropdown
-                        )
-                );
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20));
 
-        requestorButton.click();
+        WebElement city = wait.until(ExpectedConditions.presenceOfElementLocated(cityDropdown));
 
-        duration =
-                StepTimer.endStep();
+        city.click();
+
+        duration = StepTimer.endStep();
+
+        ExtentTestListener.logStep("Arabic City dropdown clicked | Time Taken : "
+                        + String.format("%.2f", duration) + " sec");
+
+        // =====================================================
+        // WAIT FOR CITY LIST
+        // =====================================================
+        By bqaiqCity = AppiumBy.xpath("//android.widget.Button[@content-desc='بقيق']");
+
+        wait.until(ExpectedConditions.presenceOfElementLocated(bqaiqCity));
+
+        // =====================================================
+        // SELECT BQAIQ
+        // =====================================================
+        StepTimer.startStep();
+
+        WebElement bqaiq = wait.until(ExpectedConditions.visibilityOfElementLocated(bqaiqCity));
+
+        bqaiq.click();
+
+        duration = StepTimer.endStep();
+
+        ExtentTestListener.logStep("Arabic city 'بقيق' selected successfully | Time Taken : "
+                        + String.format("%.2f", duration) + " sec");
+
+        // =====================================================
+        // REQUESTOR TYPE
+        // =====================================================
+        Thread.sleep(3000);
+        StepTimer.startStep();
+
+        By requestorTypeDropdown = AppiumBy.accessibilityId("نوع الحساب");
+
+        waitAndClick(requestorTypeDropdown);
+
+        duration = StepTimer.endStep();
 
         ExtentTestListener.logStep(
                 "Arabic Requestor Type dropdown clicked | Time Taken : "
-                        + String.format("%.2f", duration)
-                        + " sec"
+                        + String.format("%.2f", duration) + " sec"
         );
 
-
-        // ==========================================================
-        // SELECT DOMESTIC REQUESTOR
-        // ==========================================================
-
+        // =====================================================
+        // DOMESTIC REQUESTOR
+        // =====================================================
+        Thread.sleep(3000);
         StepTimer.startStep();
 
         By domesticRequestor =
-                AppiumBy.xpath(
-                        "//android.widget.Button[@content-desc='مستخدم فردي']"
-                );
+                AppiumBy.accessibilityId("حساب فردي");
 
-        WebElement domesticOption =
-                wait.until(
-                        ExpectedConditions.elementToBeClickable(
-                                domesticRequestor
-                        )
-                );
+        waitAndClick(domesticRequestor);
 
-        domesticOption.click();
-
-        duration =
-                StepTimer.endStep();
+        duration = StepTimer.endStep();
 
         ExtentTestListener.logStep(
                 "Arabic Domestic Requestor selected successfully | Time Taken : "
-                        + String.format("%.2f", duration)
-                        + " sec"
+                        + String.format("%.2f", duration) + " sec"
         );
 
-
-        // ==========================================================
+        // =====================================================
         // SCROLL TO REGISTRATION FIELDS
-        // ==========================================================
+        // =====================================================
 
         StepTimer.startStep();
 
         scrollUp(0.75);
 
-        duration =
-                StepTimer.endStep();
+        duration = StepTimer.endStep();
 
-        ExtentTestListener.logStep(
-                "Scrolled to registration fields | Time Taken : "
-                        + String.format("%.2f", duration)
-                        + " sec"
-        );
+        ExtentTestListener.logStep("Scrolled to registration fields | Time Taken : "
+                        + String.format("%.2f", duration) + " sec");
 
-
-        // ==========================================================
+        // =====================================================
         // FIRST NAME
-        // ==========================================================
+        // =====================================================
 
         StepTimer.startStep();
 
-        waitAndSendKeys(
-                AppiumBy.xpath(
-                        "//android.widget.ScrollView/android.view.View/android.widget.EditText[1]"
-                ),
-                "رام"
-        );
+        waitAndSendKeys
+                (AppiumBy.xpath("//android.widget.ScrollView/android.view.View/android.widget.EditText[1]"), "رام");
 
-        duration =
-                StepTimer.endStep();
+        duration = StepTimer.endStep();
 
-        ExtentTestListener.logStep(
-                "First Name entered | Time Taken : "
-                        + String.format("%.2f", duration)
-                        + " sec"
-        );
+        ExtentTestListener.logStep("First Name entered | Time Taken : "
+                        + String.format("%.2f", duration) + " sec");
 
         hideKeyboard();
 
-
-        // ==========================================================
+        // =====================================================
         // MIDDLE NAME
-        // ==========================================================
+        // =====================================================
 
         StepTimer.startStep();
 
-        waitAndSendKeys(
-                AppiumBy.xpath(
-                        "//android.widget.ScrollView/android.view.View/android.widget.EditText[2]"
-                ),
-                "كومار"
-        );
+        waitAndSendKeys
+                (AppiumBy.xpath("//android.widget.ScrollView/android.view.View/android.widget.EditText[2]"), "كومار");
 
-        duration =
-                StepTimer.endStep();
+        duration = StepTimer.endStep();
 
-        ExtentTestListener.logStep(
-                "Middle Name entered | Time Taken : "
-                        + String.format("%.2f", duration)
-                        + " sec"
-        );
+        ExtentTestListener.logStep("Middle Name entered | Time Taken : "
+                        + String.format("%.2f", duration) + " sec");
 
         hideKeyboard();
 
-
-        // ==========================================================
+        // =====================================================
         // LAST NAME
-        // ==========================================================
+        // =====================================================
 
         StepTimer.startStep();
 
-        waitAndSendKeys(
-                AppiumBy.xpath(
-                        "//android.widget.ScrollView/android.view.View/android.widget.EditText[3]"
-                ),
-                "كومار"
-        );
+        waitAndSendKeys
+                (AppiumBy.xpath("//android.widget.ScrollView/android.view.View/android.widget.EditText[3]"), "كومار");
 
-        duration =
-                StepTimer.endStep();
+        duration = StepTimer.endStep();
 
-        ExtentTestListener.logStep(
-                "Last Name entered | Time Taken : "
-                        + String.format("%.2f", duration)
-                        + " sec"
-        );
+        ExtentTestListener.logStep("Last Name entered | Time Taken : "
+                        + String.format("%.2f", duration) + " sec");
 
         hideKeyboard();
 
-
-        // ==========================================================
-        // GENDER
-        // ==========================================================
+        // =====================================================
+        // GENDER DROPDOWN
+        // =====================================================
 
         StepTimer.startStep();
 
-        By genderDropdown =
-                AppiumBy.xpath(
-                        "//android.widget.Button[@content-desc='الجنس']"
-                );
+        By genderDropdown = AppiumBy.xpath("//android.widget.Button[@content-desc='الجنس']");
 
-        WebElement genderButton =
-                wait.until(
-                        ExpectedConditions.elementToBeClickable(
-                                genderDropdown
-                        )
-                );
+        waitAndClick(genderDropdown);
 
-        genderButton.click();
+        duration = StepTimer.endStep();
 
-        duration =
-                StepTimer.endStep();
+        ExtentTestListener.logStep("Gender dropdown clicked successfully | Time Taken : "
+                        + String.format("%.2f", duration) + " sec");
 
-        ExtentTestListener.logStep(
-                "Gender dropdown clicked successfully | Time Taken : "
-                        + String.format("%.2f", duration)
-                        + " sec"
-        );
-
-
-        // ==========================================================
+        // =====================================================
         // SELECT MALE
-        // ==========================================================
+        // =====================================================
 
         StepTimer.startStep();
 
-        waitAndClick(
-                AppiumBy.accessibilityId("ذكر")
-        );
+        waitAndClick(AppiumBy.accessibilityId("ذكر"));
 
-        duration =
-                StepTimer.endStep();
+        duration = StepTimer.endStep();
 
-        ExtentTestListener.logStep(
-                "Male selected | Time Taken : "
-                        + String.format("%.2f", duration)
-                        + " sec"
-        );
+        ExtentTestListener.logStep("Male selected | Time Taken : "
+                        + String.format("%.2f", duration) + " sec");
 
-
-        // ==========================================================
+        // =====================================================
         // SCROLL TO MOBILE SECTION
-        // ==========================================================
+        // =====================================================
 
         StepTimer.startStep();
 
         scrollUp(0.80);
 
-        duration =
-                StepTimer.endStep();
+        duration = StepTimer.endStep();
 
-        ExtentTestListener.logStep(
-                "Scrolled to Mobile section | Time Taken : "
-                        + String.format("%.2f", duration)
-                        + " sec"
-        );
+        ExtentTestListener.logStep("Scrolled to Mobile section | Time Taken : "
+                        + String.format("%.2f", duration) + " sec");
 
+        // =====================================================
+        // GENERATE MOBILE NUMBER
+        // =====================================================
 
-        // ==========================================================
+        String mobile = mobileUtil.getUniqueMobileNumber("bqaiq");
+
+        ExtentTestListener.logStep("Generated Mobile Number : " + mobile);
+
+        // =====================================================
         // MOBILE NUMBER
-        // ==========================================================
-
-        String mobile =
-                mobileUtil.getUniqueMobileNumber("bqaiq");
-
-        ExtentTestListener.logStep(
-                "Generated Mobile Number : " + mobile
-        );
+        // HINT BASED LOCATOR
+        // =====================================================
 
         StepTimer.startStep();
 
-        waitAndSendKeys(
-                AppiumBy.androidUIAutomator(
-                        "new UiSelector()"
-                                + ".className(\"android.widget.EditText\")"
-                                + ".instance(3)"
-                ),
-                mobile
-        );
+        By mobileLocator = AppiumBy.xpath("//android.widget.EditText[@hint='أدخل رقم جوالك']");
 
-        duration =
-                StepTimer.endStep();
+        WebElement mobileField = wait.until
+                (ExpectedConditions.visibilityOfElementLocated(mobileLocator));
 
-        ExtentTestListener.logStep(
-                "Arabic Mobile Number entered successfully | Time Taken : "
-                        + String.format("%.2f", duration)
-                        + " sec"
-        );
+        ExtentTestListener.logStep("Arabic Mobile field found successfully");
+
+        mobileField.click();
+        mobileField.clear();
+        mobileField.sendKeys(mobile);
+
+        duration = StepTimer.endStep();
+
+        ExtentTestListener.logStep("Arabic Mobile Number entered successfully : "
+                + mobile + " | Time Taken : "
+                + String.format("%.2f", duration) + " sec");
 
         hideKeyboard();
 
-
-        // ==========================================================
+        // =====================================================
         // EMAIL
-        // ==========================================================
+        // =====================================================
 
         StepTimer.startStep();
 
-        sendKeysIfVisible(
-                AppiumBy.androidUIAutomator(
-                        "new UiSelector()"
-                                + ".className(\"android.widget.EditText\")"
-                                + ".instance(4)"
-                ),
-                "abishek251295@gmail.com",
-                "Email Address"
-        );
+        By emailLocator = AppiumBy.xpath("//android.widget.EditText[@hint='أدخل عنوان بريدك الإلكتروني']");
 
-        duration =
-                StepTimer.endStep();
+        sendKeysIfVisible(emailLocator,
+                "abishek251295@gmail.com", "Email Address");
 
-        ExtentTestListener.logStep(
-                "Email entered successfully | Time Taken : "
-                        + String.format("%.2f", duration)
-                        + " sec"
-        );
+        duration = StepTimer.endStep();
+
+        ExtentTestListener.logStep("Email step completed | Time Taken : "
+                        + String.format("%.2f", duration) + " sec");
 
         hideKeyboard();
 
-
-        // ==========================================================
+        // =====================================================
         // CHECKBOX
-        // ==========================================================
+        // =====================================================
 
         StepTimer.startStep();
 
-        waitAndClick(
-                AppiumBy.xpath(
-                        "//android.widget.CheckBox"
-                )
-        );
+        waitAndClick(AppiumBy.className("android.widget.CheckBox"));
 
-        duration =
-                StepTimer.endStep();
+        duration = StepTimer.endStep();
 
-        ExtentTestListener.logStep(
-                "Checkbox selected | Time Taken : "
-                        + String.format("%.2f", duration)
-                        + " sec"
-        );
+        ExtentTestListener.logStep("Checkbox selected | Time Taken : "
+                        + String.format("%.2f", duration) + " sec");
 
-
-        // ==========================================================
-        // REGISTER BUTTON
-        // ==========================================================
+        // =====================================================
+        // REGISTER
+        // =====================================================
 
         StepTimer.startStep();
 
-        waitAndClick(
-                AppiumBy.accessibilityId("تسجيل")
-        );
+        waitAndClick(AppiumBy.accessibilityId("تسجيل"));
 
-        duration =
-                StepTimer.endStep();
+        duration = StepTimer.endStep();
 
-        ExtentTestListener.logStep(
-                "Arabic Register button clicked successfully | Time Taken : "
-                        + String.format("%.2f", duration)
-                        + " sec"
-        );
+        ExtentTestListener.logStep("Arabic Register button clicked successfully | Time Taken : "
+                        + String.format("%.2f", duration) + " sec");
 
-
-        // ==========================================================
-        // CONFIRM POPUP
-        // ==========================================================
+        // =====================================================
+        // CONFIRM REGISTRATION POPUP
+        // =====================================================
 
         StepTimer.startStep();
 
-        waitAndClick(
-                AppiumBy.accessibilityId("تأكيد")
-        );
+        waitAndClick(AppiumBy.accessibilityId("تأكيد"));
 
-        duration =
-                StepTimer.endStep();
+        duration = StepTimer.endStep();
 
-        ExtentTestListener.logStep(
-                "Confirmation popup clicked successfully | Time Taken : "
-                        + String.format("%.2f", duration)
-                        + " sec"
-        );
+        ExtentTestListener.logStep("Confirmation popup clicked successfully | Time Taken : "
+                        + String.format("%.2f", duration) + " sec");
 
-
-        // ==========================================================
-        // WAIT FOR OTP
-        // ==========================================================
-
-        Thread.sleep(5000);
-
-
-        // ==========================================================
-        // GET OTP
-        // ==========================================================
+        // =====================================================
+        // GET OTP FROM DATABASE
+        // =====================================================
 
         StepTimer.startStep();
 
-        String otp =
-                mobileUtil.getOTP(mobile);
+        String otp = mobileUtil.getOTP(mobile);
 
-        duration =
-                StepTimer.endStep();
+        duration = StepTimer.endStep();
 
-        ExtentTestListener.logStep(
-                "OTP from DB : "
+        if (otp == null || otp.trim().isEmpty()) {
+
+            throw new RuntimeException("OTP was not received for mobile : " + mobile);
+        }
+
+        ExtentTestListener.logStep("OTP received from database : "
                         + otp
                         + " | Time Taken : "
                         + String.format("%.2f", duration)
-                        + " sec"
-        );
+                        + " sec");
 
+        // =====================================================
+        // MANUAL OTP ENTRY
+        // =====================================================
 
-        // ==========================================================
-        // WAIT BEFORE OTP CONFIRM
-        // ==========================================================
+        ExtentTestListener.logStep("Please enter OTP manually on the mobile device");
 
-        Thread.sleep(6000);
+        System.out.println("==============================================");
+        System.out.println("PLEASE ENTER OTP MANUALLY");
+        System.out.println("OTP : " + otp);
+        System.out.println("After OTP entry, automation will wait 5 seconds.");
+        System.out.println("==============================================");
 
-
-        // ==========================================================
-        // VERIFY OTP
-        // ==========================================================
-
-        StepTimer.startStep();
-
-        WebElement verifyOtpButton =
-                wait.until(
-                        ExpectedConditions.elementToBeClickable(
-                                AppiumBy.accessibilityId(
-                                        "Verify OTP"
-                                )
-                        )
-                );
-
-        verifyOtpButton.click();
-
-        duration =
-                StepTimer.endStep();
-
-        ExtentTestListener.logStep(
-                "Verify OTP button clicked | Time Taken : "
-                        + String.format("%.2f", duration)
-                        + " sec"
-        );
-
-
-        // ==========================================================
-        // OK POPUP - تأكيد
-        // ==========================================================
+        // =====================================================
+        // WAIT 5 SECONDS AFTER MANUAL OTP ENTRY
+        // =====================================================
 
         StepTimer.startStep();
 
-        WebElement okPopupButton =
-                wait.until(
-                        ExpectedConditions.elementToBeClickable(
-                                AppiumBy.accessibilityId(
-                                        "تأكيد"
-                                )
-                        )
-                );
+        waitFiveSeconds();
 
-        okPopupButton.click();
+        duration = StepTimer.endStep();
 
-        duration =
-                StepTimer.endStep();
-
-        ExtentTestListener.logStep(
-                "OK popup Confirm button clicked | Time Taken : "
+        ExtentTestListener.logStep("5 seconds wait completed after manual OTP entry | Time Taken : "
                         + String.format("%.2f", duration)
                         + " sec");
 
-        // CHANGE LANGUAGE ARABIC -> ENGLISH
+        // =====================================================
+        // CLICK VERIFY OTP - ARABIC
+        // =====================================================
+        Thread.sleep(4000);
+
+        StepTimer.startStep();
+
+        By verifyOtpButton = AppiumBy.accessibilityId("التحقق من رمز التحقق");
+
+        waitAndClick(verifyOtpButton);
+
+        duration = StepTimer.endStep();
+
+        ExtentTestListener.logStep("Arabic OTP Verify button clicked successfully | Time Taken : "
+                        + String.format("%.2f", duration) + " sec");
+
+        // =====================================================
+        // SUCCESS CONFIRMATION
+        // =====================================================
+        Thread.sleep(4000);
+        StepTimer.startStep();
+
+        waitAndClick(AppiumBy.accessibilityId("تأكيد"));
+
+        duration = StepTimer.endStep();
+
+        ExtentTestListener.logStep("Registration success confirmation clicked | Time Taken : "
+                        + String.format("%.2f", duration) + " sec");
+
+        // =====================================================
+        // SELECT ARABIC LANGUAGE
+        // =====================================================
         Thread.sleep(6000);
         StepTimer.startStep();
 
-        WebElement arabicButton1 = wait.until(
-                ExpectedConditions.visibilityOfElementLocated(
-                        AppiumBy.xpath(
-                                "//android.view.View[@content-desc='العربية']"
-                        )
-                )
-        );
-
-        arabicButton1.click();
+        waitAndClick(AppiumBy.xpath(
+                "//android.view.View[@content-desc='العربية']"));
 
         duration = StepTimer.endStep();
 
-        ExtentTestListener.logStep(
-                "Arabic language button clicked | Time Taken : "
-                        + String.format("%.2f", duration)
-                        + " sec"
-        );
+        ExtentTestListener.logStep("Arabic language button clicked | Time Taken : "
+                        + String.format("%.2f", duration) + " sec");
 
-        // ==========================================================
-// CLICK ENGLISH
-// ==========================================================
+        // =====================================================
+        // SWITCH BACK TO ENGLISH
+        // =====================================================
 
         StepTimer.startStep();
 
-        WebElement englishButton1 = wait.until(
-                ExpectedConditions.elementToBeClickable(
-                        AppiumBy.xpath(
-                                "//android.widget.Button[contains(@content-desc,'English')]"
-                        )
-                )
-        );
-
-        englishButton1.click();
+        waitAndClick(AppiumBy.xpath(
+                        "//android.widget.Button[contains(@content-desc,'English')]"));
 
         duration = StepTimer.endStep();
 
-        ExtentTestListener.logStep(
-                "English language selected | Time Taken : "
-                        + String.format("%.2f", duration)
-                        + " sec"
-        );
+        ExtentTestListener.logStep("English language selected | Time Taken : "
+                        + String.format("%.2f", duration) + " sec");
 
-        // ==========================================================
+        // =====================================================
         // FLOW COMPLETED
-        // ==========================================================
+        // =====================================================
 
-        ExtentTestListener.logStep(
-                "====== Arabic Registration Flow completed successfully ======"
-        );
+        ExtentTestListener.logStep("====== Arabic Registration Flow completed successfully ======");
+        System.out.println("========== ARABIC REGISTRATION FLOW COMPLETED ==========");
     }
 }

@@ -17,63 +17,26 @@ public class F2RequestorRescheduleFlowTest  extends BaseClassMobile {
 
         //Select Location
         Thread.sleep(5000);
-        BLocationPage locationPage = new BLocationPage(driver);
+        ALocationPage locationPage = new ALocationPage(driver);
         locationPage.selectLocation();
 
         ExtentTestListener.logStep("Location Selected Successfully");
 
-        //Requestor - Open Pending Order & Chat
-        CChatWithCollectorPage reschedulePage = new CChatWithCollectorPage(driver);
-        reschedulePage.clickChatWithCollector();
-        reschedulePage.selectOrderToReschedule(orderNumber);
-        reschedulePage.openChatAndReturn();
 
-        ExtentTestListener.logStep("Order Selected Successfully");
+        //Reschedule
+        BOrderForReschedule orderForReschedule = new BOrderForReschedule();
 
-        //=========================================================
-        // Launch SS Utility App
-        //=========================================================
-        driver.activateApp("com.smartsort.utilities");
-        ExtentTestListener.logStep("SS Utility App Launched Successfully");
-
-        // Collector Login
-        Thread.sleep(12000);
-        DLoginCollectorPage loginPage = new DLoginCollectorPage();
-        loginPage.login("0500055447",
-                           "Admin@194");
-
-        log("Collector Login Successful");
-
-        // Collector Chat
-        EChatWithRequestor requestOrderPage = new EChatWithRequestor();
-        requestOrderPage.openLatestRequestOrder();
-        requestOrderPage.selectRequestOrder(orderNumber);
-        requestOrderPage.clickChatIcon();
-        requestOrderPage.clickImOnTheWay();
-
-        //=========================================================
-        // Launch SmartSort App
-        //=========================================================
-
-        driver.activateApp("com.abqaiq.smartsort");
-        ExtentTestListener.logStep("Smart Sort App Launched Successfully");
-
-
-        // Verify Chat & Reschedule
-        FVerifyChatAndReschedule verifyChat = new FVerifyChatAndReschedule();
-        verifyChat.openOrders();
-        verifyChat.selectOrderToReschedule(orderNumber);
-        verifyChat.openChatAndReturn();
-        verifyChat.clickRescheduleButton();
-
+        orderForReschedule.openSavedOrderForReschedule();
 
         // Slot Selection
-        GSlotPage slotPage = new GSlotPage(driver);
+        CSlotPage slotPage = new CSlotPage(driver);
+
         slotPage.selectSlotTiming();
         Thread.sleep(1500);
         slotPage.confirmReschedule();
 
         ExtentTestListener.logStep("Slot Selected Successfully");
+
         ExtentTestListener.logStep("========== REQUESTOR RESCHEDULE FLOW COMPLETED ==========");
     }
 }

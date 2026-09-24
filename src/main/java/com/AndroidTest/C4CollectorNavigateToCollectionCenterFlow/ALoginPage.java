@@ -67,9 +67,9 @@ public class ALoginPage extends BaseClassMobile {
 
             ExtentTestListener.logStep("Clicking Sign In Button...");
 
-            WebElement signInButton = wait.until(
-                    ExpectedConditions.elementToBeClickable(
-                            AppiumBy.accessibilityId("Sign In")));
+            WebElement signInButton = wait.until
+                    (ExpectedConditions.elementToBeClickable
+                            (AppiumBy.accessibilityId("Sign In")));
 
             signInButton.click();
 
@@ -79,8 +79,8 @@ public class ALoginPage extends BaseClassMobile {
                             + String.format("%.2f", duration)
                             + " sec");
         }
-        catch (Exception e) {
-
+        catch (Exception e)
+        {
             ExtentTestListener.logStep("Login Failed : " + e.getMessage());
 
             throw new RuntimeException("Login Flow Failed", e);

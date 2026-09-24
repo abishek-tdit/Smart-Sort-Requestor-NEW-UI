@@ -42,8 +42,9 @@ public class CLogoutPage extends BaseClassMobile {
         // =========================================================
         StepTimer.startStep();
 
-        WebElement account = wait.until(ExpectedConditions.elementToBeClickable
-                (AppiumBy.accessibilityId("Account")));
+        WebElement account = wait.until
+                (ExpectedConditions.elementToBeClickable
+                        (AppiumBy.accessibilityId("Account")));
 
         account.click();
 

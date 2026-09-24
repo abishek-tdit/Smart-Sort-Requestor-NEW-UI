@@ -1,5 +1,6 @@
 package com.AndroidTest.KSettingFlow;
 
+import Base.ExtentTestListener;
 import io.appium.java_client.AppiumBy;
 import io.appium.java_client.android.AndroidDriver;
 import org.openqa.selenium.By;
@@ -33,7 +34,7 @@ public class ETermsAndConditionsPage {
     // =========================================================
     public void openValidateAndGoBack() {
 
-        System.out.println("===== TERMS & CONDITIONS FLOW STARTED =====");
+        ExtentTestListener.logStep("===== TERMS & CONDITIONS FLOW STARTED =====");
 
         // -----------------------------------------------------
         // 1. Scroll down until Terms & Conditions is visible
@@ -46,7 +47,7 @@ public class ETermsAndConditionsPage {
         wait.until(ExpectedConditions.elementToBeClickable(termsAndConditions))
                 .click();
 
-        System.out.println("Terms & Conditions clicked successfully");
+        ExtentTestListener.logStep("Terms & Conditions clicked successfully");
 
         // -----------------------------------------------------
         // 3. Wait for Terms & Conditions page to load
@@ -56,21 +57,21 @@ public class ETermsAndConditionsPage {
                         || driver.getPageSource().contains("Conditions")
         );
 
-        System.out.println("Terms & Conditions page loaded successfully");
+        ExtentTestListener.logStep("Terms & Conditions page loaded successfully");
 
         // -----------------------------------------------------
         // 4. Scroll down inside Terms & Conditions page
         // -----------------------------------------------------
         scrollPageDown();
 
-        System.out.println("Terms & Conditions page scrolled down");
+        ExtentTestListener.logStep("Terms & Conditions page scrolled down");
 
         // -----------------------------------------------------
         // 5. Scroll back up
         // -----------------------------------------------------
         scrollPageUp();
 
-        System.out.println("Terms & Conditions page scrolled back up");
+        ExtentTestListener.logStep("Terms & Conditions page scrolled back up");
 
         // -----------------------------------------------------
         // 6. Go back to Settings
@@ -82,8 +83,8 @@ public class ETermsAndConditionsPage {
         // -----------------------------------------------------
         wait.until(ExpectedConditions.visibilityOfElementLocated(settings));
 
-        System.out.println("Returned to Settings page successfully");
-        System.out.println("===== TERMS & CONDITIONS FLOW COMPLETED =====");
+        ExtentTestListener.logStep("Returned to Settings page successfully");
+        ExtentTestListener.logStep("===== TERMS & CONDITIONS FLOW COMPLETED =====");
     }
 
     // =========================================================
@@ -112,7 +113,7 @@ public class ETermsAndConditionsPage {
                 termsAndConditions
         ));
 
-        System.out.println("Terms & Conditions is visible");
+        ExtentTestListener.logStep("Terms & Conditions is visible");
     }
 
     // =========================================================

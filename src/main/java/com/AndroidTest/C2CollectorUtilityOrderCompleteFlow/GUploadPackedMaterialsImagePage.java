@@ -19,9 +19,9 @@ public class GUploadPackedMaterialsImagePage extends BaseClassMobile {
 
         StepTimer.startStep();
 
-        WebElement weightField = wait.until(
-                ExpectedConditions.presenceOfElementLocated(
-                        AppiumBy.className("android.widget.EditText")));
+        WebElement weightField = wait.until
+                (ExpectedConditions.presenceOfElementLocated
+                        (AppiumBy.className("android.widget.EditText")));
 
         weightField.click();
 
@@ -32,27 +32,24 @@ public class GUploadPackedMaterialsImagePage extends BaseClassMobile {
 
         double duration = StepTimer.endStep();
 
-        ExtentTestListener.logStep(
-                "Weight entered: 10 KG | Time Taken : "
+        ExtentTestListener.logStep("Weight entered: 10 KG | Time Taken : "
                         + String.format("%.2f", duration)
                         + " sec");
 
 
         // Hide Keyboard
         StepTimer.startStep();
-
         try {
             driver.hideKeyboard();
-        } catch (Exception ignored) {
+        }
+        catch (Exception ignored) {
         }
 
         duration = StepTimer.endStep();
 
-        ExtentTestListener.logStep(
-                "Keyboard Hidden | Time Taken : "
+        ExtentTestListener.logStep("Keyboard Hidden | Time Taken : "
                         + String.format("%.2f", duration)
                         + " sec");
-
 
         StepTimer.startStep();
 
@@ -60,8 +57,7 @@ public class GUploadPackedMaterialsImagePage extends BaseClassMobile {
 
         duration = StepTimer.endStep();
 
-        ExtentTestListener.logStep(
-                "Wait After Weight Entry | Time Taken : "
+        ExtentTestListener.logStep("Wait After Weight Entry | Time Taken : "
                         + String.format("%.2f", duration)
                         + " sec");
 
@@ -72,15 +68,13 @@ public class GUploadPackedMaterialsImagePage extends BaseClassMobile {
 
         StepTimer.startStep();
 
-        ExtentTestListener.logStep(
-                "Please manually take photo and return to app...");
+        ExtentTestListener.logStep("Please manually take photo and return to app...");
 
-        Thread.sleep(10000);
+        Thread.sleep(20000);
 
         duration = StepTimer.endStep();
 
-        ExtentTestListener.logStep(
-                "Manual Photo Wait Completed | Time Taken : "
+        ExtentTestListener.logStep("Manual Photo Wait Completed | Time Taken : "
                         + String.format("%.2f", duration)
                         + " sec");
 
@@ -95,29 +89,58 @@ public class GUploadPackedMaterialsImagePage extends BaseClassMobile {
 
         try {
 
-            ExtentTestListener.logStep(
-                    "Package = " + driver.getCurrentPackage());
+            String currentPackage = driver.getCurrentPackage();
+
+            ExtentTestListener.logStep("Current Package = " + currentPackage);
+
+            if (!"com.smartsort.utilities".equals(currentPackage)) {
+
+                ExtentTestListener.logStep
+                        ("Wrong application detected. Expected SS Utility but found : " + currentPackage);
+                try {
+                    driver.activateApp("com.smartsort.utilities");
+
+                    ExtentTestListener.logStep("SS Utility app activated successfully");
+                }
+                catch (Exception activateException)
+                {
+                    ExtentTestListener.logStep("Unable to activate SS Utility app");
+                }
+            }
 
             driver.getPageSource();
 
-            ExtentTestListener.logStep("UiAutomator2 Alive");
+            ExtentTestListener.logStep("UiAutomator2 session is alive");
+        }
+        catch (Exception e)
+        {
+            ExtentTestListener.logStep("UiAutomator2 session crashed");
 
-        } catch (Exception e) {
+            try {
 
-            ExtentTestListener.logStep("UiAutomator2 Crashed");
+                BaseClassMobile.restartUtilitySession();
 
-            BaseClassMobile.restartSession();
+                sessionRestarted = true;
 
-            sessionRestarted = true;
-
-            ExtentTestListener.logStep(
-                    "Appium session restarted successfully");
+                ExtentTestListener.logStep("SS Utility Appium session restarted successfully");
+            }
+            catch (Exception restartException)
+            {
+                ExtentTestListener.logStep("SS Utility Appium session restart failed");
+                throw new RuntimeException
+                        ("Unable to restart SS Utility Appium session", restartException);
+            }
         }
 
         duration = StepTimer.endStep();
 
-        ExtentTestListener.logStep(
-                "Appium Session Check Completed | Time Taken : "
+        ExtentTestListener.logStep("Appium Session Check Completed | Time Taken : "
+                        + String.format("%.2f", duration)
+                        + " sec");
+
+        duration = StepTimer.endStep();
+
+        ExtentTestListener.logStep("Appium Session Check Completed | Time Taken : "
                         + String.format("%.2f", duration)
                         + " sec");
 
@@ -130,8 +153,8 @@ public class GUploadPackedMaterialsImagePage extends BaseClassMobile {
 
         try {
 
-            List<WebElement> reasonElements = driver.findElements(
-                    AppiumBy.accessibilityId("Select Reason"));
+            List<WebElement> reasonElements =
+                    driver.findElements(AppiumBy.accessibilityId("Select Reason"));
 
             if (!reasonElements.isEmpty()
                     && reasonElements.get(0).isDisplayed()) {
@@ -139,37 +162,29 @@ public class GUploadPackedMaterialsImagePage extends BaseClassMobile {
                 // Click Select Reason
                 reasonElements.get(0).click();
 
-                ExtentTestListener.logStep(
-                        "Select Reason Clicked");
+                ExtentTestListener.logStep("Select Reason Clicked");
 
                 // Select Technical Issue
-                wait.until(
-                                ExpectedConditions.elementToBeClickable(
-                                        AppiumBy.accessibilityId("Technical issue")))
-                        .click();
+                wait.until(ExpectedConditions.elementToBeClickable
+                        (AppiumBy.accessibilityId("Technical issue"))).click();
 
-                ExtentTestListener.logStep(
-                        "Reason Selected : Technical issue");
+                ExtentTestListener.logStep("Reason Selected : Technical issue");
 
                 // Scroll down to Submit
                 scrollDown();
-
-            } else {
-
-                ExtentTestListener.logStep(
-                        "Select Reason not visible - Skipping Reason selection");
             }
-
-        } catch (Exception e) {
-
-            ExtentTestListener.logStep(
-                    "Select Reason not available - Moving to Submit button");
+            else
+            {
+                ExtentTestListener.logStep("Select Reason not visible - Skipping Reason selection");
+            }
+        }
+        catch (Exception e) {
+            ExtentTestListener.logStep("Select Reason not available - Moving to Submit button");
         }
 
         duration = StepTimer.endStep();
 
-        ExtentTestListener.logStep(
-                "Reason Selection Completed | Time Taken : "
+        ExtentTestListener.logStep("Reason Selection Completed | Time Taken : "
                         + String.format("%.2f", duration)
                         + " sec");
 
@@ -181,40 +196,33 @@ public class GUploadPackedMaterialsImagePage extends BaseClassMobile {
         StepTimer.startStep();
 
         try {
-
-            wait.until(
-                            ExpectedConditions.elementToBeClickable(
-                                    AppiumBy.accessibilityId("Submit")))
-                    .click();
+            wait.until(ExpectedConditions.elementToBeClickable
+                    (AppiumBy.accessibilityId("Submit"))).click();
 
             duration = StepTimer.endStep();
 
             if (sessionRestarted) {
 
-                ExtentTestListener.logStep(
-                        "Submit Clicked After Restart | Time Taken : "
-                                + String.format("%.2f", duration)
-                                + " sec");
-
-            } else {
-
-                ExtentTestListener.logStep(
-                        "Submit Clicked | Time Taken : "
+                ExtentTestListener.logStep("Submit Clicked After Restart | Time Taken : "
                                 + String.format("%.2f", duration)
                                 + " sec");
             }
-
-        } catch (Exception e) {
-
+            else
+            {
+                ExtentTestListener.logStep("Submit Clicked | Time Taken : "
+                                + String.format("%.2f", duration)
+                                + " sec");
+            }
+        }
+        catch (Exception e)
+        {
             duration = StepTimer.endStep();
 
-            ExtentTestListener.logStep(
-                    "Submit button not found | Time Taken : "
+            ExtentTestListener.logStep("Submit button not found | Time Taken : "
                             + String.format("%.2f", duration)
                             + " sec");
 
-            throw new RuntimeException(
-                    "Submit button not found after session recovery", e);
+            throw new RuntimeException("Submit button not found after session recovery", e);
         }
 
 
@@ -228,9 +236,9 @@ public class GUploadPackedMaterialsImagePage extends BaseClassMobile {
 
         duration = StepTimer.endStep();
 
-        ExtentTestListener.logStep(
-                "Wait After Submit Completed | Time Taken : "
-                        + String.format("%.2f", duration) + " sec");
+        ExtentTestListener.logStep("Wait After Submit Completed | Time Taken : "
+                + String.format("%.2f", duration)
+                + " sec");
 
 
         // =========================================================
@@ -240,8 +248,7 @@ public class GUploadPackedMaterialsImagePage extends BaseClassMobile {
         StepTimer.startStep();
 
         wait.until(ExpectedConditions.elementToBeClickable
-                (AppiumBy.accessibilityId(
-                        "Go to Dashboard"))).click();
+                (AppiumBy.accessibilityId("Go to Dashboard"))).click();
 
         duration = StepTimer.endStep();
 

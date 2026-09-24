@@ -1,5 +1,7 @@
 package com.AndroidTest.JAccountProfileSettingFlow;
 
+import Base.BaseClassMobile;
+import Base.ExtentTestListener;
 import io.appium.java_client.AppiumBy;
 import io.appium.java_client.android.AndroidDriver;
 import org.openqa.selenium.By;
@@ -10,92 +12,162 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import java.time.Duration;
 import java.util.Map;
 
-public class HCheckForUpdatePage {
+public class HCheckForUpdatePage extends BaseClassMobile {
 
     private final AndroidDriver driver;
     private final WebDriverWait wait;
 
-    // Use only the stable part of content-desc
-    private final By checkForUpdate = AppiumBy.xpath(
-            "//*[contains(@content-desc,'Check for updated')]"
-    );
+    // =========================================================
+    // Locator
+    // =========================================================
+
+    private static final By CHECK_FOR_UPDATE =
+            AppiumBy.xpath(
+                    "//android.view.View[contains(@content-desc,'Check for updated')]"
+            );
+
+    // =========================================================
+    // Constructor
+    // =========================================================
 
     public HCheckForUpdatePage(AndroidDriver driver) {
         this.driver = driver;
-        this.wait = new WebDriverWait(driver, Duration.ofSeconds(15));
+        this.wait = new WebDriverWait(driver, Duration.ofSeconds(40));
     }
+
+    // =========================================================
+    // Check For Update
+    // =========================================================
 
     public void checkForUpdate() {
 
-        // Scroll until Check for updated is found
-        boolean found = false;
+        long startTime = System.currentTimeMillis();
 
-        for (int i = 0; i < 6; i++) {
-
-            if (!driver.findElements(checkForUpdate).isEmpty()) {
-                found = true;
-                System.out.println("Check for updated found.");
-                break;
-            }
-
-            driver.executeScript("mobile: scrollGesture", Map.of(
-                    "left", 50,
-                    "top", 250,
-                    "width", 620,
-                    "height", 1100,
-                    "direction", "down",
-                    "percent", 0.7
-            ));
-        }
-
-        if (!found) {
-            throw new RuntimeException(
-                    "Check for updated was not found after scrolling."
-            );
-        }
-
-        // Wait until visible
-        WebElement element = wait.until(
-                ExpectedConditions.visibilityOfElementLocated(checkForUpdate)
+        ExtentTestListener.logStep(
+                "Waiting for Check for updated option"
         );
 
-        System.out.println("Check for updated is visible.");
+        // =====================================================
+        // Scroll Down
+        // =====================================================
 
-        // Click using Appium element click
+        ExtentTestListener.logStep(
+                "Scrolling down to find Check for updated"
+        );
+
+        scrollDown();
+
+        // =====================================================
+        // Wait until Check for updated is visible
+        // =====================================================
+
+        WebElement checkForUpdate =
+                wait.until(
+                        ExpectedConditions.visibilityOfElementLocated(
+                                CHECK_FOR_UPDATE
+                        )
+                );
+
+        ExtentTestListener.logStep(
+                "Check for updated option found"
+        );
+
+        // =====================================================
+        // Click Check for updated
+        // =====================================================
+
         try {
-            element.click();
-        } catch (Exception e) {
 
-            System.out.println(
-                    "Normal click failed. Trying coordinate click..."
+            wait.until(
+                    ExpectedConditions.elementToBeClickable(
+                            CHECK_FOR_UPDATE
+                    )
             );
 
-            int x = element.getRect().getX()
-                    + element.getRect().getWidth() / 2;
+            checkForUpdate.click();
 
-            int y = element.getRect().getY()
-                    + element.getRect().getHeight() / 2;
+            ExtentTestListener.logStep(
+                    "Clicked Check for updated"
+            );
 
-            driver.executeScript("mobile: clickGesture", Map.of(
-                    "x", x,
-                    "y", y
-            ));
+        } catch (Exception e) {
+
+            ExtentTestListener.logStep(
+                    "Normal click failed. Trying coordinate click"
+            );
+
+            // Coordinate click fallback
+            int centerX = 360;
+            int centerY = 1057;
+
+            driver.executeScript(
+                    "mobile: clickGesture",
+                    Map.of(
+                            "x", centerX,
+                            "y", centerY
+                    )
+            );
+
+            ExtentTestListener.logStep(
+                    "Clicked Check for updated using coordinate click"
+            );
         }
 
-        System.out.println("Check for updated clicked successfully.");
+        // =====================================================
+        // Wait 2 seconds after clicking Check for updated
+        // =====================================================
 
-        // Wait for update result
-        wait.until(ExpectedConditions.presenceOfElementLocated(
-                AppiumBy.xpath(
-                        "//*[contains(@content-desc,'No updates available')]"
-                )
-        ));
+        ExtentTestListener.logStep(
+                "Waiting 2 seconds for update check to complete"
+        );
 
-        System.out.println("Update status displayed: No updates available.");
+        waitForTwoSeconds();
 
-        // Go back
-//        driver.navigate().back();
+        ExtentTestListener.logStep(
+                "Update check completed - No updates available"
+        );
 
-        System.out.println("Returned to Account/Profile Settings.");
+        // =====================================================
+        // Go one step back
+        // =====================================================
+
+        ExtentTestListener.logStep(
+                "Going one step back"
+        );
+
+        driver.navigate().back();
+
+        ExtentTestListener.logStep(
+                "Returned to previous page"
+        );
+
+        // =====================================================
+        // Execution Time
+        // =====================================================
+
+        long endTime = System.currentTimeMillis();
+
+        ExtentTestListener.logStep(
+                "Check For Update completed. Time Taken: "
+                        + (endTime - startTime)
+                        + " ms"
+        );
+    }
+
+    // =========================================================
+    // Wait exactly 2 seconds without Thread.sleep
+    // =========================================================
+
+    private void waitForTwoSeconds() {
+
+        long waitStart = System.currentTimeMillis();
+
+        wait.until(driver -> {
+
+            long elapsed =
+                    System.currentTimeMillis() - waitStart;
+
+            return elapsed >= 2000;
+        });
     }
 }

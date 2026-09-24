@@ -12,33 +12,28 @@ public class F1PlaceOrderForRescheduleFlowTest extends BaseClassMobile {
     @Test(priority = 11)
     public void placeOrderForRescheduleFlow() throws Exception {
 
-//        System.out.println("================================================");
-//        System.out.println("F1 Place Order For Reschedule Flow Started");
-//        System.out.println("================================================");
-//
-//        //LOCATION
-//        ALocationPage locationPage = new ALocationPage(driver);
-//        locationPage.selectLocation();
-//
-//        //DOORSTEP PICKUP
-//        BDoorPickupPage doorPickupPage = new BDoorPickupPage();
-//        doorPickupPage.selectDoorstepPickupFlow();
-//
-//        //ADDRESS
-//        CAddressPage addressPage = new CAddressPage();
-//        addressPage.updateAddressFromSavedAddress();
-//
-//        //SLOT
-//        DSlotPage slotPage = new DSlotPage();
-//        slotPage.selectSlotConfirmAndOK();
+        System.out.println("================================================");
+        System.out.println("F1 Place Order For Reschedule Flow Started");
+        System.out.println("================================================");
+
+        //LOCATION
+        ALocationPage locationPage = new ALocationPage(driver);
+        locationPage.selectLocation();
+
+        //DOORSTEP PICKUP
+        BDoorPickupPage doorPickupPage = new BDoorPickupPage();
+        doorPickupPage.selectDoorstepPickupFlow();
+
+
+        //SLOT
+        CSlotPage slotPage = new CSlotPage();
+        slotPage.selectMaterialCategory();
+        slotPage.selectSlotConfirmAndOK();
 
         //SAVE ORDER NUMBER
-        ESaveOrderNumberForReschedule saveOrder = new ESaveOrderNumberForReschedule();
+        Thread.sleep(10000);
+        DSaveOrderNumberForReschedule saveOrder = new DSaveOrderNumberForReschedule();
         saveOrder.saveRecentlyPlacedOrderNumber();
-
-//        System.out.println("================================================");
-//        System.out.println("F1 Place Order For Reschedule Flow Completed");
-//        System.out.println("================================================");
 
         ExtentTestListener.logStep("F1 Place Order For Reschedule Flow Completed Successfully");
     }
