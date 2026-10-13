@@ -22,21 +22,17 @@ public class F2RequestorRescheduleFlowTest  extends BaseClassMobile {
 
         ExtentTestListener.logStep("Location Selected Successfully");
 
-
         //Reschedule
         BOrderForReschedule orderForReschedule = new BOrderForReschedule();
-
         orderForReschedule.openSavedOrderForReschedule();
 
         // Slot Selection
         CSlotPage slotPage = new CSlotPage(driver);
-
         slotPage.selectSlotTiming();
         Thread.sleep(1500);
         slotPage.confirmReschedule();
 
         ExtentTestListener.logStep("Slot Selected Successfully");
-
         ExtentTestListener.logStep("========== REQUESTOR RESCHEDULE FLOW COMPLETED ==========");
     }
 }

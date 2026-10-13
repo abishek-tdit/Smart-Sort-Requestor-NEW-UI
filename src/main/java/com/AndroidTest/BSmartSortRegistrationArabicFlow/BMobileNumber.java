@@ -17,9 +17,11 @@ public class BMobileNumber {
                     + "encrypt=false";
 
     private static final String USER = "Testing_Team";
+
     private static final String PASSWORD = "Testing@194";
 
     private final Random random = new Random();
+
 
     // =========================================================
     // GENERATE RANDOM MOBILE
@@ -33,9 +35,13 @@ public class BMobileNumber {
         String prefix;
         int totalLength;
 
+
         switch (cityNormalized) {
 
-            // Saudi Arabia
+            // =================================================
+            // SAUDI ARABIA
+            // =================================================
+
             case "bqaiq":
             case "al-qatif":
             case "sakaka":
@@ -43,23 +49,39 @@ public class BMobileNumber {
             case "jeddah":
 
                 prefix = "05";
+
                 totalLength = 10;
+
                 break;
 
-            // Egypt
+
+            // =================================================
+            // EGYPT
+            // =================================================
+
             case "asyut":
 
                 prefix = "01";
+
                 totalLength = 11;
+
                 break;
 
-            // India
+
+            // =================================================
+            // INDIA
+            // =================================================
+
             case "chennai":
             case "vellore":
 
                 int[] startDigits = {
-                        6, 7, 8, 9
+                        6,
+                        7,
+                        8,
+                        9
                 };
+
 
                 prefix =
                         String.valueOf(
@@ -71,7 +93,13 @@ public class BMobileNumber {
                         );
 
                 totalLength = 10;
+
                 break;
+
+
+            // =================================================
+            // UNSUPPORTED CITY
+            // =================================================
 
             default:
 
@@ -80,8 +108,10 @@ public class BMobileNumber {
                 );
         }
 
+
         StringBuilder mobile =
                 new StringBuilder(prefix);
+
 
         while (mobile.length() < totalLength) {
 
@@ -90,8 +120,10 @@ public class BMobileNumber {
             );
         }
 
+
         return mobile.toString();
     }
+
 
     // =========================================================
     // CHECK MOBILE EXISTS
@@ -103,6 +135,7 @@ public class BMobileNumber {
                 "SELECT COUNT(*) "
                         + "FROM Users "
                         + "WHERE Phone = ?";
+
 
         try (
                 Connection con =
@@ -118,21 +151,26 @@ public class BMobileNumber {
 
             ps.setString(1, mobile);
 
+
             ResultSet rs =
                     ps.executeQuery();
+
 
             if (rs.next()) {
 
                 return rs.getInt(1) > 0;
             }
 
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
 
             e.printStackTrace();
         }
 
+
         return false;
     }
+
 
     // =========================================================
     // GENERATE UNIQUE MOBILE
@@ -142,20 +180,172 @@ public class BMobileNumber {
 
         String mobile;
 
+
         do {
 
             mobile =
                     generateRandomMobileNumber(city);
+
 
             ExtentTestListener.logStep(
                     "Checking Mobile Number : "
                             + mobile
             );
 
+
         } while (mobileExists(mobile));
+
 
         return mobile;
     }
+
+
+    // =========================================================
+    // GENERATE RANDOM FIRST NAME
+    // =========================================================
+
+    public String generateRandomArabicFirstName() {
+
+        String[] firstNames = {
+
+                "محمد",
+                "أحمد",
+                "علي",
+                "خالد",
+                "سعيد",
+                "عبدالله",
+                "يوسف",
+                "عمر",
+                "حسن",
+                "إبراهيم"
+
+        };
+
+        return firstNames[
+                random.nextInt(
+                        firstNames.length
+                )
+                ];
+    }
+
+
+// =========================================================
+// GENERATE RANDOM ARABIC MIDDLE NAME
+// =========================================================
+
+    public String generateRandomArabicMiddleName() {
+
+        String[] middleNames = {
+
+                "محمد",
+                "أحمد",
+                "علي",
+                "خالد",
+                "سلمان",
+                "عبدالرحمن",
+                "يوسف",
+                "عمر",
+                "حسين",
+                "ناصر"
+
+        };
+
+        return middleNames[
+                random.nextInt(
+                        middleNames.length
+                )
+                ];
+    }
+
+
+// =========================================================
+// GENERATE RANDOM ARABIC LAST NAME
+// =========================================================
+
+    public String generateRandomArabicLastName() {
+
+        String[] lastNames = {
+
+                "العتيبي",
+                "القحطاني",
+                "الشمري",
+                "الحربي",
+                "المطيري",
+                "الدوسري",
+                "الغامدي",
+                "الزهراني",
+                "السبيعي",
+                "العنزي"
+
+        };
+
+        return lastNames[
+                random.nextInt(
+                        lastNames.length
+                )
+                ];
+    }
+
+
+    // =========================================================
+    // GENERATE EMAIL
+    // BASED ON FIRST + MIDDLE + LAST NAME
+    // =========================================================
+
+    public String generateEmail(
+            String firstName,
+            String middleName,
+            String lastName) {
+
+
+        String first =
+                firstName
+                        .trim()
+                        .toLowerCase()
+                        .replaceAll(
+                                "[^a-z]",
+                                ""
+                        );
+
+
+        String middle =
+                middleName
+                        .trim()
+                        .toLowerCase()
+                        .replaceAll(
+                                "[^a-z]",
+                                ""
+                        );
+
+
+        String last =
+                lastName
+                        .trim()
+                        .toLowerCase()
+                        .replaceAll(
+                                "[^a-z]",
+                                ""
+                        );
+
+
+        // Generate 5-digit random number
+
+        int randomNumber =
+                10000
+                        + random.nextInt(
+                        90000
+                );
+
+
+        return first
+                + "."
+                + middle
+                + "."
+                + last
+                + randomNumber
+                + "@gmail.com";
+    }
+
 
     // =========================================================
     // GET OTP
@@ -169,8 +359,18 @@ public class BMobileNumber {
                         + "WHERE phno = ? "
                         + "ORDER BY 1 DESC";
 
-        // 15 attempts x 2 seconds = 30 seconds
-        for (int attempt = 1; attempt <= 15; attempt++) {
+
+        // =====================================================
+        // 15 ATTEMPTS
+        // 2 SECONDS BETWEEN EACH ATTEMPT
+        // TOTAL = 30 SECONDS
+        // =====================================================
+
+        for (
+                int attempt = 1;
+                attempt <= 15;
+                attempt++
+        ) {
 
             try (
                     Connection con =
@@ -184,29 +384,41 @@ public class BMobileNumber {
                             con.prepareStatement(sql)
             ) {
 
-                ps.setString(1, mobile);
+                ps.setString(
+                        1,
+                        mobile
+                );
+
 
                 ResultSet rs =
                         ps.executeQuery();
+
 
                 if (rs.next()) {
 
                     String otp =
                             rs.getString("OTP");
 
-                    if (otp != null
-                            && !otp.trim().isEmpty()) {
+
+                    if (
+                            otp != null
+                                    && !otp
+                                    .trim()
+                                    .isEmpty()
+                    ) {
 
                         ExtentTestListener.logStep(
                                 "OTP found for mobile : "
                                         + mobile
                         );
 
+
                         return otp;
                     }
                 }
 
-            } catch (SQLException e) {
+            }
+            catch (SQLException e) {
 
                 ExtentTestListener.logStep(
                         "OTP database check failed - Attempt "
@@ -214,12 +426,17 @@ public class BMobileNumber {
                 );
             }
 
-            // Small polling wait
+
+            // =================================================
+            // POLLING WAIT
+            // =================================================
+
             try {
 
                 Thread.sleep(2000);
 
-            } catch (InterruptedException e) {
+            }
+            catch (InterruptedException e) {
 
                 Thread.currentThread().interrupt();
 
@@ -229,6 +446,7 @@ public class BMobileNumber {
                 );
             }
         }
+
 
         throw new RuntimeException(
                 "OTP not found for mobile : "

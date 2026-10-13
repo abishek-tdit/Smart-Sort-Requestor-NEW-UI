@@ -7,6 +7,7 @@ import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.android.nativekey.AndroidKey;
 import io.appium.java_client.android.nativekey.KeyEvent;
 import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -18,175 +19,129 @@ public class ACallSupportPage extends BaseClassMobile {
     private final AndroidDriver driver;
     private final WebDriverWait wait;
 
-    // =========================
-    // Locators
-    // =========================
+    // =========================================================
+    // LOCATORS
+    // =========================================================
 
-    private final By SUPPORT_CENTER =
-            AppiumBy.xpath(
-                    "//android.view.View[" +
-                            "contains(@content-desc,'Customer Support') " +
-                            "and contains(@content-desc,'Support Center')" +
-                            "]"
-            );
+    private final By SUPPORT_CENTER = AppiumBy.xpath("//*[contains(@content-desc,'Customer Support')"
+                    + " and contains(@content-desc,'Support Center')]");
 
+    private final By CALL_NOW = AppiumBy.xpath("//*[contains(@content-desc,'Call Now')"
+                    + " or contains(@text,'Call Now')]");
 
-    private final By CALL_NOW =
-            AppiumBy.accessibilityId("Call Now");
+    private final By CALL_BUTTON = AppiumBy.xpath("//*[contains(@content-desc,'Call')"
+                    + " or @text='Call']");
 
-    private final By CALL_BUTTON =
-            AppiumBy.accessibilityId("Call");
-
-    // =========================
-    // Constructor
-    // =========================
+    // =========================================================
+    // CONSTRUCTOR
+    // =========================================================
 
     public ACallSupportPage() {
 
         this.driver = BaseClassMobile.driver;
 
-        this.wait = new WebDriverWait(
-                driver,
-                Duration.ofSeconds(20)
-        );
+        this.wait = new WebDriverWait(driver, Duration.ofSeconds(20));
     }
 
-    // =========================
-    // Click Support Center
-    // =========================
+    // =========================================================
+    // CLICK SUPPORT CENTER
+    // =========================================================
 
     public void clickSupportCenter() {
 
-        System.out.println(
-                "========== SUPPORT CENTER FLOW STARTED =========="
-        );
+        System.out.println("========== SUPPORT CENTER FLOW STARTED ==========");
 
         int maxScrolls = 6;
         int scrollCount = 0;
 
-        // Scroll until Support Center is visible
         while (
                 driver.findElements(SUPPORT_CENTER).isEmpty()
-                        && scrollCount < maxScrolls
-        ) {
+                        && scrollCount < maxScrolls)
+        {
 
-            driver.executeScript(
-                    "mobile: scrollGesture",
-                    Map.of(
-                            "left", 50,
+            driver.executeScript("mobile: scrollGesture",
+                    Map.of("left", 50,
                             "top", 300,
                             "width", 620,
                             "height", 1000,
                             "direction", "down",
-                            "percent", 0.8
-                    )
-            );
+                            "percent", 0.8));
 
             scrollCount++;
 
-            System.out.println(
-                    "Scrolled down - attempt "
-                            + scrollCount
-            );
+            System.out.println("Scrolled down - attempt " + scrollCount);
         }
 
-        // Click Support Center
-        wait.until(
-                ExpectedConditions.elementToBeClickable(
-                        SUPPORT_CENTER
-                )
-        ).click();
+        WebElement supportCenter =
+                wait.until(ExpectedConditions.elementToBeClickable(SUPPORT_CENTER));
 
-        System.out.println(
-                "Support Center clicked successfully"
-        );
+        supportCenter.click();
 
-        ExtentTestListener.logStep(
-                "Support Center clicked successfully"
-        );
+        System.out.println("Support Center clicked successfully");
+
+        ExtentTestListener.logStep("Support Center clicked successfully");
     }
 
-    // =========================
-    // Click Call Now
-    // =========================
+    // =========================================================
+    // CLICK CALL NOW
+    // =========================================================
 
     public void clickCallNow() {
 
-        wait.until(
-                ExpectedConditions.elementToBeClickable(
-                        CALL_NOW
-                )
-        ).click();
+        System.out.println("Waiting for Call Now...");
 
-        System.out.println(
-                "Call Now clicked successfully"
-        );
+        WebElement callNow =
+                wait.until(ExpectedConditions.elementToBeClickable(CALL_NOW));
 
-        ExtentTestListener.logStep(
-                "Call Now clicked successfully"
-        );
+        System.out.println("Call Now element found: "
+                + callNow.getAttribute("contentDescription"));
+        callNow.click();
+
+        System.out.println("Call Now clicked successfully");
+        ExtentTestListener.logStep("Call Now clicked successfully");
     }
 
-    // =========================
-    // Confirm Call Popup
-    // =========================
+    // =========================================================
+    // CONFIRM CALL POPUP
+    // =========================================================
 
     public void confirmCall() {
 
-        wait.until(
-                ExpectedConditions.elementToBeClickable(
-                        CALL_BUTTON
-                )
-        ).click();
+        System.out.println("Waiting for Call confirmation...");
 
-        System.out.println(
-                "Call button clicked successfully"
-        );
+        WebElement callButton =
+                wait.until(ExpectedConditions.elementToBeClickable(CALL_BUTTON));
+        callButton.click();
 
-        ExtentTestListener.logStep(
-                "Call button clicked successfully"
-        );
+        System.out.println("Call button clicked successfully");
+        ExtentTestListener.logStep("Call button clicked successfully");
     }
 
-    // =========================
-    // Go Back From Call Log
-    // =========================
+    // =========================================================
+    // RETURN TO APP
+    // =========================================================
 
     public void returnToApp() {
 
         System.out.println("Going back from Call Log...");
-
-        // BACK - 1
-        driver.pressKey(
-                new KeyEvent(AndroidKey.BACK)
-        );
+        driver.pressKey(new KeyEvent(AndroidKey.BACK));
 
         System.out.println("Android BACK - 1 pressed");
-
-        // BACK - 2
-        driver.pressKey(
-                new KeyEvent(AndroidKey.BACK)
-        );
+        driver.pressKey(new KeyEvent(AndroidKey.BACK));
 
         System.out.println("Android BACK - 2 pressed");
-
-        ExtentTestListener.logStep(
-                "Android BACK pressed 2 times"
-        );
+        ExtentTestListener.logStep("Android BACK pressed 2 times");
     }
 
-    // =========================
-    // Complete Call Support Flow
-    // =========================
+    // =========================================================
+    // COMPLETE CALL SUPPORT FLOW
+    // =========================================================
 
     public void callSupportCenter() {
 
         clickSupportCenter();
-
         clickCallNow();
-
         confirmCall();
-
         returnToApp();
     }
 }

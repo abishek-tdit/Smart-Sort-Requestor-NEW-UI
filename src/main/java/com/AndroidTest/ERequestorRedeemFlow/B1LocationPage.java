@@ -40,18 +40,18 @@ public class B1LocationPage {
                 + String.format("%.2f", duration)
                 + " sec");
 
-        // Bqaiq Location
+        // Asyut Location
         StepTimer.startStep();
 
         WebElement locationBtn = wait.until(
                 ExpectedConditions.elementToBeClickable(
-                        AppiumBy.accessibilityId("Bqaiq")));
+                        AppiumBy.accessibilityId("Asyut")));
 
         locationBtn.click();
 
         duration = StepTimer.endStep();
 
-        ExtentTestListener.logStep("Location Selected : Bqaiq | Time Taken : "
+        ExtentTestListener.logStep("Location Selected : Asyut | Time Taken : "
                 + String.format("%.2f", duration)
                 + " sec");
 

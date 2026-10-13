@@ -26,15 +26,29 @@ public class BPickupQuantityOrdersPage extends BaseClassMobile {
     // LOCATORS
     // =========================================================
 
-    private final By PICKUP_QUANTITY_ORDERS = AppiumBy.xpath
-            ("//*[contains(@content-desc,'Pickup Quantity Orders')" +
-                    " or contains(@text,'Pickup Quantity Orders')]");
+    private final By PICKUP_QUANTITY_ORDERS =
+            AppiumBy.xpath(
+                    "//*[contains(@content-desc,'Pickup Quantity Orders')" +
+                            " or contains(@text,'Pickup Quantity Orders')]"
+            );
 
     private final By UPDATE_QUANTITY =
             AppiumBy.accessibilityId("Update Quantity");
 
-    private final By WEIGHT_FIELD =
-            AppiumBy.className("android.widget.EditText");
+
+    private final By BATTERY_WEIGHT_FIELD =
+            AppiumBy.androidUIAutomator(
+                    "new UiSelector()" +
+                            ".className(\"android.widget.EditText\")" +
+                            ".instance(0)"
+            );
+//
+//    private final By TEXTILE_WEIGHT_FIELD =
+//            AppiumBy.androidUIAutomator(
+//                    "new UiSelector()" +
+//                            ".className(\"android.widget.EditText\")" +
+//                            ".instance(1)"
+//            );
 
     private final By SUBMIT =
             AppiumBy.accessibilityId("Submit");
@@ -55,191 +69,397 @@ public class BPickupQuantityOrdersPage extends BaseClassMobile {
             // STEP 1 - Wait after Login
             // =================================================
 
-            ExtentTestListener.logStep("Waiting for Collection Center dashboard...");
+            ExtentTestListener.logStep(
+                    "Waiting for Collection Center dashboard..."
+            );
 
             pageWait.until(driver ->
                     driver.findElements(PICKUP_QUANTITY_ORDERS).size() > 0
                             ||
-                            driver.findElements(AppiumBy.accessibilityId("Pickup Quantity Orders")).size() > 0);
+                            driver.findElements(
+                                    AppiumBy.accessibilityId(
+                                            "Pickup Quantity Orders"
+                                    )
+                            ).size() > 0
+            );
 
-            ExtentTestListener.logStep("Collection Center dashboard loaded successfully");
+            ExtentTestListener.logStep(
+                    "Collection Center dashboard loaded successfully"
+            );
 
 
             // =================================================
             // STEP 2 - Click Pickup Quantity Orders
             // =================================================
 
-            ExtentTestListener.logStep("Clicking Pickup Quantity Orders...");
+            ExtentTestListener.logStep(
+                    "Clicking Pickup Quantity Orders..."
+            );
 
             StepTimer.startStep();
 
-            WebElement pickupQuantityOrders = findPickupQuantityOrders();
+            WebElement pickupQuantityOrders =
+                    findPickupQuantityOrders();
 
             pickupQuantityOrders.click();
 
             double duration = StepTimer.endStep();
 
-            ExtentTestListener.logStep("Pickup Quantity Orders clicked successfully | Time Taken : "
+            ExtentTestListener.logStep(
+                    "Pickup Quantity Orders clicked successfully | Time Taken : "
                             + String.format("%.2f", duration)
-                            + " sec");
+                            + " sec"
+            );
 
 
             // =================================================
             // STEP 3 - Get Saved DO Number
             // =================================================
 
-            ExtentTestListener.logStep("Getting Saved Delivery Order Number...");
+            ExtentTestListener.logStep(
+                    "Getting Saved Delivery Order Number..."
+            );
 
             StepTimer.startStep();
 
             String savedDONumber =
                     FSaveDONumberPage.getDONumber();
 
+            duration = StepTimer.endStep();
+
             if (savedDONumber == null ||
                     savedDONumber.trim().isEmpty()) {
 
-                StepTimer.endStep();
-
-                throw new RuntimeException("Saved DO Number is null or empty.");
+                throw new RuntimeException(
+                        "Saved DO Number is null or empty."
+                );
             }
 
             savedDONumber = savedDONumber.trim();
 
-            ExtentTestListener.logStep("Saved DO Number : " + savedDONumber);
+            ExtentTestListener.logStep(
+                    "Saved DO Number : " + savedDONumber
+            );
 
 
             // =================================================
             // STEP 4 - Click Saved Delivery Order
             // =================================================
 
-            ExtentTestListener.logStep("Clicking Saved Delivery Order...");
+            ExtentTestListener.logStep(
+                    "Clicking Saved Delivery Order..."
+            );
 
             StepTimer.startStep();
 
             By savedDO =
-                    AppiumBy.xpath("//*[contains(@content-desc,'" + savedDONumber
-                    + "') "
-                    + "or contains(@text,'"
-                    + savedDONumber
-                    + "')]");
+                    AppiumBy.xpath(
+                            "//*[contains(@content-desc,'"
+                                    + savedDONumber
+                                    + "') " +
+                                    "or contains(@text,'"
+                                    + savedDONumber
+                                    + "')]"
+                    );
 
             WebElement order =
-                    wait.until(ExpectedConditions.elementToBeClickable(savedDO));
+                    wait.until(
+                            ExpectedConditions.elementToBeClickable(
+                                    savedDO
+                            )
+                    );
 
             order.click();
 
             duration = StepTimer.endStep();
 
-            ExtentTestListener.logStep("Saved Delivery Order Clicked Successfully : "
+            ExtentTestListener.logStep(
+                    "Saved Delivery Order Clicked Successfully : "
                             + savedDONumber
                             + " | Time Taken : "
                             + String.format("%.2f", duration)
-                            + " sec");
+                            + " sec"
+            );
 
 
             // =================================================
             // STEP 5 - Click Update Quantity
             // =================================================
 
-            ExtentTestListener.logStep("Clicking Update Quantity...");
+            ExtentTestListener.logStep(
+                    "Clicking Update Quantity..."
+            );
 
             StepTimer.startStep();
 
             WebElement updateQuantity =
-                    wait.until(ExpectedConditions.elementToBeClickable(UPDATE_QUANTITY));
+                    wait.until(
+                            ExpectedConditions.elementToBeClickable(
+                                    UPDATE_QUANTITY
+                            )
+                    );
 
             updateQuantity.click();
 
             duration = StepTimer.endStep();
 
-            ExtentTestListener.logStep("Update Quantity clicked successfully | Time Taken : "
+            ExtentTestListener.logStep(
+                    "Update Quantity clicked successfully | Time Taken : "
                             + String.format("%.2f", duration)
-                            + " sec");
+                            + " sec"
+            );
 
 
             // =================================================
-            // STEP 6 - Enter KG
+            // STEP 6.1 - Enter Battery KG
             // =================================================
 
-            ExtentTestListener.logStep("Entering Quantity : 10 KG...");
+            enterQuantity(
+                    "Battery",
+                    BATTERY_WEIGHT_FIELD,
+                    "5"
+            );
 
-            StepTimer.startStep();
-
-            WebElement weightField =
-                    wait.until(ExpectedConditions.elementToBeClickable(WEIGHT_FIELD));
-
-            weightField.click();
-            weightField.clear();
-            weightField.sendKeys("10");
-
-            duration = StepTimer.endStep();
-
-            ExtentTestListener.logStep("Weight entered : 10 KG | Time Taken : "
-                            + String.format("%.2f", duration)
-                            + " sec");
+//
+//            // =================================================
+//            // STEP 6.2 - Enter Textile KG
+//            // =================================================
+//
+//            enterQuantity(
+//                    "Textile",
+//                    TEXTILE_WEIGHT_FIELD,
+//                    "4"
+//            );
 
 
             // =================================================
-            // STEP 7 - Hide Keyboard
-            //=================================================
-            try {
-                driver.hideKeyboard();
-            }
-            catch (Exception ignored) {
-            }
+            // STEP 7 - Hide Keyboard Before Submit
+            // =================================================
+
+            hideKeyboard();
 
 
             // =================================================
             // STEP 8 - Click Submit
             // =================================================
 
-            ExtentTestListener.logStep("Clicking Submit...");
+            ExtentTestListener.logStep(
+                    "Clicking Submit..."
+            );
 
             StepTimer.startStep();
 
             WebElement submitButton =
-                    wait.until(ExpectedConditions.elementToBeClickable(SUBMIT));
+                    wait.until(
+                            ExpectedConditions.elementToBeClickable(
+                                    SUBMIT
+                            )
+                    );
 
             submitButton.click();
 
             duration = StepTimer.endStep();
 
-            ExtentTestListener.logStep("Submit clicked successfully | Time Taken : "
+            ExtentTestListener.logStep(
+                    "Submit clicked successfully | Time Taken : "
                             + String.format("%.2f", duration)
-                            + " sec");
+                            + " sec"
+            );
 
 
             // =================================================
-            // STEP 9 - Click OK
+            // STEP 9 - Click OK Popup
             // =================================================
 
-            ExtentTestListener.logStep("Waiting for OK Popup...");
+            ExtentTestListener.logStep(
+                    "Waiting for OK Popup..."
+            );
 
             StepTimer.startStep();
 
             WebElement okButton =
-                    wait.until(ExpectedConditions.elementToBeClickable(OK_BUTTON));
+                    wait.until(
+                            ExpectedConditions.elementToBeClickable(
+                                    OK_BUTTON
+                            )
+                    );
+
             okButton.click();
 
             duration = StepTimer.endStep();
 
-            ExtentTestListener.logStep("OK Popup clicked successfully | Time Taken : "
+            ExtentTestListener.logStep(
+                    "OK Popup clicked successfully | Time Taken : "
                             + String.format("%.2f", duration)
-                            + " sec");
+                            + " sec"
+            );
 
 
             // =================================================
             // FLOW COMPLETED
             // =================================================
 
-            ExtentTestListener.logStep("Collection Center Quantity Updated Successfully");
-        }
-        catch (Exception e)
-        {
-            ExtentTestListener.logStep
-                    ("Collection Center Quantity Update Failed : " + e.getMessage());
+            ExtentTestListener.logStep(
+                    "Collection Center Quantity Updated Successfully"
+            );
 
-            throw new RuntimeException("Collection Center Quantity Update Flow Failed", e);
+        }
+        catch (Exception e) {
+
+            ExtentTestListener.logStep(
+                    "Collection Center Quantity Update Failed : "
+                            + e.getMessage()
+            );
+
+            throw new RuntimeException(
+                    "Collection Center Quantity Update Flow Failed",
+                    e
+            );
+        }
+    }
+
+
+    // =========================================================
+    // ENTER QUANTITY
+    // =========================================================
+
+    private void enterQuantity(
+            String materialName,
+            By fieldLocator,
+            String quantity) {
+
+        ExtentTestListener.logStep(
+                "Entering " + materialName
+                        + " Quantity : "
+                        + quantity
+                        + " KG..."
+        );
+
+        StepTimer.startStep();
+
+        try {
+
+            // -------------------------------------------------
+            // Wait for EditText
+            // -------------------------------------------------
+
+            WebElement weightField =
+                    wait.until(
+                            ExpectedConditions.visibilityOfElementLocated(
+                                    fieldLocator
+                            )
+                    );
+
+
+            // -------------------------------------------------
+            // Make sure field is enabled
+            // -------------------------------------------------
+
+            if (!weightField.isEnabled()) {
+
+                throw new RuntimeException(
+                        materialName
+                                + " KG field is disabled."
+                );
+            }
+
+
+            // -------------------------------------------------
+            // Click field
+            // -------------------------------------------------
+
+            weightField.click();
+
+
+            // -------------------------------------------------
+            // Clear existing value
+            // -------------------------------------------------
+
+            weightField.clear();
+
+
+            // -------------------------------------------------
+            // Enter quantity
+            // -------------------------------------------------
+
+            weightField.sendKeys(quantity);
+
+
+            // -------------------------------------------------
+            // Verify entered value
+            // -------------------------------------------------
+
+            String enteredValue =
+                    weightField.getAttribute("text");
+
+            if (enteredValue == null ||
+                    enteredValue.trim().isEmpty()) {
+
+                throw new RuntimeException(
+                        materialName
+                                + " KG value was not entered."
+                );
+            }
+
+
+            // -------------------------------------------------
+            // End timer
+            // -------------------------------------------------
+
+            double duration =
+                    StepTimer.endStep();
+
+
+            ExtentTestListener.logStep(
+                    materialName
+                            + " Weight entered : "
+                            + enteredValue
+                            + " KG | Time Taken : "
+                            + String.format("%.2f", duration)
+                            + " sec"
+            );
+
+
+            // -------------------------------------------------
+            // Hide keyboard
+            // -------------------------------------------------
+
+            hideKeyboard();
+
+        }
+        catch (Exception e) {
+
+            StepTimer.endStep();
+
+            throw new RuntimeException(
+                    "Failed to enter "
+                            + materialName
+                            + " quantity : "
+                            + e.getMessage(),
+                    e
+            );
+        }
+    }
+
+
+    // =========================================================
+    // HIDE KEYBOARD
+    // =========================================================
+
+    private void hideKeyboard() {
+
+        try {
+
+            driver.hideKeyboard();
+
+            ExtentTestListener.logStep(
+                    "Keyboard hidden successfully"
+            );
+
+        }
+        catch (Exception ignored) {
+
+            // Keyboard may already be hidden.
         }
     }
 
@@ -256,11 +476,18 @@ public class BPickupQuantityOrdersPage extends BaseClassMobile {
 
         try {
 
-            WebElement element = new WebDriverWait
-                            (driver, Duration.ofSeconds(5)).until
-                    (ExpectedConditions.elementToBeClickable(PICKUP_QUANTITY_ORDERS));
+            WebElement element =
+                    new WebDriverWait(
+                            driver,
+                            Duration.ofSeconds(5)
+                    ).until(
+                            ExpectedConditions.elementToBeClickable(
+                                    PICKUP_QUANTITY_ORDERS
+                            )
+                    );
 
             if (element.isDisplayed()) {
+
                 return element;
             }
         }
@@ -275,11 +502,19 @@ public class BPickupQuantityOrdersPage extends BaseClassMobile {
         try {
 
             WebElement element =
-                    new WebDriverWait(driver, Duration.ofSeconds(5)).until
-                            (ExpectedConditions.elementToBeClickable
-                                    (AppiumBy.accessibilityId("Pickup Quantity Orders")));
+                    new WebDriverWait(
+                            driver,
+                            Duration.ofSeconds(5)
+                    ).until(
+                            ExpectedConditions.elementToBeClickable(
+                                    AppiumBy.accessibilityId(
+                                            "Pickup Quantity Orders"
+                                    )
+                            )
+                    );
 
             if (element.isDisplayed()) {
+
                 return element;
             }
         }
@@ -291,33 +526,45 @@ public class BPickupQuantityOrdersPage extends BaseClassMobile {
         // Third - scroll down and search
         // -----------------------------------------------------
 
-        ExtentTestListener.logStep("Pickup Quantity Orders not currently visible. Scrolling...");
+        ExtentTestListener.logStep(
+                "Pickup Quantity Orders not currently visible. Scrolling..."
+        );
 
         for (int attempt = 1; attempt <= 5; attempt++) {
 
             try {
 
-                ExtentTestListener.logStep
-                        ("Scrolling to Pickup Quantity Orders : attempt " + attempt);
+                ExtentTestListener.logStep(
+                        "Scrolling to Pickup Quantity Orders : attempt "
+                                + attempt
+                );
 
-                WebElement element = findVisiblePickupQuantityOrders();
+                WebElement element =
+                        findVisiblePickupQuantityOrders();
 
                 if (element != null) {
+
                     return element;
                 }
+
                 swipeUp();
+
             }
-            catch (Exception e)
-            {
-                ExtentTestListener.logStep("Scroll attempt "
+            catch (Exception e) {
+
+                ExtentTestListener.logStep(
+                        "Scroll attempt "
                                 + attempt
                                 + " failed : "
-                                + e.getMessage());
+                                + e.getMessage()
+                );
             }
         }
 
 
-        throw new RuntimeException("Pickup Quantity Orders was NOT found after scrolling.");
+        throw new RuntimeException(
+                "Pickup Quantity Orders was NOT found after scrolling."
+        );
     }
 
 
@@ -327,18 +574,25 @@ public class BPickupQuantityOrdersPage extends BaseClassMobile {
 
     private WebElement findVisiblePickupQuantityOrders() {
 
-        var elements = driver.findElements(PICKUP_QUANTITY_ORDERS);
+        var elements =
+                driver.findElements(
+                        PICKUP_QUANTITY_ORDERS
+                );
 
         for (WebElement element : elements) {
 
             try {
+
                 if (element.isDisplayed()) {
+
                     return element;
                 }
+
             }
             catch (Exception ignored) {
             }
         }
+
         return null;
     }
 
@@ -349,19 +603,27 @@ public class BPickupQuantityOrdersPage extends BaseClassMobile {
 
     private void swipeUp() {
 
-        Dimension screen = driver.manage()
-                .window()
-                .getSize();
+        Dimension screen =
+                driver.manage()
+                        .window()
+                        .getSize();
 
-        int width = screen.getWidth();
-        int height = screen.getHeight();
+        int width =
+                screen.getWidth();
 
-        driver.executeScript("mobile: swipeGesture",
-                Map.of("left", 0,
+        int height =
+                screen.getHeight();
+
+        driver.executeScript(
+                "mobile: swipeGesture",
+                Map.of(
+                        "left", 0,
                         "top", 100,
                         "width", width,
                         "height", height - 200,
                         "direction", "up",
-                        "percent", 0.70));
+                        "percent", 0.70
+                )
+        );
     }
 }

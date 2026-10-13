@@ -118,7 +118,6 @@ public class A2CollectorToRequestorChat extends BaseClassMobile {
         ExtentTestListener.logStep("Waiting for 'I'm on the way'...");
         Thread.sleep(9000);
         try {
-
             WebElement button =
                     wait.until(ExpectedConditions.elementToBeClickable(imOnTheWayButton));
 
@@ -135,9 +134,9 @@ public class A2CollectorToRequestorChat extends BaseClassMobile {
                 ExtentTestListener.getTest().pass("'I'm on the way' clicked successfully");
                 driver.navigate().back();
             }
-
-        } catch (Exception e) {
-
+        }
+        catch (Exception e)
+        {
             ExtentTestListener.logStep("Failed to click 'I'm on the way': " + e.getMessage());
 
             if (ExtentTestListener.getTest() != null) {

@@ -17,7 +17,9 @@ public class KSettingFlowTest extends BaseClassMobile {
 
         //NOTIFICATION:
         BNotificationPage notificationPage = new BNotificationPage(driver);
-        notificationPage.openAndValidateNotifications();
+        notificationPage.validateNotificationsFlow();
+        driver.navigate().back();
+
 
         //Theme
         CThemePage themePage = new CThemePage(driver);
@@ -36,11 +38,16 @@ public class KSettingFlowTest extends BaseClassMobile {
         //AboutUs
         FAboutUsPage aboutUsPage = new FAboutUsPage(driver);
         aboutUsPage.openAboutUsAndBack();
-        driver.navigate().back();
 
-//        //Reports
-//        GReportsPage reportsPage = new GReportsPage(driver);
-//        reportsPage.validateReportsPage();
+        //Reports
+        GReportsPage reportsPage = new GReportsPage();
+        reportsPage.clickReport();
+        reportsPage.clickWeekly();
+        reportsPage.clickMonthly();
+        reportsPage.clickRange();
+        driver.navigate().back();
+//      ========================
+        driver.navigate().back();
 
         System.out.println("========== SETTING FLOW COMPLETED ==========");
     }

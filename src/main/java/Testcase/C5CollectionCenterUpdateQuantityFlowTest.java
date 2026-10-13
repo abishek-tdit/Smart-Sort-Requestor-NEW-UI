@@ -17,14 +17,11 @@ public class C5CollectionCenterUpdateQuantityFlowTest extends BaseClassMobile {
 
         // Login
         ALoginPage loginPage = new ALoginPage();
-        loginPage.login("0500123001",
-                generatedPassword);
+        loginPage.login("0500123001", generatedPassword);
 
 
         // Pickup Quantity - Orders
-        BPickupQuantityOrdersPage pickupQuantityOrdersPage =
-                new BPickupQuantityOrdersPage();
-
+        BPickupQuantityOrdersPage pickupQuantityOrdersPage = new BPickupQuantityOrdersPage();
         pickupQuantityOrdersPage.clickPickupQuantityOrders();
 
         ExtentTestListener.logStep("Collection Center Update Quantity 4th Flow Completed");

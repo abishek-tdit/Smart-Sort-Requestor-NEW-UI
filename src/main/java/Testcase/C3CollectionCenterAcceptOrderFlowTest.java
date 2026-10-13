@@ -15,12 +15,9 @@ public class C3CollectionCenterAcceptOrderFlowTest extends BaseClassMobile {
     public void collectionCenterAcceptOrderFlowTest() throws Exception {
 
         //TTFVaasan : 0500123001
-
         //Login:
         ALoginPage loginPage = new ALoginPage();
-        loginPage.login("0500123001",
-                generatedPassword);
-
+        loginPage.login("0500123001", generatedPassword);
 
         //Unaccepted - Orders:
         BUnacceptedOrdersPage unacceptedOrdersPage = new BUnacceptedOrdersPage();

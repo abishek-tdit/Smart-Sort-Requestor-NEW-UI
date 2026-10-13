@@ -27,46 +27,34 @@ public class N3VerifyReferralPointsFlowTest
             driver.activateApp("com.abqaiq.smartsort");
             ExtentTestListener.logStep("Smart Sort App Launched Successfully");
 
-            // =====================================================
-            // MOBILE NUMBER
-            // =====================================================
 
+            // MOBILE NUMBER
             String mobile = "0500000055";
 
             ExtentTestListener.logStep("Referral Points Flow Started");
 
-            // =====================================================
-            // LOGOUT
-            // =====================================================
 
+            // LOGOUT
             ALogoutPage logoutPage = new ALogoutPage();
             logoutPage.logout();
 
-            // =====================================================
-            // OTP OBJECT
-            // =====================================================
 
+            // OTP OBJECT
             B2LoginOTP loginOTP = new B2LoginOTP();
 
-            // =====================================================
-            // CAPTURE OTP BASELINE BEFORE LOGIN
-            // =====================================================
 
+            // CAPTURE OTP BASELINE BEFORE LOGIN
             long previousOtpId = loginOTP.getLatestOtpId(mobile);
 
             System.out.println("OTP baseline captured : " + previousOtpId);
 
-            // =====================================================
-            // LOGIN
-            // =====================================================
 
+            // LOGIN
             B1RequestorLoginPage loginPage = new B1RequestorLoginPage(driver);
             loginPage.login(mobile);
 
-            // =====================================================
-            // GET NEW LOGIN OTP
-            // =====================================================
 
+            // GET NEW LOGIN OTP
             String otp = loginOTP.getLoginOTP(mobile, previousOtpId);
 
             // =====================================================
@@ -82,22 +70,11 @@ public class N3VerifyReferralPointsFlowTest
 
             ExtentTestListener.logStep("New Login OTP retrieved. Please enter OTP manually : " + otp);
 
-            // =====================================================
-            // WAIT FOR LOGIN COMPLETION
-            // =====================================================
-
             waitForLoginCompletion();
 
-            // =====================================================
             // LOCATION
-            // =====================================================
-
             CLocationPage locationPage = new CLocationPage(driver);
             locationPage.selectLocation();
-
-            // =====================================================
-            // FLOW COMPLETED
-            // =====================================================
 
             ExtentTestListener.logStep("N3 Verify Referral Points Flow Completed");
         }
@@ -110,10 +87,8 @@ public class N3VerifyReferralPointsFlowTest
         }
     }
 
-    // =====================================================
-    // WAIT FOR LOGIN COMPLETION
-    // =====================================================
 
+    // WAIT FOR LOGIN COMPLETION
     private void waitForLoginCompletion() {
 
         System.out.println();

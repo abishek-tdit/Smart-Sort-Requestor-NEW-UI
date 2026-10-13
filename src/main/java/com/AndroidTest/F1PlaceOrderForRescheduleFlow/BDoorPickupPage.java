@@ -9,6 +9,7 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.time.Duration;
+import java.util.List;
 import java.util.Map;
 
 public class BDoorPickupPage extends BaseClassMobile {
@@ -19,10 +20,11 @@ public class BDoorPickupPage extends BaseClassMobile {
     // =========================================================
     // LOCATORS
     // =========================================================
+    private final By doorstepPickup = AppiumBy.xpath(
+            "//android.widget.ImageView[@content-desc='Doorstep Pickup\n" +
+                    "We come to your place to collect your items']"
+    );
 
-    // Request Now - Home Screen
-    private final By requestNow =
-            AppiumBy.accessibilityId("Request Now");
 
     // Material Checkbox
     private final By materialCheckBox =
@@ -43,16 +45,18 @@ public class BDoorPickupPage extends BaseClassMobile {
         System.out.println("Doorstep Pickup Flow Started");
         System.out.println("==============================================");
 
-        // 1. Wait for Home Screen
-        System.out.println("Waiting for Home screen to load...");
-
-        WebElement requestNowButton = wait.until(
-                ExpectedConditions.elementToBeClickable(requestNow)
+        // DOORSTEP PICKUP
+        WebElement doorstepPickupButton = wait.until(
+                ExpectedConditions.elementToBeClickable(doorstepPickup)
         );
 
-        requestNowButton.click();
+        doorstepPickupButton.click();
 
-        ExtentTestListener.logStep("Request Now clicked successfully");
+        ExtentTestListener.logStep(
+                "Doorstep Pickup clicked successfully"
+        );
+
+        System.out.println("Doorstep Pickup clicked successfully");
 
 
         // 2. Select Material Checkbox
@@ -79,28 +83,39 @@ public class BDoorPickupPage extends BaseClassMobile {
         ExtentTestListener.logStep("Continue clicked");
 
 
+        // 2.1 Select Material Checkbox (Optional)
+        List<WebElement> checkboxes = driver.findElements(materialCheckBox);
+
+        if (!checkboxes.isEmpty() && checkboxes.get(0).isDisplayed()) {
+
+            checkboxes.get(0).click();
+
+            ExtentTestListener.logStep("Checkbox Selected");
+
+        } else {
+
+            ExtentTestListener.logStep("Checkbox not visible. Skipping.");
+        }
+
+
+        // 3.1 Click Continue (Optional)
+        List<WebElement> continueButtons = driver.findElements(continueButton);
+
+        if (!continueButtons.isEmpty() && continueButtons.get(0).isDisplayed()) {
+
+            continueButtons.get(0).click();
+
+            ExtentTestListener.logStep("Continue clicked");
+        }
+        else
+        {
+            ExtentTestListener.logStep("Continue button not visible. Skipping.");
+        }
+
+
         System.out.println("==============================================");
         ExtentTestListener.logStep("Doorstep Pickup Flow Completed");
         System.out.println("==============================================");
     }
 
-
-    // =========================================================
-    // SMALL SCROLL
-    // =========================================================
-
-    private void scrollLittleDown() {
-
-        driver.executeScript(
-                "mobile: scrollGesture",
-                Map.of(
-                        "left", 50,
-                        "top", 300,
-                        "width", 620,
-                        "height", 900,
-                        "direction", "down",
-                        "percent", 0.35
-                )
-        );
-    }
 }

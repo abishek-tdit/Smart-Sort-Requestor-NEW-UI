@@ -2,6 +2,7 @@ package com.AndroidTest.C2CollectorUtilityOrderCompleteFlow;
 
 import Base.BaseClassMobile;
 import Base.ExtentTestListener;
+import org.openqa.selenium.By;
 import utilities.StepTimer;
 import io.appium.java_client.AppiumBy;
 import io.appium.java_client.android.AndroidDriver;
@@ -42,7 +43,6 @@ public class HDeliveryOrderAssignToCollectionCenterPage extends BaseClassMobile 
         // =====================================================
         // CLICK RO - DO TAB
         // =====================================================
-
         StepTimer.startStep();
 
         WebElement roDoTab = waitUntilClickable
@@ -101,22 +101,23 @@ public class HDeliveryOrderAssignToCollectionCenterPage extends BaseClassMobile 
         // =====================================================
         // SELECT COLLECTION CENTER
         // =====================================================
-
         StepTimer.startStep();
 
-        WebElement cc = waitUntilClickable(AppiumBy.androidUIAutomator
-                ("new UiSelector()" +
-                        ".descriptionContains(\"TTFVaasan\")"), 20);
+        By collectionCenter =
+                AppiumBy.accessibilityId("TTFVaasan\n3492.61 KM");
 
-        driver.executeScript("mobile: clickGesture",
-                Map.of("elementId", ((RemoteWebElement) cc).getId()));
+        WebElement cc =
+                waitUntilClickable(collectionCenter, 20);
+
+        cc.click();
 
         duration = StepTimer.endStep();
 
-        ExtentTestListener.logStep("Selected Collection Center - TTFVaasan | Time Taken : "
+        ExtentTestListener.logStep(
+                "Selected Collection Center - TTFVaasan 3492.61 KM | Time Taken : "
                         + String.format("%.2f", duration)
-                        + " sec");
-
+                        + " sec"
+        );
 
         // =====================================================
         // CLICK ASSIGN

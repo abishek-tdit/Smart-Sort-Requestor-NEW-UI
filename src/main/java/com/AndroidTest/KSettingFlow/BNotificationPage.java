@@ -5,14 +5,12 @@ import io.appium.java_client.AppiumBy;
 import io.appium.java_client.android.AndroidDriver;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.interactions.PointerInput;
-import org.openqa.selenium.interactions.Sequence;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.time.Duration;
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -21,594 +19,289 @@ public class BNotificationPage {
     private final AndroidDriver driver;
     private final WebDriverWait wait;
 
-    // =========================================================
+    // =====================================================
     // LOCATORS
-    // =========================================================
-    private final By notificationsTab =
-            AppiumBy.accessibilityId("Notifications");
-    private final By notificationsTitle =
-            AppiumBy.accessibilityId("Notifications");
-    private final By notificationCards = AppiumBy.xpath(
-            "//android.view.View[@content-desc and @clickable='true']");
+    // =====================================================
 
-    // =========================================================
+    private final By NOTIFICATIONS_BUTTON =
+            AppiumBy.accessibilityId("Notifications");
+
+    // Match notification cards only.
+    // The content description starts with a notification title.
+    // This avoids matching Home, Orders, Rewards and Account.
+    private final By NOTIFICATION_ITEMS =
+            AppiumBy.xpath(
+                    "//android.widget.ImageView[@content-desc and " +
+                            "(contains(@content-desc,'Points') or " +
+                            "contains(@content-desc,'Redeem') or " +
+                            "contains(@content-desc,'Order') or " +
+                            "contains(@content-desc,'Reward') or " +
+                            "contains(@content-desc,'Collection') or " +
+                            "contains(@content-desc,'Request') or " +
+                            "contains(@content-desc,'Conversion'))]"
+            );
+
+    // =====================================================
     // CONSTRUCTOR
-    // =========================================================
+    // =====================================================
 
     public BNotificationPage(AndroidDriver driver) {
 
         this.driver = driver;
 
         this.wait = new WebDriverWait(
-                        driver,
-                        Duration.ofSeconds(15));
+                driver,
+                Duration.ofSeconds(15)
+        );
     }
 
-    // =========================================================
-    // OPEN NOTIFICATIONS
-    // =========================================================
+    // =====================================================
+    // STEP 1 - OPEN NOTIFICATIONS
+    // =====================================================
 
-    public void openAndValidateNotifications() {
+    public void clickNotifications() {
 
-        ExtentTestListener.logStep(
-                "========== NOTIFICATION FLOW STARTED ==========");
-
-        /*
-         * Click Notifications.
-         */
-        WebElement notificationTab = wait.until
-                (ExpectedConditions.elementToBeClickable(notificationsTab));
-
-        notificationTab.click();
-
-        ExtentTestListener.logStep(
-                "Notifications tab clicked successfully."
+        System.out.println(
+                "STEP 1: Waiting for Notifications button"
         );
 
-        /*
-         * Wait for Notifications page title.
-         */
+        WebElement button = wait.until(
+                ExpectedConditions.elementToBeClickable(
+                        NOTIFICATIONS_BUTTON
+                )
+        );
+
+        button.click();
+
+        ExtentTestListener.logStep(
+                "Notifications button clicked successfully"
+        );
+
+        System.out.println(
+                "Notifications button clicked successfully"
+        );
+
         wait.until(
-                ExpectedConditions.visibilityOfElementLocated(
-                        notificationsTitle
+                ExpectedConditions.presenceOfElementLocated(
+                        NOTIFICATION_ITEMS
                 )
         );
 
         ExtentTestListener.logStep(
-                "Notifications screen displayed."
+                "Notifications screen displayed successfully"
         );
 
-        /*
-         * Wait until at least one notification card is
-         * available.
-         *
-         * We no longer wait for a scrollable container.
-         */
-        wait.until(
-                driver ->
-                        !driver.findElements(
-                                notificationCards
-                        ).isEmpty()
-        );
-
-        ExtentTestListener.logStep(
-                "Notification cards loaded successfully."
-        );
-
-        /*
-         * Validate first 10 notifications.
-         */
-        validateFirst10Notifications();
-
-        /*
-         * Return to previous page.
-         */
-        driver.navigate().back();
-
-        /*
-         * Wait until Notifications title disappears.
-         */
-        try {
-
-            new WebDriverWait(driver,
-                    Duration.ofSeconds(10)).until
-                    (ExpectedConditions.invisibilityOfElementLocated
-                            (notificationsTitle));
-
-        } catch (Exception ignored) {
-            /*
-             * Some Flutter pages can keep the previous
-             * accessibility node temporarily.
-             */
-        }
-
-        ExtentTestListener.logStep(
-                "Returned from Notifications screen."
-        );
-
-        ExtentTestListener.logStep(
-                "========== NOTIFICATION FLOW COMPLETED =========="
+        System.out.println(
+                "Notifications screen displayed successfully"
         );
     }
 
-    // =========================================================
-    // VALIDATE FIRST 10 NOTIFICATIONS
-    // =========================================================
+    // =====================================================
+    // STEP 2 - VALIDATE FIRST 10 NOTIFICATIONS
+    // =====================================================
 
-    private void validateFirst10Notifications() {
+    public void validateFirst10Notifications() {
 
-        final int REQUIRED_NOTIFICATIONS = 10;
+        System.out.println(
+                "========== NOTIFICATION VALIDATION STARTED =========="
+        );
 
-        int notificationCount = 0;
+        Set<String> validatedNotifications =
+                new LinkedHashSet<>();
 
-        /*
-         * Stores the notification text that has already
-         * been processed.
-         *
-         * This prevents the same card from being counted
-         * again after scrolling.
-         */
-        Set<String> processedNotifications =
-                new HashSet<>();
+        int maxScrollAttempts = 15;
+        int scrollAttempts = 0;
 
-        /*
-         * Stores the previous visible notification list.
-         */
-        List<String> previousScreen =
-                new ArrayList<>();
+        while (validatedNotifications.size() < 10
+                && scrollAttempts < maxScrollAttempts) {
 
-        int noChangeCount = 0;
+            // Find currently available notification cards.
+            List<WebElement> notifications =
+                    driver.findElements(NOTIFICATION_ITEMS);
 
-        /*
-         * Maximum number of swipe attempts.
-         */
-        final int MAX_SCROLLS = 15;
+            int previousCount =
+                    validatedNotifications.size();
 
-        for (
-                int scroll = 0;
-                scroll <= MAX_SCROLLS
-                        && notificationCount < REQUIRED_NOTIFICATIONS;
-                scroll++
-        ) {
-
-            ExtentTestListener.logStep(
-                    "Reading notification screen..."
-            );
-
-            /*
-             * Read currently visible notification cards.
-             */
-            List<String> currentScreen =
-                    getVisibleNotifications();
-
-            ExtentTestListener.logStep(
-                    "Visible notification cards: "
-                            + currentScreen.size()
-            );
-
-            /*
-             * If no cards were found, wait for them.
-             */
-            if (currentScreen.isEmpty()) {
+            for (WebElement notification : notifications) {
 
                 try {
 
-                    wait.until(
-                            driver ->
-                                    !driver.findElements(
-                                            notificationCards
-                                    ).isEmpty()
-                    );
+                    String text =
+                            notification.getAttribute("content-desc");
 
-                    currentScreen =
-                            getVisibleNotifications();
+                    if (text == null || text.trim().isEmpty()) {
+                        continue;
+                    }
 
-                } catch (Exception ignored) {
-                    /*
-                     * Continue to next attempt.
-                     */
-                }
-            }
+                    text = text.trim();
 
-            /*
-             * Process currently visible notifications.
-             */
-            for (String notification : currentScreen) {
+                    // Add each unique notification in display order.
+                    if (validatedNotifications.add(text)) {
 
-                if (
-                        notificationCount
-                                >= REQUIRED_NOTIFICATIONS
-                ) {
-                    break;
-                }
+                        int number =
+                                validatedNotifications.size();
 
-                /*
-                 * Ignore empty values.
-                 */
-                if (
-                        notification == null
-                                || notification.trim().isEmpty()
-                ) {
-                    continue;
-                }
+                        System.out.println(
+                                "Notification " + number + ": " + text
+                        );
 
-                /*
-                 * Ignore date separators.
-                 */
-                if (isDateSeparator(notification)) {
-                    continue;
-                }
+                        ExtentTestListener.logStep(
+                                "Notification " + number +
+                                        " validated: " + text
+                        );
+                    }
 
-                /*
-                 * Count only a notification that has not
-                 * already been processed.
-                 */
-                if (
-                        processedNotifications.add(
-                                notification
-                        )
-                ) {
+                    if (validatedNotifications.size() == 10) {
+                        break;
+                    }
 
-                    notificationCount++;
+                } catch (Exception e) {
 
                     System.out.println(
-                            "Notification "
-                                    + notificationCount
-                                    + " : "
-                                    + notification
+                            "Unable to read notification: "
+                                    + e.getMessage()
                     );
                 }
             }
 
-            /*
-             * Stop after finding 10 notifications.
-             */
-            if (
-                    notificationCount
-                            >= REQUIRED_NOTIFICATIONS
-            ) {
+            if (validatedNotifications.size() >= 10) {
                 break;
             }
 
-            /*
-             * Check whether the current screen changed.
-             */
-            if (
-                    currentScreen.equals(
-                            previousScreen
-                    )
-            ) {
+            // Stop if the scroll limit has been reached.
+            if (scrollAttempts >= maxScrollAttempts) {
+                break;
+            }
 
-                noChangeCount++;
+            // =================================================
+            // SCROLL DOWN
+            // =================================================
+
+            scrollAttempts++;
+
+            System.out.println(
+                    "Scrolling notification screen. Attempt: "
+                            + scrollAttempts
+            );
+
+            try {
+
+                // Swipe on the screen rather than trying to scroll
+                // a container that might not be correctly identified.
+                driver.executeScript(
+                        "mobile: swipeGesture",
+                        java.util.Map.of(
+                                "left", 30,
+                                "top", 250,
+                                "width", driver.manage()
+                                        .window()
+                                        .getSize()
+                                        .getWidth() - 60,
+                                "height", driver.manage()
+                                        .window()
+                                        .getSize()
+                                        .getHeight() - 500,
+                                "direction", "up",
+                                "percent", 0.75
+                        )
+                );
+
+                // Wait briefly for the screen to update.
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+
+                    throw new RuntimeException(
+                            "Interrupted while scrolling notifications",
+                            e
+                    );
+                }
+
+            } catch (Exception e) {
+
+                throw new RuntimeException(
+                        "Failed to scroll notification screen",
+                        e
+                );
+            }
+
+            // Log whether scrolling exposed new notification messages.
+            int currentCount = validatedNotifications.size();
+
+            if (currentCount == previousCount) {
 
                 System.out.println(
-                        "Notification screen did not change. "
-                                + "Attempt: "
-                                + noChangeCount
+                        "No new notification found after scroll attempt "
+                                + scrollAttempts
                 );
 
             } else {
 
-                noChangeCount = 0;
-
-                previousScreen =
-                        new ArrayList<>(
-                                currentScreen
-                        );
-            }
-
-            /*
-             * If the screen did not change several times,
-             * stop scrolling.
-             */
-            if (noChangeCount >= 3) {
-
                 System.out.println(
-                        "Notification list is no longer moving."
+                        "New notifications found. Total collected: "
+                                + currentCount
                 );
-
-                break;
             }
-
-            /*
-             * Do not scroll after the last possible attempt.
-             */
-            if (scroll >= MAX_SCROLLS) {
-                break;
-            }
-
-            /*
-             * Perform swipe.
-             */
-            System.out.println(
-                    "Scrolling notification list..."
-            );
-
-            swipeNotificationList();
-
-            /*
-             * Wait for notification content to change.
-             *
-             * No Thread.sleep() is used.
-             */
-            waitForNotificationListUpdate(
-                    previousScreen
-            );
         }
 
-        /*
-         * Final validation.
-         */
-        if (
-                notificationCount
-                        < REQUIRED_NOTIFICATIONS
-        ) {
+        // =====================================================
+        // STEP 3 - FINAL VALIDATION
+        // =====================================================
 
-            throw new RuntimeException(
-                    "Only "
-                            + notificationCount
-                            + " notification cards found. "
-                            + "Expected "
-                            + REQUIRED_NOTIFICATIONS
-                            + "."
+        List<String> results =
+                new ArrayList<>(validatedNotifications);
+
+        System.out.println(
+                "Total unique notification messages found: "
+                        + results.size()
+        );
+
+        if (results.size() < 10) {
+
+            String error =
+                    "Expected 10 notifications but found "
+                            + results.size()
+                            + ". Check the notification XPath and "
+                            + "whether more notifications exist.";
+
+            ExtentTestListener.logStep(error);
+
+            throw new AssertionError(error);
+        }
+
+        for (int i = 0; i < 10; i++) {
+
+            if (results.get(i).trim().isEmpty()) {
+
+                throw new AssertionError(
+                        "Notification " + (i + 1)
+                                + " is empty"
+                );
+            }
+
+            System.out.println(
+                    "PASS: Notification " + (i + 1)
             );
         }
 
         System.out.println(
-                "Notification validation completed. "
-                        + "Total validated: "
-                        + notificationCount
+                "========== NOTIFICATION VALIDATION PASSED =========="
+        );
+
+        ExtentTestListener.logStep(
+                "Successfully validated the first 10 notifications"
         );
     }
 
-    // =========================================================
-    // GET VISIBLE NOTIFICATIONS
-    // =========================================================
+    // =====================================================
+    // STEP 3 - COMPLETE FLOW
+    // =====================================================
 
-    private List<String> getVisibleNotifications() {
+    public void validateNotificationsFlow() {
 
-        List<String> notifications =
-                new ArrayList<>();
+        clickNotifications();
 
-        List<WebElement> cards =
-                driver.findElements(
-                        notificationCards
-                );
-
-        for (WebElement card : cards) {
-
-            try {
-
-                /*
-                 * Get content-desc.
-                 */
-                String contentDescription =
-                        card.getAttribute(
-                                "content-desc"
-                        );
-
-                if (
-                        contentDescription == null
-                                || contentDescription
-                                .trim()
-                                .isEmpty()
-                ) {
-                    continue;
-                }
-
-                /*
-                 * Clean notification text.
-                 */
-                String clean =
-                        cleanText(
-                                contentDescription
-                        );
-
-                if (clean.isEmpty()) {
-                    continue;
-                }
-
-                /*
-                 * Ignore date separators.
-                 */
-                if (isDateSeparator(clean)) {
-                    continue;
-                }
-
-                /*
-                 * Add notification.
-                 */
-                notifications.add(clean);
-
-            } catch (Exception ignored) {
-                /*
-                 * Ignore stale/invalid element and continue.
-                 */
-            }
-        }
-
-        return notifications;
-    }
-
-    // =========================================================
-    // SWIPE NOTIFICATION LIST
-    // =========================================================
-
-    private void swipeNotificationList() {
-
-        /*
-         * Real W3C touch action.
-         *
-         * Device:
-         * 720 x 1604
-         *
-         * Swipe starts near the bottom and moves upward.
-         */
-        PointerInput finger =
-                new PointerInput(
-                        PointerInput.Kind.TOUCH,
-                        "notificationFinger"
-                );
-
-        Sequence swipe =
-                new Sequence(
-                        finger,
-                        1
-                );
-
-        /*
-         * Move finger to starting position.
-         */
-        swipe.addAction(
-                finger.createPointerMove(
-                        Duration.ZERO,
-                        PointerInput.Origin.viewport(),
-                        360,
-                        1350
-                )
-        );
-
-        /*
-         * Finger down.
-         */
-        swipe.addAction(
-                finger.createPointerDown(
-                        PointerInput.MouseButton.LEFT.asArg()
-                )
-        );
-
-        /*
-         * Move upward.
-         */
-        swipe.addAction(
-                finger.createPointerMove(
-                        Duration.ofMillis(800),
-                        PointerInput.Origin.viewport(),
-                        360,
-                        550
-                )
-        );
-
-        /*
-         * Finger up.
-         */
-        swipe.addAction(
-                finger.createPointerUp(
-                        PointerInput.MouseButton.LEFT.asArg()
-                )
-        );
-
-        /*
-         * Perform swipe.
-         */
-        driver.perform(
-                List.of(swipe)
-        );
-    }
-
-    // =========================================================
-    // WAIT FOR LIST UPDATE
-    // =========================================================
-
-    private void waitForNotificationListUpdate(
-            List<String> oldScreen
-    ) {
-
-        try {
-
-            new WebDriverWait(
-                    driver,
-                    Duration.ofSeconds(5)
-            ).until(
-                    driver -> {
-
-                        List<String> currentScreen =
-                                getVisibleNotifications();
-
-                        /*
-                         * Return true when the visible
-                         * notification content changes.
-                         */
-                        return !currentScreen.equals(
-                                oldScreen
-                        );
-                    }
-            );
-
-        } catch (Exception ignored) {
-
-            /*
-             * Do not fail immediately if the list does
-             * not expose an easily detectable update.
-             *
-             * The next loop will read the screen again.
-             */
-        }
-    }
-
-    // =========================================================
-    // DATE SEPARATOR CHECK
-    // =========================================================
-
-    private boolean isDateSeparator(
-            String text
-    ) {
-
-        if (
-                text == null
-                        || text.trim().isEmpty()
-        ) {
-            return false;
-        }
-
-        return text.matches(
-                "(January|February|March|April|May|June|July|August|"
-                        + "September|October|November|December)"
-                        + "\\s+\\d{1,2},\\s+\\d{4}"
-        );
-    }
-
-    // =========================================================
-    // CLEAN TEXT
-    // =========================================================
-
-    private String cleanText(
-            String text
-    ) {
-
-        if (text == null) {
-            return "";
-        }
-
-        return text
-                /*
-                 * Remove invisible Unicode formatting
-                 * characters.
-                 */
-                .replaceAll(
-                        "\\p{Cf}",
-                        ""
-                )
-
-                /*
-                 * Convert line breaks to spaces.
-                 */
-                .replace(
-                        "\n",
-                        " "
-                )
-
-                /*
-                 * Normalize multiple spaces.
-                 */
-                .replaceAll(
-                        "\\s+",
-                        " "
-                )
-
-                /*
-                 * Remove leading/trailing spaces.
-                 */
-                .trim();
+        validateFirst10Notifications();
     }
 }

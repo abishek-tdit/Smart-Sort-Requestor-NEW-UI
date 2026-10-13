@@ -24,7 +24,6 @@ public class F1PlaceOrderForRescheduleFlowTest extends BaseClassMobile {
         BDoorPickupPage doorPickupPage = new BDoorPickupPage();
         doorPickupPage.selectDoorstepPickupFlow();
 
-
         //SLOT
         CSlotPage slotPage = new CSlotPage();
         slotPage.selectMaterialCategory();

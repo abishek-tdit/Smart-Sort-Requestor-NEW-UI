@@ -13,11 +13,11 @@ public class C1RequestorOrderPlacingFlowTest extends BaseClassMobile {
     public void smartSortOrderFlow() throws Exception {
 
         //Login
-        ALoginPage loginPage = new ALoginPage(driver);
-        loginPage.login("0500000055",
-                          generatedPassword);
-
-        ExtentTestListener.logStep("Requestor Login Successful");
+//        ALoginPage loginPage = new ALoginPage(driver);
+//        loginPage.login("0500000555",
+//                          generatedPassword);
+//
+//        ExtentTestListener.logStep("Requestor Login Successful");
 
         //Location
         CLocationPage locationPage = new CLocationPage(driver);
@@ -38,6 +38,7 @@ public class C1RequestorOrderPlacingFlowTest extends BaseClassMobile {
 
 
         //save order number
+        Thread.sleep(5000);
         GSaveOrderNumberForDoorPickup saveOrder = new GSaveOrderNumberForDoorPickup();
         saveOrder.saveRecentlyPlacedOrderNumber();
 

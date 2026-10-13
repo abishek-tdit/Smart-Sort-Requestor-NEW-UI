@@ -18,16 +18,10 @@ public class BSmartSortRegistrationArabicFlowTest
 
             ExtentTestListener.logStep("Arabic Registration Flow Started");
 
-            // =================================================
-            // ARABIC SIGN UP
-            // =================================================
 
+            // ARABIC SIGN UP
             ASignUpArabicPage signUpPage = new ASignUpArabicPage(driver);
             signUpPage.signUp();
-
-            // =================================================
-            // SUCCESS
-            // =================================================
 
             ExtentTestListener.logStep("Arabic Registration Flow Completed Successfully");
 

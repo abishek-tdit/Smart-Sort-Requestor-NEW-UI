@@ -10,12 +10,12 @@ public class ERequestorRedeemFlowTest extends BaseClassMobile {
     @Test(priority = 10)
     public void requestorRedeemFlow() throws Exception {
 
-        ExtentTestListener.logStep("Start Redeem Flow");
         //=========================================================
         // Launch SmartSort App
         //=========================================================
-        driver.activateApp("com.abqaiq.smartsort");
+        ExtentTestListener.logStep("Start Redeem Flow");
 
+        driver.activateApp("com.abqaiq.smartsort");
         Thread.sleep(8000);
 
         //Select Location A1:

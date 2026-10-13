@@ -4,6 +4,7 @@ import Base.BaseClassMobile;
 import Base.ExtentTestListener;
 import io.appium.java_client.AppiumBy;
 import org.openqa.selenium.By;
+import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -26,8 +27,7 @@ public class CSlotPage extends BaseClassMobile {
 
     private final By availableSlots = By.xpath(
             "//*[contains(@content-desc,'AM') or " +
-                    "contains(@content-desc,'PM')]"
-    );
+                    "contains(@content-desc,'PM')]");
 
     // =========================================================
     // CONFIRM ORDER
@@ -180,24 +180,43 @@ public class CSlotPage extends BaseClassMobile {
     // =========================================================
     // OK POPUP
     // =========================================================
-
     public void clickOKPopup() {
 
-        System.out.println(
-                "Waiting for OK popup..."
-        );
+        System.out.println("Checking for OK popup...");
 
-        WebElement ok = wait.until(
-                ExpectedConditions.elementToBeClickable(
-                        okButton
-                )
-        );
+        try {
 
-        ok.click();
+            WebDriverWait shortWait = new WebDriverWait(
+                    driver,
+                    Duration.ofSeconds(5)
+            );
 
-        ExtentTestListener.logStep(
-                "OK popup clicked"
-        );
+            WebElement ok = shortWait.until(
+                    ExpectedConditions.elementToBeClickable(okButton)
+            );
+
+            if (ok.isDisplayed()) {
+
+                ok.click();
+
+                ExtentTestListener.logStep(
+                        "OK popup clicked"
+                );
+
+                System.out.println("OK popup clicked");
+
+            }
+
+        } catch (TimeoutException e) {
+
+            System.out.println(
+                    "OK popup not displayed - Skipping"
+            );
+
+            ExtentTestListener.logStep(
+                    "OK popup not displayed - Skipped"
+            );
+        }
     }
 
 

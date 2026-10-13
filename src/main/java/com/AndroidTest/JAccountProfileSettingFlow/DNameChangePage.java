@@ -212,37 +212,26 @@ public class DNameChangePage {
 
         updatedLastNameField.sendKeys("Abiram");
 
-        System.out.println(
-                "Last Name changed: abishek -> Abiram"
-        );
+        System.out.println("Last Name changed: abishek -> Abiram");
 
         // -----------------------------------------------------
         // CLICK UPDATE AGAIN
         // -----------------------------------------------------
 
-        WebElement secondUpdate = wait.until(
-                ExpectedConditions.elementToBeClickable(
-                        updateButton
-                )
-        );
+        WebElement secondUpdate = wait.until
+                (ExpectedConditions.elementToBeClickable(updateButton));
 
         secondUpdate.click();
 
-        System.out.println(
-                "Second Update clicked successfully"
-        );
+        System.out.println("Second Update clicked successfully");
 
         // -----------------------------------------------------
         // COMPLETED
         // -----------------------------------------------------
 
-        System.out.println(
-                "===== NAME CHANGE COMPLETED ====="
-        );
+        System.out.println("===== NAME CHANGE COMPLETED =====");
 
-        System.out.println(
-                "Final Last Name: Abiram"
-        );
+        System.out.println("Final Last Name: Abiram");
     }
 
     // =========================================================
@@ -255,39 +244,21 @@ public class DNameChangePage {
     ) {
 
         try {
-
-            wait.until(
-                    ExpectedConditions.elementToBeClickable(
-                            locator
-                    )
-            ).click();
-
-        } catch (Exception e) {
-
-            System.out.println(
-                    "Normal click failed. Trying parent element..."
-            );
+            wait.until(ExpectedConditions.elementToBeClickable(locator)).click();
+        }
+        catch (Exception e)
+        {
+            System.out.println("Normal click failed. Trying parent element...");
 
             try {
 
-                WebElement parent =
-                        element.findElement(
-                                By.xpath("..")
-                        );
+                WebElement parent = element.findElement(By.xpath(".."));
 
-                wait.until(
-                        ExpectedConditions.elementToBeClickable(
-                                parent
-                        )
-                ).click();
-
-            } catch (Exception parentException) {
-
-                throw new RuntimeException(
-                        "Unable to click element: " +
-                                locator,
-                        parentException
-                );
+                wait.until(ExpectedConditions.elementToBeClickable(parent)).click();
+            }
+            catch (Exception parentException)
+            {
+                throw new RuntimeException("Unable to click element: " + locator, parentException);
             }
         }
     }

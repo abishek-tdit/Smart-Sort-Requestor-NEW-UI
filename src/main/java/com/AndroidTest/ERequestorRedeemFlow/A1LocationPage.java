@@ -12,83 +12,121 @@ import java.time.Duration;
 
 public class A1LocationPage {
 
-    AndroidDriver driver;
-    WebDriverWait wait;
+    private final AndroidDriver driver;
+    private final WebDriverWait wait;
+
+    // Fast normal wait
+    private static final int FAST_WAIT = 8;
+
+    // Fallback wait for slow loading
+    private static final int FALLBACK_WAIT = 20;
 
     public A1LocationPage(AndroidDriver driver) {
+
         this.driver = driver;
-        this.wait = new WebDriverWait(driver, Duration.ofSeconds(60));
+
+        this.wait = new WebDriverWait(
+                driver,
+                Duration.ofSeconds(FALLBACK_WAIT)
+        );
+
+        this.wait.pollingEvery(
+                Duration.ofMillis(300)
+        );
     }
 
     public void selectLocation() throws Exception {
 
-        // Wait until Home page loading is completed
-        waitForPageToBeStable();
-        ExtentTestListener.logStep("Home page loading completed");
+        // =====================================================
+        // 1. WAIT FOR HOME PAGE
+        // =====================================================
 
-        // Explore Other Locations
         StepTimer.startStep();
 
-        WebElement exploreBtn = wait.until(
-                ExpectedConditions.elementToBeClickable(
-                        AppiumBy.accessibilityId("Explore Other Locations")));
+        WebElement exploreBtn =
+                wait.until(
+                        ExpectedConditions.elementToBeClickable(
+                                AppiumBy.accessibilityId(
+                                        "Explore Other Locations"
+                                )
+                        )
+                );
+
+        double duration = StepTimer.endStep();
+
+        ExtentTestListener.logStep(
+                "Home page loading completed | Time Taken : "
+                        + String.format("%.2f", duration)
+                        + " sec"
+        );
+
+        // =====================================================
+        // 2. CLICK EXPLORE OTHER LOCATIONS
+        // =====================================================
+
+        StepTimer.startStep();
 
         exploreBtn.click();
 
-        double duration = StepTimer.endStep();
-        ExtentTestListener.logStep("Explore Other Locations clicked | Time Taken : "
-                + String.format("%.2f", duration)
-                + " sec");
+        duration = StepTimer.endStep();
 
-        // Bqaiq Location
+        ExtentTestListener.logStep(
+                "Explore Other Locations clicked | Time Taken : "
+                        + String.format("%.2f", duration)
+                        + " sec"
+        );
+
+        // =====================================================
+        // 3. SELECT BQAIQ
+        // =====================================================
+
         StepTimer.startStep();
 
-        WebElement locationBtn = wait.until(
-                ExpectedConditions.elementToBeClickable(
-                        AppiumBy.accessibilityId("Bqaiq")));
+        WebElement locationBtn =
+                wait.until(
+                        ExpectedConditions.elementToBeClickable(
+                                AppiumBy.accessibilityId("Bqaiq")
+                        )
+                );
 
         locationBtn.click();
 
         duration = StepTimer.endStep();
 
-        ExtentTestListener.logStep("Location Selected : Bqaiq | Time Taken : "
-                + String.format("%.2f", duration)
-                + " sec");
+        ExtentTestListener.logStep(
+                "Location Selected : Bqaiq | Time Taken : "
+                        + String.format("%.2f", duration)
+                        + " sec"
+        );
 
-        // Wait for loading
-        waitForPageToBeStable();
+        // =====================================================
+        // 4. WAIT FOR NEXT SCREEN
+        // =====================================================
 
-        ExtentTestListener.logStep("Location loading completed");
+        waitForLocationPage();
+
+        ExtentTestListener.logStep(
+                "Location loading completed"
+        );
     }
 
-    private void waitForPageToBeStable() {
+    // =========================================================
+    // WAIT FOR LOCATION PAGE
+    // =========================================================
 
-        String previousSource = " ";
-        int stableCount = 0;
-        long endTime = System.currentTimeMillis() + 60000;
-        while (System.currentTimeMillis() < endTime) {
-            String currentSource = driver.getPageSource();
-            if (currentSource.equals(previousSource))
-            {
-                stableCount++;
-                if (stableCount >= 3) {
-                    return;
-                }
-            }
-            else
-            {
-                stableCount = 0;
-                previousSource = currentSource;
-            }
-            try
-            {
-                Thread.sleep(1000);
-            }
-            catch (InterruptedException e)
-            {
-                Thread.currentThread().interrupt();
-                return;
-            }
+    private void waitForLocationPage() {
+
+        try {
+
+            new WebDriverWait(
+                    driver, Duration.ofSeconds(FAST_WAIT))
+
+                    .pollingEvery(Duration.ofMillis(300))
+                    .until(driver -> !driver.findElements
+                            (AppiumBy.accessibilityId("Explore Other Locations")).isEmpty());
+
+        }
+        catch (Exception ignored) {
         }
     }
 }

@@ -17,13 +17,18 @@ import java.util.Collections;
 
 public class G1AddressPage extends BaseClassMobile {
 
+    // =========================================================
+    // DRIVER / WAIT
+    // =========================================================
+
     private final AndroidDriver driver;
     private final WebDriverWait wait;
+
+    private static final int WAIT_TIME = 30;
 
     // =========================================================
     // LOCATORS
     // =========================================================
-
 
     private final By ADDRESS =
             AppiumBy.xpath(
@@ -38,8 +43,8 @@ public class G1AddressPage extends BaseClassMobile {
     private final By SELECT_CITY =
             AppiumBy.accessibilityId("Select City");
 
-    private final By CHENNAI =
-            AppiumBy.accessibilityId("Chennai");
+    private final By BQAIQ =
+            AppiumBy.accessibilityId("Bqaiq");
 
     private final By SELECT_DISTRICT =
             AppiumBy.accessibilityId("Select district");
@@ -56,7 +61,6 @@ public class G1AddressPage extends BaseClassMobile {
     private final By OK_BUTTON =
             AppiumBy.accessibilityId("OK");
 
-
     // =========================================================
     // CONSTRUCTOR
     // =========================================================
@@ -65,12 +69,8 @@ public class G1AddressPage extends BaseClassMobile {
 
         this.driver = driver;
 
-        this.wait = new WebDriverWait(
-                driver,
-                Duration.ofSeconds(30)
-        );
+        this.wait = new WebDriverWait(driver, Duration.ofSeconds(WAIT_TIME));
     }
-
 
     // =========================================================
     // REAL TOUCH SWIPE UP
@@ -90,57 +90,36 @@ public class G1AddressPage extends BaseClassMobile {
         int endX = width / 2;
         int endY = (int) (height * 0.30);
 
-        ExtentTestListener.logStep(
-                "REAL SWIPE UP : "
-                        + startX + "," + startY
-                        + " -> "
-                        + endX + "," + endY
-        );
+        ExtentTestListener.logStep("REAL SWIPE UP : "
+                + startX + "," + startY
+                + " -> "
+                + endX + "," + endY);
 
-        PointerInput finger =
-                new PointerInput(
-                        PointerInput.Kind.TOUCH,
-                        "finger"
-                );
+        PointerInput finger = new PointerInput
+                (PointerInput.Kind.TOUCH, "finger");
 
-        Sequence swipe =
-                new Sequence(finger, 1);
+        Sequence swipe = new Sequence(finger, 1);
 
-        swipe.addAction(
-                finger.createPointerMove(
+        swipe.addAction(finger.createPointerMove(
                         Duration.ZERO,
                         PointerInput.Origin.viewport(),
                         startX,
-                        startY
-                )
-        );
+                        startY));
 
-        swipe.addAction(
-                finger.createPointerDown(
-                        PointerInput.MouseButton.LEFT.asArg()
-                )
-        );
+        swipe.addAction(finger.createPointerDown(
+                        PointerInput.MouseButton.LEFT.asArg()));
 
-        swipe.addAction(
-                finger.createPointerMove(
+        swipe.addAction(finger.createPointerMove(
                         Duration.ofMillis(800),
                         PointerInput.Origin.viewport(),
                         endX,
-                        endY
-                )
-        );
+                        endY));
 
-        swipe.addAction(
-                finger.createPointerUp(
-                        PointerInput.MouseButton.LEFT.asArg()
-                )
-        );
+        swipe.addAction
+                (finger.createPointerUp(PointerInput.MouseButton.LEFT.asArg()));
 
-        driver.perform(
-                Collections.singletonList(swipe)
-        );
+        driver.perform(Collections.singletonList(swipe));
     }
-
 
     // =========================================================
     // CHECK ELEMENT SAFE VISIBLE AREA
@@ -161,7 +140,9 @@ public class G1AddressPage extends BaseClassMobile {
                     y + (elementHeight / 2);
 
             Dimension screen =
-                    driver.manage().window().getSize();
+                    driver.manage()
+                            .window()
+                            .getSize();
 
             int screenHeight =
                     screen.getHeight();
@@ -177,46 +158,31 @@ public class G1AddressPage extends BaseClassMobile {
                             + screenHeight
             );
 
-            /*
-             * Safe clickable area.
-             *
-             * Avoid:
-             * - Header area
-             * - Bottom navigation area
-             */
             return centerY > 180
                     && centerY < screenHeight - 180;
 
         } catch (Exception e) {
 
+            ExtentTestListener.logStep(
+                    "Unable to determine element position"
+            );
+
             return false;
         }
     }
-
 
     // =========================================================
     // CLICK ADDRESS
     // =========================================================
 
     public G1AddressPage clickAddress() {
-        scrollDown();
+
         long startTime =
                 System.currentTimeMillis();
 
         ExtentTestListener.logStep(
                 "===== FIND ADDRESS SECTION ====="
         );
-
-        /*
-         * First check whether Address is already visible.
-         *
-         * This is important because the XML you provided
-         * already shows Address at:
-         *
-         * [40,522][680,652]
-         *
-         * So there is NO need to blindly scroll twice.
-         */
 
         for (int attempt = 1; attempt <= 6; attempt++) {
 
@@ -234,86 +200,88 @@ public class G1AddressPage extends BaseClassMobile {
                         "Dynamic Address element found"
                 );
 
-                /*
-                 * Check current position.
-                 */
-                if (isInSafeVisibleArea(address)) {
+                // -------------------------------------------------
+                // CHECK SAFE VISIBLE AREA
+                // -------------------------------------------------
+
+                if (!isInSafeVisibleArea(address)) {
 
                     ExtentTestListener.logStep(
-                            "Address is in safe visible area"
+                            "Address found but outside safe visible area"
                     );
 
-                    /*
-                     * Wait until clickable.
-                     */
-                    wait.until(
-                            ExpectedConditions.elementToBeClickable(
-                                    ADDRESS
-                            )
-                    );
-
-                    /*
-                     * Re-find immediately before click.
-                     */
-                    address =
-                            driver.findElement(ADDRESS);
-
-                    /*
-                     * Check position one final time.
-                     */
-                    if (!isInSafeVisibleArea(address)) {
-
-                        ExtentTestListener.logStep(
-                                "Address moved - scrolling again"
-                        );
-
-                        performSwipeUp();
-
-                        continue;
-                    }
-
-                    ExtentTestListener.logStep(
-                            "CLICKING DYNAMIC ADDRESS"
-                    );
-
-                    address.click();
-
-                    long endTime =
-                            System.currentTimeMillis();
-
-                    ExtentTestListener.logStep(
-                            "Address clicked successfully | Time Taken : "
-                                    + (endTime - startTime)
-                                    + " ms"
-                    );
-
-                    return this;
+                    performSwipeUp();
+                    continue;
                 }
 
-                ExtentTestListener.logStep(
-                        "Address found but outside safe visible area"
+                // -------------------------------------------------
+                // WAIT UNTIL CLICKABLE
+                // -------------------------------------------------
+
+                wait.until(
+                        ExpectedConditions.elementToBeClickable(
+                                ADDRESS
+                        )
                 );
+
+                // -------------------------------------------------
+                // RE-FIND BEFORE CLICK
+                // -------------------------------------------------
+
+                address =
+                        driver.findElement(ADDRESS);
+
+                if (!isInSafeVisibleArea(address)) {
+
+                    ExtentTestListener.logStep(
+                            "Address moved after wait - scrolling again"
+                    );
+
+                    performSwipeUp();
+                    continue;
+                }
+
+                // -------------------------------------------------
+                // CLICK
+                // -------------------------------------------------
+
+                ExtentTestListener.logStep(
+                        "CLICKING DYNAMIC ADDRESS"
+                );
+
+                address.click();
+
+                long endTime =
+                        System.currentTimeMillis();
+
+                ExtentTestListener.logStep(
+                        "Address clicked successfully"
+                                + " | Time Taken : "
+                                + (endTime - startTime)
+                                + " ms"
+                );
+
+                return this;
 
             } catch (Exception e) {
 
                 ExtentTestListener.logStep(
                         "Address not ready on attempt "
                                 + attempt
+                                + " | Reason : "
+                                + e.getClass().getSimpleName()
                 );
-            }
 
-            /*
-             * Only scroll when Address is not currently
-             * in the correct visible position.
-             */
-            performSwipeUp();
+                if (attempt < 6) {
+                    performSwipeUp();
+                }
+            }
         }
 
         throw new RuntimeException(
                 "FAILED: Dynamic Address could not be clicked"
         );
     }
-
 
     // =========================================================
     // CLICK ADD ADDRESS
@@ -341,14 +309,14 @@ public class G1AddressPage extends BaseClassMobile {
                 System.currentTimeMillis();
 
         ExtentTestListener.logStep(
-                "Add Address clicked successfully | Time Taken : "
+                "Add Address clicked successfully"
+                        + " | Time Taken : "
                         + (endTime - startTime)
                         + " ms"
         );
 
         return this;
     }
-
 
     // =========================================================
     // SELECT CITY
@@ -370,43 +338,79 @@ public class G1AddressPage extends BaseClassMobile {
         ).click();
 
         ExtentTestListener.logStep(
-                "Searching for Chennai"
+                "Searching for Bqaiq"
         );
 
         for (int attempt = 1; attempt <= 5; attempt++) {
 
             try {
 
-                WebElement chennai =
-                        driver.findElement(CHENNAI);
+                WebElement bqaiq =
+                        driver.findElement(BQAIQ);
 
-                if (isInSafeVisibleArea(chennai)) {
-
-                    chennai.click();
-
-                    long endTime =
-                            System.currentTimeMillis();
+                if (!isInSafeVisibleArea(bqaiq)) {
 
                     ExtentTestListener.logStep(
-                            "Chennai selected successfully | Time Taken : "
-                                    + (endTime - startTime)
-                                    + " ms"
+                            "Bqaiq found but outside safe visible area"
                     );
 
-                    return this;
+                    performSwipeUp();
+                    continue;
                 }
 
-            } catch (Exception ignored) {
-            }
+                wait.until(
+                        ExpectedConditions.elementToBeClickable(
+                                BQAIQ
+                        )
+                );
 
-            performSwipeUp();
+                // Re-find immediately before click
+                bqaiq =
+                        driver.findElement(BQAIQ);
+
+                if (!isInSafeVisibleArea(bqaiq)) {
+
+                    ExtentTestListener.logStep(
+                            "Bqaiq moved after wait - scrolling again"
+                    );
+
+                    performSwipeUp();
+                    continue;
+                }
+
+                bqaiq.click();
+
+                long endTime =
+                        System.currentTimeMillis();
+
+                ExtentTestListener.logStep(
+                        "Bqaiq selected successfully"
+                                + " | Time Taken : "
+                                + (endTime - startTime)
+                                + " ms"
+                );
+
+                return this;
+
+            } catch (Exception e) {
+
+                ExtentTestListener.logStep(
+                        "Bqaiq not ready on attempt "
+                                + attempt
+                                + " | Reason : "
+                                + e.getClass().getSimpleName()
+                );
+
+                if (attempt < 5) {
+                    performSwipeUp();
+                }
+            }
         }
 
         throw new RuntimeException(
-                "FAILED: Chennai could not be found"
+                "FAILED: Bqaiq could not be found"
         );
     }
-
 
     // =========================================================
     // SELECT DISTRICT
@@ -428,27 +432,79 @@ public class G1AddressPage extends BaseClassMobile {
         ).click();
 
         ExtentTestListener.logStep(
-                "Select Ambattur"
+                "Searching for Ambattur"
         );
 
-        wait.until(
-                ExpectedConditions.elementToBeClickable(
-                        AMBATTUR
-                )
-        ).click();
+        for (int attempt = 1; attempt <= 5; attempt++) {
 
-        long endTime =
-                System.currentTimeMillis();
+            try {
 
-        ExtentTestListener.logStep(
-                "Ambattur selected successfully | Time Taken : "
-                        + (endTime - startTime)
-                        + " ms"
+                WebElement ambattur =
+                        driver.findElement(AMBATTUR);
+
+                if (!isInSafeVisibleArea(ambattur)) {
+
+                    ExtentTestListener.logStep(
+                            "Ambattur found but outside safe visible area"
+                    );
+
+                    performSwipeUp();
+                    continue;
+                }
+
+                wait.until(
+                        ExpectedConditions.elementToBeClickable(
+                                AMBATTUR
+                        )
+                );
+
+                // Re-find immediately before click
+                ambattur =
+                        driver.findElement(AMBATTUR);
+
+                if (!isInSafeVisibleArea(ambattur)) {
+
+                    ExtentTestListener.logStep(
+                            "Ambattur moved after wait - scrolling again"
+                    );
+
+                    performSwipeUp();
+                    continue;
+                }
+
+                ambattur.click();
+
+                long endTime =
+                        System.currentTimeMillis();
+
+                ExtentTestListener.logStep(
+                        "Ambattur selected successfully"
+                                + " | Time Taken : "
+                                + (endTime - startTime)
+                                + " ms"
+                );
+
+                return this;
+
+            } catch (Exception e) {
+
+                ExtentTestListener.logStep(
+                        "Ambattur not ready on attempt "
+                                + attempt
+                                + " | Reason : "
+                                + e.getClass().getSimpleName()
+                );
+
+                if (attempt < 5) {
+                    performSwipeUp();
+                }
+            }
+        }
+
+        throw new RuntimeException(
+                "FAILED: Ambattur could not be found"
         );
-
-        return this;
     }
-
 
     // =========================================================
     // USE CURRENT LOCATION
@@ -472,33 +528,71 @@ public class G1AddressPage extends BaseClassMobile {
                                 USE_CURRENT_LOCATION
                         );
 
-                if (isInSafeVisibleArea(location)) {
-
-                    location.click();
-
-                    long endTime =
-                            System.currentTimeMillis();
+                if (!isInSafeVisibleArea(location)) {
 
                     ExtentTestListener.logStep(
-                            "Use Current Location clicked successfully | Time Taken : "
-                                    + (endTime - startTime)
-                                    + " ms"
+                            "Use Current Location found but outside safe visible area"
                     );
 
-                    return this;
+                    performSwipeUp();
+                    continue;
                 }
 
-            } catch (Exception ignored) {
-            }
+                wait.until(
+                        ExpectedConditions.elementToBeClickable(
+                                USE_CURRENT_LOCATION
+                        )
+                );
 
-            performSwipeUp();
+                // Re-find immediately before click
+                location =
+                        driver.findElement(
+                                USE_CURRENT_LOCATION
+                        );
+
+                if (!isInSafeVisibleArea(location)) {
+
+                    ExtentTestListener.logStep(
+                            "Use Current Location moved after wait - scrolling again"
+                    );
+
+                    performSwipeUp();
+                    continue;
+                }
+
+                location.click();
+
+                long endTime =
+                        System.currentTimeMillis();
+
+                ExtentTestListener.logStep(
+                        "Use Current Location clicked successfully"
+                                + " | Time Taken : "
+                                + (endTime - startTime)
+                                + " ms"
+                );
+
+                return this;
+
+            } catch (Exception e) {
+
+                ExtentTestListener.logStep(
+                        "Use Current Location not ready on attempt "
+                                + attempt
+                                + " | Reason : "
+                                + e.getClass().getSimpleName()
+                );
+
+                if (attempt < 5) {
+                    performSwipeUp();
+                }
+            }
         }
 
         throw new RuntimeException(
                 "FAILED: Use Current Location could not be found"
         );
     }
-
 
     // =========================================================
     // SAVE ADDRESS
@@ -518,37 +612,71 @@ public class G1AddressPage extends BaseClassMobile {
             try {
 
                 WebElement save =
-                        driver.findElement(
-                                SAVE_ADDRESS
-                        );
+                        driver.findElement(SAVE_ADDRESS);
 
-                if (isInSafeVisibleArea(save)) {
-
-                    save.click();
-
-                    long endTime =
-                            System.currentTimeMillis();
+                if (!isInSafeVisibleArea(save)) {
 
                     ExtentTestListener.logStep(
-                            "Save Address clicked successfully | Time Taken : "
-                                    + (endTime - startTime)
-                                    + " ms"
+                            "Save Address found but outside safe visible area"
                     );
 
-                    return this;
+                    performSwipeUp();
+                    continue;
                 }
 
-            } catch (Exception ignored) {
-            }
+                wait.until(
+                        ExpectedConditions.elementToBeClickable(
+                                SAVE_ADDRESS
+                        )
+                );
 
-            performSwipeUp();
+                // Re-find immediately before click
+                save =
+                        driver.findElement(SAVE_ADDRESS);
+
+                if (!isInSafeVisibleArea(save)) {
+
+                    ExtentTestListener.logStep(
+                            "Save Address moved after wait - scrolling again"
+                    );
+
+                    performSwipeUp();
+                    continue;
+                }
+
+                save.click();
+
+                long endTime =
+                        System.currentTimeMillis();
+
+                ExtentTestListener.logStep(
+                        "Save Address clicked successfully"
+                                + " | Time Taken : "
+                                + (endTime - startTime)
+                                + " ms"
+                );
+
+                return this;
+
+            } catch (Exception e) {
+
+                ExtentTestListener.logStep(
+                        "Save Address not ready on attempt "
+                                + attempt
+                                + " | Reason : "
+                                + e.getClass().getSimpleName()
+                );
+
+                if (attempt < 5) {
+                    performSwipeUp();
+                }
+            }
         }
 
         throw new RuntimeException(
                 "FAILED: Save Address could not be found"
         );
     }
-
 
     // =========================================================
     // CLICK OK
@@ -563,24 +691,27 @@ public class G1AddressPage extends BaseClassMobile {
                 "Waiting for OK Popup"
         );
 
-        wait.until(
-                ExpectedConditions.elementToBeClickable(
-                        OK_BUTTON
-                )
-        ).click();
+        WebElement ok =
+                wait.until(
+                        ExpectedConditions.elementToBeClickable(
+                                OK_BUTTON
+                        )
+                );
+
+        ok.click();
 
         long endTime =
                 System.currentTimeMillis();
 
         ExtentTestListener.logStep(
-                "OK clicked successfully | Time Taken : "
+                "OK clicked successfully"
+                        + " | Time Taken : "
                         + (endTime - startTime)
                         + " ms"
         );
 
         return this;
     }
-
 
     // =========================================================
     // COMPLETE ADDRESS FLOW
@@ -595,46 +726,26 @@ public class G1AddressPage extends BaseClassMobile {
                 "===== ADDRESS FLOW STARTED ====="
         );
 
-        /*
-         * 1. Find dynamic Address card
-         */
         clickAddress();
 
-        /*
-         * 2. Click Add Address
-         */
         clickAddAddress();
 
-        /*
-         * 3. Select City
-         */
         selectCity();
 
-        /*
-         * 4. Select District
-         */
         selectDistrict();
 
-        /*
-         * 5. Use Current Location
-         */
         useCurrentLocation();
 
-        /*
-         * 6. Save Address
-         */
         saveAddress();
 
-        /*
-         * 7. Click OK
-         */
         clickOK();
 
         long endTime =
                 System.currentTimeMillis();
 
         ExtentTestListener.logStep(
-                "===== ADDRESS FLOW COMPLETED ===== | Total Time Taken : "
+                "===== ADDRESS FLOW COMPLETED ====="
+                        + " | Total Time Taken : "
                         + (endTime - startTime)
                         + " ms"
         );

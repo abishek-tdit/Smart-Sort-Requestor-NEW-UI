@@ -14,13 +14,11 @@ public class C4CollectorNavigateToCollectionCenterFlowTest extends BaseClassMobi
     @Test(priority = 6)
     public void collectorNavigateToCollectionCenterTest() throws Exception {
 
-        //Rahul  : 0500055447
-        //TDIT   : 0500000654
+        //Rahuu  : 0500055447
 
         // Login:
         ALoginPage loginPage = new ALoginPage();
-        loginPage.login("0500055447",
-                generatedPassword);
+        loginPage.login("0500055447", generatedPassword);
 
         //Collector Navigate To Collection Center:
         BCollectorNavigateToCollectionCenterDOPage doPage = new BCollectorNavigateToCollectionCenterDOPage();

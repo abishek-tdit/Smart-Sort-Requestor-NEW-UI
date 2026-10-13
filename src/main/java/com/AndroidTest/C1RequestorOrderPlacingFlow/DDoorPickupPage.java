@@ -22,7 +22,10 @@ public class DDoorPickupPage {
     // =========================================================
 
     // Doorstep Pickup - Home Screen
-    private final By requestNow = AppiumBy.accessibilityId("Request Now");
+    private final By doorstepPickup = AppiumBy.xpath(
+            "//android.widget.ImageView[@content-desc='Doorstep Pickup\n" +
+                    "We come to your place to collect your items']"
+    );
 
     // Checkbox
     private final By materialCheckBox = AppiumBy.className("android.widget.CheckBox");
@@ -59,23 +62,28 @@ public class DDoorPickupPage {
 
         ExtentTestListener.logStep("Waiting for Home screen to load...");
 
-        //REQUEST NOW
-        WebElement requestNowButton =
-                wait.until(ExpectedConditions.elementToBeClickable(requestNow));
+        // DOORSTEP PICKUP
+        WebElement doorstepPickupButton = wait.until(
+                ExpectedConditions.elementToBeClickable(doorstepPickup)
+        );
 
-        requestNowButton.click();
+        doorstepPickupButton.click();
 
-        ExtentTestListener.logStep("Request Now clicked successfully");
+        ExtentTestListener.logStep(
+                "Doorstep Pickup clicked successfully"
+        );
+
+        System.out.println("Doorstep Pickup clicked successfully");
 
 
         // =====================================================
         // 4. CLICK CHECKBOX
         // =====================================================
 
-        WebElement checkbox =
+        WebElement checkbox1 =
                 wait.until(ExpectedConditions.elementToBeClickable(materialCheckBox));
 
-        checkbox.click();
+        checkbox1.click();
 
         ExtentTestListener.logStep("Checkbox Selected");
 
@@ -84,10 +92,33 @@ public class DDoorPickupPage {
         // 5. CLICK CONTINUE
         // =====================================================
 
-        WebElement continueBtn =
+        WebElement continueBtn1 =
                 wait.until(ExpectedConditions.elementToBeClickable(continueButton));
 
-        continueBtn.click();
+        continueBtn1.click();
+
+        ExtentTestListener.logStep("Continue clicked");
+
+        // =====================================================
+        // 4.1 CLICK CHECKBOX
+        // =====================================================
+
+        WebElement checkbox2 =
+                wait.until(ExpectedConditions.elementToBeClickable(materialCheckBox));
+
+        checkbox2.click();
+
+        ExtentTestListener.logStep("Checkbox Selected");
+
+
+        // =====================================================
+        // 5.1 CLICK CONTINUE
+        // =====================================================
+
+        WebElement continueBtn2 =
+                wait.until(ExpectedConditions.elementToBeClickable(continueButton));
+
+        continueBtn2.click();
 
         ExtentTestListener.logStep("Continue clicked");
 

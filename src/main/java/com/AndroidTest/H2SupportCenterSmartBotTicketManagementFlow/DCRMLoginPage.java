@@ -1,5 +1,6 @@
 package com.AndroidTest.H2SupportCenterSmartBotTicketManagementFlow;
 
+import lombok.Getter;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -10,11 +11,12 @@ import java.time.Duration;
 
 public class DCRMLoginPage {
 
+    // Return the SAME CRM browser
+    @Getter
     private WebDriver driver;
     private WebDriverWait wait;
 
-    private static final String URL =
-            "https://qa-crm.smartsortsupport.com/login";
+    private static final String URL = "https://qa-crm.smartsortsupport.com/login";
 
     private final By username =
             By.xpath("//input[@placeholder='Enter your username']");
@@ -55,8 +57,4 @@ public class DCRMLoginPage {
         System.out.println("CRM Login Successful");
     }
 
-    // Return the SAME CRM browser
-    public WebDriver getDriver() {
-        return driver;
-    }
 }

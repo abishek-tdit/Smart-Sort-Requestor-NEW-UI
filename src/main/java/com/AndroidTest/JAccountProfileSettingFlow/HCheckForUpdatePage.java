@@ -22,9 +22,7 @@ public class HCheckForUpdatePage extends BaseClassMobile {
     // =========================================================
 
     private static final By CHECK_FOR_UPDATE =
-            AppiumBy.xpath(
-                    "//android.view.View[contains(@content-desc,'Check for updated')]"
-            );
+            AppiumBy.xpath("//android.view.View[contains(@content-desc,'Check for updated')]");
 
     // =========================================================
     // Constructor
@@ -43,17 +41,13 @@ public class HCheckForUpdatePage extends BaseClassMobile {
 
         long startTime = System.currentTimeMillis();
 
-        ExtentTestListener.logStep(
-                "Waiting for Check for updated option"
-        );
+        ExtentTestListener.logStep("Waiting for Check for updated option");
 
         // =====================================================
         // Scroll Down
         // =====================================================
 
-        ExtentTestListener.logStep(
-                "Scrolling down to find Check for updated"
-        );
+        ExtentTestListener.logStep("Scrolling down to find Check for updated");
 
         scrollDown();
 
@@ -62,15 +56,9 @@ public class HCheckForUpdatePage extends BaseClassMobile {
         // =====================================================
 
         WebElement checkForUpdate =
-                wait.until(
-                        ExpectedConditions.visibilityOfElementLocated(
-                                CHECK_FOR_UPDATE
-                        )
-                );
+                wait.until(ExpectedConditions.visibilityOfElementLocated(CHECK_FOR_UPDATE));
 
-        ExtentTestListener.logStep(
-                "Check for updated option found"
-        );
+        ExtentTestListener.logStep("Check for updated option found");
 
         // =====================================================
         // Click Check for updated
@@ -78,35 +66,22 @@ public class HCheckForUpdatePage extends BaseClassMobile {
 
         try {
 
-            wait.until(
-                    ExpectedConditions.elementToBeClickable(
-                            CHECK_FOR_UPDATE
-                    )
-            );
-
+            wait.until(ExpectedConditions.elementToBeClickable(CHECK_FOR_UPDATE));
             checkForUpdate.click();
 
-            ExtentTestListener.logStep(
-                    "Clicked Check for updated"
-            );
-
-        } catch (Exception e) {
-
-            ExtentTestListener.logStep(
-                    "Normal click failed. Trying coordinate click"
-            );
+            ExtentTestListener.logStep("Clicked Check for updated");
+        }
+        catch (Exception e)
+        {
+            ExtentTestListener.logStep("Normal click failed. Trying coordinate click");
 
             // Coordinate click fallback
             int centerX = 360;
             int centerY = 1057;
 
-            driver.executeScript(
-                    "mobile: clickGesture",
-                    Map.of(
-                            "x", centerX,
-                            "y", centerY
-                    )
-            );
+            driver.executeScript("mobile: clickGesture",
+                    Map.of("x", centerX,
+                            "y", centerY));
 
             ExtentTestListener.logStep(
                     "Clicked Check for updated using coordinate click"
@@ -164,10 +139,10 @@ public class HCheckForUpdatePage extends BaseClassMobile {
 
         wait.until(driver -> {
 
-            long elapsed =
-                    System.currentTimeMillis() - waitStart;
+            long elapsed = System.currentTimeMillis() - waitStart;
 
             return elapsed >= 2000;
-        });
+        }
+        );
     }
 }

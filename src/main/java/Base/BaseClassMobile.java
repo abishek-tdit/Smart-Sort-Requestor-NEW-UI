@@ -31,21 +31,17 @@ public class BaseClassMobile {
     // App Packages
     // =========================================================
 
-    public static final String REQUESTOR_PACKAGE =
-            "com.abqaiq.smartsort";
+    public static final String REQUESTOR_PACKAGE = "com.abqaiq.smartsort";
 
-    public static final String UTILITY_PACKAGE =
-            "com.smartsort.utilities";
+    public static final String UTILITY_PACKAGE = "com.smartsort.utilities";
 
     // =========================================================
     // Device
     // =========================================================
 
-    private static final String DEVICE_NAME =
-            "HA69Z5PJ8PROEYHA";
+    private static final String DEVICE_NAME = "HA69Z5PJ8PROEYHA";
 
-    private static final String APPIUM_SERVER =
-            "http://127.0.0.1:4723";
+    private static final String APPIUM_SERVER = "http://127.0.0.1:4723";
 
     // =========================================================
     // Launch Requestor Application
@@ -54,101 +50,52 @@ public class BaseClassMobile {
     @BeforeSuite(alwaysRun = true)
     public void setUp() throws Exception {
 
-        ExtentTestListener.logStep(
-                "========== MOBILE EXECUTION STARTED ==========");
+        ExtentTestListener.logStep("========== MOBILE EXECUTION STARTED ==========");
 
         // Do not create another session if already running
         if (driver != null) {
-
-            ExtentTestListener.logStep(
-                    "Existing Mobile Session Reused");
-
+            ExtentTestListener.logStep("Existing Mobile Session Reused");
             return;
         }
 
-        DesiredCapabilities capabilities =
-                new DesiredCapabilities();
+        DesiredCapabilities capabilities = new DesiredCapabilities();
 
         // ---------------------------------------------------------
         // Platform
         // ---------------------------------------------------------
+        capabilities.setCapability("platformName", "Android");
+        capabilities.setCapability("automationName", "UiAutomator2");
+        capabilities.setCapability("deviceName", DEVICE_NAME);
+        capabilities.setCapability("udid", DEVICE_NAME);
 
-        capabilities.setCapability(
-                "platformName",
-                "Android");
-
-        capabilities.setCapability(
-                "automationName",
-                "UiAutomator2");
-
-        capabilities.setCapability(
-                "deviceName",
-                DEVICE_NAME);
-
-        capabilities.setCapability(
-                "udid",
-                DEVICE_NAME);
-
-        // ---------------------------------------------------------
+        // -------------------------------------------------------
         // Requestor Application
-        // ---------------------------------------------------------
-
-        capabilities.setCapability(
-                "appPackage",
-                REQUESTOR_PACKAGE);
-
-        capabilities.setCapability(
-                "appActivity",
-                "com.abqaiq.smartsort.MainActivity");
+        // -------------------------------------------------------
+        capabilities.setCapability("appPackage", REQUESTOR_PACKAGE);
+        capabilities.setCapability("appActivity", "com.abqaiq.smartsort.MainActivity");
 
         // ---------------------------------------------------------
         // Appium Settings
         // ---------------------------------------------------------
-
-        capabilities.setCapability(
-                "noReset",
-                true);
-
-        capabilities.setCapability(
-                "autoGrantPermissions",
-                true);
-
-        capabilities.setCapability(
-                "ignoreHiddenApiPolicyError",
-                true);
-
-        capabilities.setCapability(
-                "newCommandTimeout",
-                300);
-
-        capabilities.setCapability(
-                "adbExecTimeout",
-                120000);
-
-        capabilities.setCapability(
-                "uiautomator2ServerInstallTimeout",
-                120000);
-
-        capabilities.setCapability(
-                "uiautomator2ServerLaunchTimeout",
-                120000);
+        capabilities.setCapability("noReset", true);
+        capabilities.setCapability("autoGrantPermissions", true);
+        capabilities.setCapability("ignoreHiddenApiPolicyError", true);
+        capabilities.setCapability("newCommandTimeout", 300);
+        capabilities.setCapability("adbExecTimeout", 120000);
+        capabilities.setCapability("uiautomator2ServerInstallTimeout", 120000);
+        capabilities.setCapability("uiautomator2ServerLaunchTimeout", 120000);
 
         // ---------------------------------------------------------
         // Create Driver
         // ---------------------------------------------------------
 
-        driver = new AndroidDriver(
-                new URL(APPIUM_SERVER),
-                capabilities);
+        driver = new AndroidDriver(new URL(APPIUM_SERVER), capabilities);
 
-        wait = new WebDriverWait(
-                driver,
-                Duration.ofSeconds(WAIT_TIME));
+        wait = new WebDriverWait(driver, Duration.ofSeconds(WAIT_TIME));
 
         extent = ExtentManager.getExtent();
 
-        ExtentTestListener.logStep(
-                "Mobile Application Launched Successfully");
+        ExtentTestListener.logStep("Mobile Application Launched Successfully");
     }
 
     // =========================================================
@@ -173,10 +120,9 @@ public class BaseClassMobile {
 
     public static String takeScreenshot(String testName) {
 
-        String folder =
-                System.getProperty("user.dir")
-                        + File.separator
-                        + "screenshots";
+        String folder = System.getProperty("user.dir")
+                + File.separator
+                + "screenshots";
 
         File directory =
                 new File(folder);

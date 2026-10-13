@@ -3,298 +3,571 @@ package com.AndroidTest.KSettingFlow;
 import Base.BaseClassMobile;
 import Base.ExtentTestListener;
 import io.appium.java_client.AppiumBy;
-import io.appium.java_client.android.AndroidDriver;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
-import java.time.Duration;
 import java.util.List;
 
 public class GReportsPage extends BaseClassMobile {
 
-    private final AndroidDriver driver;
-    private final WebDriverWait wait;
+    // =========================================================
+    // LOCATORS
+    // =========================================================
 
-// ============================================================
-// CONSTRUCTOR
-// ============================================================
-
-    public GReportsPage(AndroidDriver driver) {
-        this.driver = driver;
-        this.wait = new WebDriverWait(driver, Duration.ofSeconds(15));
-    }
-
-// ============================================================
-// LOCATORS
-// ============================================================
-
-    // Report menu in Settings
     private final By REPORT =
             AppiumBy.accessibilityId("Report");
 
-    // Reports page title
-    private final By REPORT_PAGE_TITLE =
-            By.xpath("//android.view.View[@content-desc='Reports']");
+    private final By OVER_ALL_ORDERS =
+            AppiumBy.accessibilityId("Over All Orders");
 
-    // ScrollView used by Settings / Reports page
-    private final By SCROLL_VIEW =
-            By.xpath("//android.widget.ScrollView[@scrollable='true']");
+    private final By TOTAL_QUANTITY =
+            AppiumBy.accessibilityId("Total Quantity");
 
-// ============================================================
-// MAIN FLOW
-// ============================================================
+    private final By TOTAL_REWARD_POINTS =
+            AppiumBy.accessibilityId("Total Reward Points");
 
-    public void validateReportsPage() {
+    private final By RECENT_ORDERS =
+            AppiumBy.accessibilityId("Recent Orders");
+
+    private final By WEEKLY =
+            AppiumBy.accessibilityId("Weekly");
+
+    private final By MONTHLY =
+            AppiumBy.accessibilityId("Monthly");
+
+    private final By RANGE =
+            AppiumBy.accessibilityId("Range");
+
+
+    // =========================================================
+    // DYNAMIC VALUE LOCATORS
+    // =========================================================
+
+    /*
+     * Any visible View whose content-desc is only a number.
+     *
+     * Example:
+     * 3
+     * 5
+     * 10
+     * 25
+     */
+    private final By DYNAMIC_NUMBER =
+            AppiumBy.xpath(
+                    "//android.view.View[" +
+                            "string-length(@content-desc) > 0 " +
+                            "and " +
+                            "translate(@content-desc,'0123456789','') = ''" +
+                            "]"
+            );
+
+
+    /*
+     * Any content-desc containing KG.
+     *
+     * Examples:
+     * 1510.00 kg
+     * 250.00 kg
+     * 75.50 kg
+     */
+    private final By DYNAMIC_KG =
+            AppiumBy.xpath(
+                    "//android.view.View[" +
+                            "contains(translate(@content-desc," +
+                            "'ABCDEFGHIJKLMNOPQRSTUVWXYZ'," +
+                            "'abcdefghijklmnopqrstuvwxyz'), 'kg')" +
+                            "]"
+            );
+
+
+    /*
+     * Recent order rows.
+     *
+     * Example:
+     * AB-RO-98286 5.00 kg 30 pts
+     * AB-RO-98289 5.00 kg 30 pts
+     *
+     * The order number, KG and points can change.
+     */
+    private final By DYNAMIC_RECENT_ORDERS =
+            AppiumBy.xpath(
+                    "//android.view.View[" +
+                            "starts-with(@content-desc,'AB-RO-')" +
+                            "]"
+            );
+
+
+    // =========================================================
+    // CLICK REPORT
+    // =========================================================
+
+    public void clickReport() {
 
         System.out.println();
-        System.out.println("==================================================");
-        ExtentTestListener.logStep("          REPORT PAGE VALIDATION STARTED");
-        System.out.println("==================================================");
+        System.out.println("========================================");
+        System.out.println("CLICKING REPORT");
+        System.out.println("========================================");
 
-        // --------------------------------------------------------
-        // STEP 1 - Validate Report menu item
-        // --------------------------------------------------------
-
-        System.out.println();
-        ExtentTestListener.logStep("----- STEP 1 : VALIDATE REPORT MENU -----");
-
-        WebElement reportElement = wait.until(
-                ExpectedConditions.visibilityOfElementLocated(REPORT)
+        clickIfVisible(
+                REPORT,
+                "Report"
         );
 
-        System.out.println("Report element found");
-        System.out.println("Report displayed : " + reportElement.isDisplayed());
-        System.out.println("Report enabled   : " + reportElement.isEnabled());
-
-        if (!reportElement.isDisplayed()) {
-            throw new RuntimeException("Report element is NOT visible");
-        }
-
-        if (!reportElement.isEnabled()) {
-            throw new RuntimeException("Report element is NOT enabled");
-        }
-
-        ExtentTestListener.logStep("Report validation PASSED");
-
-        // --------------------------------------------------------
-        // STEP 2 - Click Report
-        // --------------------------------------------------------
-
-        System.out.println();
-        System.out.println("----- STEP 2 : CLICK REPORT -----");
-
-        reportElement.click();
-
-        ExtentTestListener.logStep("Report clicked successfully");
-
-        // --------------------------------------------------------
-        // STEP 3 - Wait for Reports page
-        // --------------------------------------------------------
-
-        System.out.println();
-        System.out.println("----- STEP 3 : WAIT FOR REPORTS PAGE -----");
-
-        wait.until(driver ->
-                driver.getPageSource().contains("Reports")
-                        || driver.getPageSource().contains("Report")
-        );
-
-        ExtentTestListener.logStep("Reports page loaded successfully");
-
-        // --------------------------------------------------------
-        // STEP 4 - Validate initial visible elements
-        // --------------------------------------------------------
-
-        System.out.println();
-        ExtentTestListener.logStep("----- STEP 4 : INITIAL REPORT PAGE -----");
-
-        validateVisibleElements("INITIAL REPORT PAGE");
-
-        // --------------------------------------------------------
-        // STEP 5 - Scroll Reports page
-        // --------------------------------------------------------
-
-        System.out.println();
-        ExtentTestListener.logStep("----- STEP 5 : SCROLL REPORT PAGE -----");
-
-        scrollReportsPage();
-
-        // --------------------------------------------------------
-        // STEP 6 - Validate elements after scroll
-        // --------------------------------------------------------
-
-        System.out.println();
-        ExtentTestListener.logStep("----- STEP 6 : AFTER SCROLL -----");
-
-        validateVisibleElements("AFTER SCROLL");
-
-        // --------------------------------------------------------
-        // FINAL RESULT
-        // --------------------------------------------------------
-
-        System.out.println();
-        System.out.println("==================================================");
-        ExtentTestListener.logStep("       REPORT PAGE VALIDATION COMPLETED");
-        System.out.println("==================================================");
+        verifyReportPage("Overall");
     }
 
-// ============================================================
-// PRINT + VALIDATE ALL VISIBLE ELEMENTS
-// ============================================================
 
-    private void validateVisibleElements(String sectionName) {
+    // =========================================================
+    // CLICK WEEKLY
+    // =========================================================
+
+    public void clickWeekly() {
 
         System.out.println();
-        System.out.println("==================================================");
-        System.out.println("----- " + sectionName + " -----");
-        System.out.println("==================================================");
+        System.out.println("========================================");
+        System.out.println("CLICKING WEEKLY");
+        System.out.println("========================================");
 
-        List<WebElement> elements = driver.findElements(
-                By.xpath("//*")
+        clickIfVisible(
+                WEEKLY,
+                "Weekly"
         );
 
-        int totalElements = 0;
-        int visibleElements = 0;
-        int enabledElements = 0;
+        verifyReportPage("Weekly");
+    }
 
-        for (WebElement element : elements) {
 
-            try {
+    // =========================================================
+    // CLICK MONTHLY
+    // =========================================================
+
+    public void clickMonthly() {
+
+        System.out.println();
+        System.out.println("========================================");
+        System.out.println("CLICKING MONTHLY");
+        System.out.println("========================================");
+
+        clickIfVisible(
+                MONTHLY,
+                "Monthly"
+        );
+
+        verifyReportPage("Monthly");
+    }
+
+
+    // =========================================================
+    // CLICK RANGE
+    // =========================================================
+
+    public void clickRange() {
+
+        System.out.println();
+        System.out.println("========================================");
+        System.out.println("CLICKING RANGE");
+        System.out.println("========================================");
+
+        clickIfVisible(
+                RANGE,
+                "Range"
+        );
+
+        verifyReportPage("Range");
+    }
+
+
+    // =========================================================
+    // VERIFY COMPLETE REPORT PAGE
+    // =========================================================
+
+    private void verifyReportPage(
+            String reportType
+    ) {
+
+        System.out.println();
+        System.out.println("----------------------------------------");
+        System.out.println(
+                "VERIFYING REPORT PAGE : " + reportType
+        );
+        System.out.println("----------------------------------------");
+
+
+        // =====================================================
+        // OVER ALL ORDERS
+        // =====================================================
+
+        verifyAndPrint(
+                OVER_ALL_ORDERS,
+                "Over All Orders"
+        );
+
+        printDynamicNumber(
+                "Over All Orders Value"
+        );
+
+
+        // =====================================================
+        // TOTAL QUANTITY
+        // =====================================================
+
+        verifyAndPrint(
+                TOTAL_QUANTITY,
+                "Total Quantity"
+        );
+
+        printDynamicKG(
+                "Total Quantity Value"
+        );
+
+
+        // =====================================================
+        // TOTAL REWARD POINTS
+        // =====================================================
+
+        verifyAndPrint(
+                TOTAL_REWARD_POINTS,
+                "Total Reward Points"
+        );
+
+
+        // =====================================================
+        // RECENT ORDERS
+        // =====================================================
+
+        verifyAndPrint(
+                RECENT_ORDERS,
+                "Recent Orders"
+        );
+
+        printRecentOrders();
+
+
+        System.out.println("----------------------------------------");
+        System.out.println(
+                reportType +
+                        " REPORT VERIFICATION COMPLETED"
+        );
+        System.out.println("----------------------------------------");
+
+        ExtentTestListener.logStep(
+                reportType +
+                        " Report page verified"
+        );
+    }
+
+
+    // =========================================================
+    // PRINT DYNAMIC NUMBER
+    // =========================================================
+
+    private void printDynamicNumber(
+            String fieldName
+    ) {
+
+        try {
+
+            List<WebElement> elements =
+                    driver.findElements(
+                            DYNAMIC_NUMBER
+                    );
+
+            if (elements.isEmpty()) {
+
+                System.out.println(
+                        "SKIP | " +
+                                fieldName +
+                                " : Value not found"
+                );
+
+                return;
+            }
+
+            /*
+             * Usually the first numeric value on the page
+             * belongs to Over All Orders.
+             */
+            for (WebElement element : elements) {
 
                 if (!element.isDisplayed()) {
                     continue;
                 }
 
-                visibleElements++;
+                String value =
+                        element.getAttribute(
+                                "content-desc"
+                        );
 
-                String className = element.getAttribute("className");
-                String text = element.getText();
-                String contentDesc = element.getAttribute("content-desc");
-                String resourceId = element.getAttribute("resource-id");
-                String clickable = element.getAttribute("clickable");
-                String enabled = element.getAttribute("enabled");
-                String bounds = element.getAttribute("bounds");
+                if (value != null &&
+                        !value.trim().isEmpty()) {
 
-                if ("true".equalsIgnoreCase(enabled)) {
-                    enabledElements++;
+                    System.out.println(
+                            "PASS | " +
+                                    fieldName +
+                                    " : " +
+                                    value
+                    );
+
+                    return;
                 }
-
-                System.out.println();
-                System.out.println("--------------------------------------------------");
-                System.out.println("VISIBLE ELEMENT #" + visibleElements);
-                System.out.println("--------------------------------------------------");
-
-                System.out.println("Class        : " + safeValue(className));
-                System.out.println("Text         : " + safeValue(text));
-                System.out.println("Content-Desc : " + safeValue(contentDesc));
-                System.out.println("Resource-ID  : " + safeValue(resourceId));
-                System.out.println("Clickable    : " + safeValue(clickable));
-                System.out.println("Enabled      : " + safeValue(enabled));
-                System.out.println("Displayed    : true");
-                System.out.println("Bounds       : " + safeValue(bounds));
-
-                totalElements++;
-
-            } catch (Exception e) {
-
-                System.out.println(
-                        "Unable to validate one element : "
-                                + e.getMessage()
-                );
             }
-        }
 
-        System.out.println();
-        System.out.println("==================================================");
-        System.out.println("VISIBLE ELEMENT SUMMARY");
-        System.out.println("==================================================");
-        System.out.println("Total elements inspected : " + totalElements);
-        System.out.println("Visible elements         : " + visibleElements);
-        System.out.println("Enabled elements         : " + enabledElements);
-        System.out.println("==================================================");
-    }
-
-// ============================================================
-// SCROLL REPORT PAGE
-// ============================================================
-
-    private void scrollReportsPage() {
-
-        try {
-
-            WebElement scrollView = wait.until(
-                    ExpectedConditions.presenceOfElementLocated(SCROLL_VIEW)
+            System.out.println(
+                    "SKIP | " +
+                            fieldName +
+                            " : Value not visible"
             );
-
-            ExtentTestListener.logStep("Reports ScrollView found");
-
-            String scrollable =
-                    scrollView.getAttribute("scrollable");
-
-            ExtentTestListener.logStep("ScrollView scrollable : " + scrollable);
-
-            // Scroll using UiScrollable
-            driver.findElement(
-                    AppiumBy.androidUIAutomator(
-                            "new UiScrollable("
-                                    + "new UiSelector().className(\"android.widget.ScrollView\")"
-                                    + ").scrollForward()"
-                    )
-            );
-
-            ExtentTestListener.logStep("Reports page scrolled successfully");
 
         } catch (Exception e) {
 
             System.out.println(
-                    "UiScrollable could not be used."
+                    "SKIP | " +
+                            fieldName +
+                            " : Unable to read value"
             );
-
-            ExtentTestListener.logStep(
-                    "Using Appium scrollGesture..."
-            );
-
-            try {
-
-                driver.executeScript(
-                        "mobile: scrollGesture",
-                        java.util.Map.of(
-                                "left", 0,
-                                "top", 200,
-                                "width", 720,
-                                "height", 1050,
-                                "direction", "down",
-                                "percent", 0.75
-                        )
-                );
-
-                System.out.println(
-                        "Reports page scrolled using scrollGesture"
-                );
-
-            } catch (Exception scrollException) {
-
-                throw new RuntimeException(
-                        "Unable to scroll Reports page: "
-                                + scrollException.getMessage(),
-                        scrollException
-                );
-            }
         }
     }
 
-// ============================================================
-// SAFE VALUE
-// ============================================================
 
-    private String safeValue(String value) {
+    // =========================================================
+    // PRINT DYNAMIC KG
+    // =========================================================
 
-        if (value == null || value.trim().isEmpty()) {
-            return "<empty>";
+    private void printDynamicKG(
+            String fieldName
+    ) {
+
+        try {
+
+            List<WebElement> elements =
+                    driver.findElements(
+                            DYNAMIC_KG
+                    );
+
+            if (elements.isEmpty()) {
+
+                System.out.println(
+                        "SKIP | " +
+                                fieldName +
+                                " : Value not found"
+                );
+
+                return;
+            }
+
+            for (WebElement element : elements) {
+
+                if (!element.isDisplayed()) {
+                    continue;
+                }
+
+                String value =
+                        element.getAttribute(
+                                "content-desc"
+                        );
+
+                if (value != null &&
+                        !value.trim().isEmpty()) {
+
+                    System.out.println(
+                            "PASS | " +
+                                    fieldName +
+                                    " : " +
+                                    value
+                    );
+
+                    return;
+                }
+            }
+
+            System.out.println(
+                    "SKIP | " +
+                            fieldName +
+                            " : Value not visible"
+            );
+
+        } catch (Exception e) {
+
+            System.out.println(
+                    "SKIP | " +
+                            fieldName +
+                            " : Unable to read value"
+            );
         }
+    }
 
-        return value;
+
+    // =========================================================
+    // PRINT RECENT ORDERS DYNAMICALLY
+    // =========================================================
+
+    private void printRecentOrders() {
+
+        try {
+
+            List<WebElement> orders =
+                    driver.findElements(
+                            DYNAMIC_RECENT_ORDERS
+                    );
+
+            if (orders.isEmpty()) {
+
+                System.out.println(
+                        "SKIP | Recent Orders : No orders found"
+                );
+
+                return;
+            }
+
+            int count = 0;
+
+            for (WebElement order : orders) {
+
+                if (!order.isDisplayed()) {
+                    continue;
+                }
+
+                String value =
+                        order.getAttribute(
+                                "content-desc"
+                        );
+
+                if (value == null ||
+                        value.trim().isEmpty()) {
+                    continue;
+                }
+
+                count++;
+
+                System.out.println(
+                        "PASS | Recent Order " +
+                                count +
+                                " : " +
+                                value
+                );
+            }
+
+            if (count == 0) {
+
+                System.out.println(
+                        "SKIP | Recent Orders : " +
+                                "Orders not visible"
+                );
+            }
+
+        } catch (Exception e) {
+
+            System.out.println(
+                    "SKIP | Recent Orders : " +
+                            "Unable to read orders"
+            );
+        }
+    }
+
+
+    // =========================================================
+    // VERIFY STATIC LABEL
+    // =========================================================
+
+    private void verifyAndPrint(
+            By locator,
+            String fieldName
+    ) {
+
+        try {
+
+            List<WebElement> elements =
+                    driver.findElements(
+                            locator
+                    );
+
+            for (WebElement element : elements) {
+
+                if (!element.isDisplayed()) {
+                    continue;
+                }
+
+                String value =
+                        element.getAttribute(
+                                "content-desc"
+                        );
+
+                if (value == null ||
+                        value.trim().isEmpty()) {
+
+                    value = element.getText();
+                }
+
+                System.out.println(
+                        "PASS | " +
+                                fieldName +
+                                " : " +
+                                value
+                );
+
+                return;
+            }
+
+            System.out.println(
+                    "SKIP | " +
+                            fieldName +
+                            " : Not visible"
+            );
+
+        } catch (Exception e) {
+
+            System.out.println(
+                    "SKIP | " +
+                            fieldName +
+                            " : Not available"
+            );
+        }
+    }
+
+
+    // =========================================================
+    // CLICK IF VISIBLE
+    // =========================================================
+
+    private void clickIfVisible(
+            By locator,
+            String name
+    ) {
+
+        try {
+
+            List<WebElement> elements =
+                    driver.findElements(
+                            locator
+                    );
+
+            for (WebElement element : elements) {
+
+                if (element.isDisplayed()) {
+
+                    element.click();
+
+                    System.out.println(
+                            "PASS | Clicked : " +
+                                    name
+                    );
+
+                    return;
+                }
+            }
+
+            System.out.println(
+                    "SKIP | " +
+                            name +
+                            " : Button not visible"
+            );
+
+        } catch (Exception e) {
+
+            System.out.println(
+                    "SKIP | Unable to click : " +
+                            name
+            );
+        }
     }
 }

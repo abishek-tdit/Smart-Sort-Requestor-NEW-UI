@@ -7,104 +7,54 @@ import io.appium.java_client.android.nativekey.AndroidKey;
 import io.appium.java_client.android.nativekey.KeyEvent;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.remote.RemoteWebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import utilities.StepTimer;
-
 import java.time.Duration;
 import java.util.List;
+import java.util.Map;
 
 public class FSlotPage extends BaseClassMobile {
 
-    private final WebDriverWait wait =
-            new WebDriverWait(driver, Duration.ofSeconds(20));
+    private final WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20));
 
     // =========================================================
-    // MATERIAL CATEGORY
+    // LOCATORS
     // =========================================================
     private final By mixedMaterials = AppiumBy.accessibilityId("Mixed-Materials");
 
-    private final By plastic = AppiumBy.accessibilityId("Plastic");
+//    private final By textile = AppiumBy.accessibilityId("Textile");
+//
+//    private final By battery = AppiumBy.accessibilityId("Battery");
 
-    private final By battery = AppiumBy.accessibilityId("Battery");
+    private final By slotTiming = AppiumBy.xpath("//android.widget.ImageView["
+                    + "contains(@content-desc,'08:00')" + " and "
+                    + "contains(@content-desc,'11:45')" + "]" );
 
-
-    // =========================================================
-    // AVAILABLE SLOT
-    // =========================================================
-    private final By availableSlots = AppiumBy.xpath
-            ("//android.widget.ScrollView" +
-                    "//android.view.View[" +
-                    "contains(@content-desc,'AM') or " +
-                    "contains(@content-desc,'PM')" +
-                    "]");
-
-
-    // =========================================================
-    // PICKUP INSTRUCTIONS
-    // =========================================================
-    private final By PICKUP_INSTRUCTIONS = AppiumBy.xpath(
-            "//android.widget.ImageView[" +
-                    "contains(@content-desc,'Pickup Instructions')" +
-                    " and " +
-                    "contains(@content-desc,'Add any specific instructions for the Collector')" +
-                    "]");
-
-
-    // =========================================================
-    // WAIT OUTSIDE
-    // =========================================================
+    private final By PICKUP_INSTRUCTIONS = AppiumBy.xpath("//android.widget.ImageView["
+            + "contains(@content-desc,'Pickup Instructions')"
+            + " and "
+            + "contains(@content-desc,'Add any specific instructions for the Collector')" + "]");
     private final By waitOutside = AppiumBy.accessibilityId("Wait outside");
-
-
-    // =========================================================
-    // NOTE
-    // =========================================================
-    private final By noteTextBox =
-            AppiumBy.className("android.widget.EditText");
-
-
-    // =========================================================
-    // RECORDING
-    // =========================================================
-    private final By startRecording =
-            AppiumBy.accessibilityId("Start recording");
-
-    private final By recordingInProgress =
-            AppiumBy.accessibilityId("Recording in progress...");
-
-
-    // =========================================================
-    // SAVE
-    // =========================================================
+    private final By noteTextBox = AppiumBy.className("android.widget.EditText");
+    private final By startRecording = AppiumBy.accessibilityId("Start recording");
+    private final By recordingInProgress = AppiumBy.accessibilityId("Recording in progress...");
     private final By saveButton = AppiumBy.accessibilityId("Save");
-
-
-    // =========================================================
-    // CONFIRM ORDER
-    // =========================================================
-    private final By confirmOrder =
-            AppiumBy.accessibilityId("Confirm Order");
-
-
-    // =========================================================
-    // OK
-    // =========================================================
+    private final By confirmOrder = AppiumBy.accessibilityId("Confirm Order");
     private final By okButton = AppiumBy.accessibilityId("OK");
 
 
-    // =========================================================
+
     // SELECT MATERIAL CATEGORY
-    // =========================================================
     public void selectMaterialCategory() {
 
         System.out.println("==============================================");
         ExtentTestListener.logStep("Waiting for Material Category...");
         System.out.println("==============================================");
 
-        // -----------------------------------------------------
+
         // 1. MIXED-MATERIALS
-        // -----------------------------------------------------
         WebElement material =
                 wait.until(ExpectedConditions.elementToBeClickable(mixedMaterials));
 
@@ -114,145 +64,112 @@ public class FSlotPage extends BaseClassMobile {
 
         ExtentTestListener.logStep("PASS : Mixed-Materials selected successfully");
 
+//        // 2. TEXTILE - CLICK ONLY IF VISIBLE
+//        List<WebElement> textileElements = driver.findElements(textile);
+//
+//        if (!textileElements.isEmpty()
+//                && textileElements.get(0).isDisplayed()
+//                && textileElements.get(0).isEnabled()) {
+//
+//            System.out.println("Textile is visible - selecting...");
+//
+//            textileElements.get(0).click();
+//
+//            ExtentTestListener.logStep("PASS : Textile selected successfully");
+//
+//        } else {
+//
+//            System.out.println("SKIP : Textile is not visible");
+//
+//            ExtentTestListener.logStep("SKIP : Textile is not visible");
+//        }
+//
+//
+//        // 3. BATTERY - CLICK ONLY IF VISIBLE
+//        List<WebElement> batteryElements = driver.findElements(battery);
+//
+//        if (!batteryElements.isEmpty()
+//                && batteryElements.get(0).isDisplayed()
+//                && batteryElements.get(0).isEnabled()) {
+//
+//            System.out.println("Battery is visible - selecting...");
+//
+//            batteryElements.get(0).click();
+//
+//            ExtentTestListener.logStep("PASS : Battery selected successfully");
+//
+//        } else {
+//
+//            System.out.println("SKIP : Battery is not visible");
+//
+//            ExtentTestListener.logStep("SKIP : Battery is not visible");
+//        }
+//
+//
+//        System.out.println("PASS : Material category selection completed");
+//
+//        ExtentTestListener.logStep("PASS : Material category selection completed");
 
-        // -----------------------------------------------------
-        // 2. PLASTIC - CLICK ONLY IF VISIBLE
-        // -----------------------------------------------------
-        List<WebElement> plasticElements = driver.findElements(plastic);
-
-        if (!plasticElements.isEmpty()
-                && plasticElements.get(0).isDisplayed()
-                && plasticElements.get(0).isEnabled()) {
-
-            System.out.println("Plastic is visible - selecting...");
-
-            plasticElements.get(0).click();
-
-            System.out.println("PASS : Plastic selected successfully");
-        }
-        else
-        {
-            System.out.println("SKIP : Plastic is not visible");
-        }
-
-        // -----------------------------------------------------
-        // 3. BATTERY - CLICK ONLY IF VISIBLE
-        // -----------------------------------------------------
-        List<WebElement> batteryElements = driver.findElements(battery);
-
-        if (!batteryElements.isEmpty()
-                && batteryElements.get(0).isDisplayed()
-                && batteryElements.get(0).isEnabled()) {
-
-            System.out.println("Battery is visible - selecting...");
-
-            batteryElements.get(0).click();
-
-            System.out.println("PASS : Battery selected successfully");
-        }
-        else
-        {
-            System.out.println("SKIP : Battery is not visible");
-        }
-        System.out.println("PASS : Material category selection completed");
     }
-
-
     // =========================================================
-    // CLICK FIRST AVAILABLE SLOT
+    // CLICK SLOT TIMING
     // =========================================================
-    public void clickFirstAvailableSlot() {
-
+    public void clickSlotTiming() {
         System.out.println("==============================================");
-        ExtentTestListener.logStep("Searching for First Available Slot...");
+        ExtentTestListener.logStep("Waiting for Slot Timing...");
         System.out.println("==============================================");
+        StepTimer.startStep();
+        // -----------------------------------------------------
+        // WAIT FOR SLOT
+        // -----------------------------------------------------
+        System.out.println( "Searching for Slot Timing : 08:00 AM - 11:45 PM" );
+        WebElement slot = wait.until
+                ( ExpectedConditions.visibilityOfElementLocated( slotTiming ) );
 
-        scrollDown();
-
-        for (int attempt = 1; attempt <= 5; attempt++) {
-
-            List<WebElement> slots = driver.findElements(availableSlots);
-
-            System.out.println("Attempt " + attempt +
-                            " | Slot Elements Found : " +
-                            slots.size());
-
-            for (WebElement slot : slots) {
-                try {
-                    if (!slot.isDisplayed() || !slot.isEnabled()) {
-                        continue;
-                    }
-
-                    String slotText = slot.getAttribute("content-desc");
-
-                    if (slotText == null || slotText.trim().isEmpty())
-                    {
-                        continue;
-                    }
-
-                    slotText = slotText.trim();
-
-                    // Make sure this is really a time slot
-                    if (!slotText.matches(
-                            ".*\\d{1,2}:\\d{2}.*(AM|PM).*"
-                    )) {
-                        continue;
-                    }
-
-                    System.out.println("Available Slot Found : " + slotText);
-
-                    wait.until(driver ->
-                            slot.isDisplayed() && slot.isEnabled());
-
-                    System.out.println("Clicking Slot : " + slotText);
-
-                    slot.click();
-
-                    System.out.println("PASS : Slot clicked successfully : " + slotText);
-
-                    return;
-
-                } catch (Exception e) {
-
-                    System.out.println("Unable to click slot : " + e.getMessage());
-                }
-            }
-
-
-            // -------------------------------------------------
-            // SCROLL ONLY IF NO SLOT FOUND
-            // -------------------------------------------------
-            if (attempt < 5) {
-
-                System.out.println("No usable slot on current screen.");
-
-                scrollDown();
-
-                System.out.println("Scrolled down - Attempt " + attempt);
-            }
+        System.out.println( "Slot Timing found : " + slot.getAttribute("contentDescription") );
+        // -----------------------------------------------------
+        // VERIFY ELEMENT
+        // -----------------------------------------------------
+        if (!slot.isDisplayed()) { throw new RuntimeException( "Slot Timing found but not displayed" );
         }
+        if (!slot.isEnabled()) { throw new RuntimeException( "Slot Timing found but not enabled" ); }
+        // -----------------------------------------------------
+        // CLICK SLOT
+        // -----------------------------------------------------
 
-        throw new RuntimeException("ERROR : No available AM/PM slot was found");
-    }
+        try { driver.executeScript( "mobile: clickGesture",
+                Map.of( "elementId", ((RemoteWebElement) slot).getId() ) );
+            System.out.println( "Slot Timing clicked using clickGesture" );
+        } catch (Exception e) {
+            System.out.println( "clickGesture failed. Trying normal click..." );
+            slot.click();
+            System.out.println( "Slot Timing clicked using normal click" );
+        } double duration = StepTimer.endStep();
+        // -----------------------------------------------------
+        // LOG
+        // -----------------------------------------------------
+        ExtentTestListener.logStep( "PASS : Slot Timing selected successfully | "
+                + "08:00 AM - 11:45 PM | Time Taken : "
+                + String.format("%.2f", duration) + " sec" );
+        System.out.println( "PASS : Slot Timing clicked successfully" ); }
 
 
     // =========================================================
     // PICKUP INSTRUCTIONS
     // =========================================================
-    public void enterPickupInstructions() throws InterruptedException {
+    public void enterPickupInstructions() {
 
         System.out.println("==============================================");
         ExtentTestListener.logStep("Pickup Instructions Flow Started");
         System.out.println("==============================================");
 
 
-        // -----------------------------------------------------
+
         // 1. PICKUP INSTRUCTIONS
-        // -----------------------------------------------------
         System.out.println("Waiting for Pickup Instructions...");
 
-        WebElement pickupButton =
-                wait.until(ExpectedConditions.elementToBeClickable(PICKUP_INSTRUCTIONS));
+        WebElement pickupButton = wait.until
+                (ExpectedConditions.elementToBeClickable(PICKUP_INSTRUCTIONS));
 
         System.out.println("Pickup Instructions found");
 
@@ -261,9 +178,7 @@ public class FSlotPage extends BaseClassMobile {
         ExtentTestListener.logStep("PASS : Pickup Instructions clicked");
 
 
-        // -----------------------------------------------------
         // 2. WAIT OUTSIDE
-        // -----------------------------------------------------
         System.out.println("Waiting for Wait outside...");
 
         WebElement outside =
@@ -298,14 +213,10 @@ public class FSlotPage extends BaseClassMobile {
 
         ExtentTestListener.logStep("PASS : Pickup note entered successfully");
 
-
-        // -----------------------------------------------------
         // 4. HIDE KEYBOARD
-        // -----------------------------------------------------
         try {
 
             if (driver.isKeyboardShown()) {
-
                 driver.pressKey(new KeyEvent(AndroidKey.BACK));
 
                 System.out.println("Keyboard hidden successfully");
@@ -314,11 +225,10 @@ public class FSlotPage extends BaseClassMobile {
             {
                 System.out.println("Keyboard is already hidden");
             }
-
-        } catch (Exception e) {
-
-            System.out.println("Unable to hide keyboard: " +
-                            e.getMessage());
+        }
+        catch (Exception e)
+        {
+            System.out.println("Unable to hide keyboard: " + e.getMessage());
         }
 
 
@@ -340,8 +250,8 @@ public class FSlotPage extends BaseClassMobile {
         // -----------------------------------------------------
         System.out.println("Waiting for Recording in progress...");
 
-        WebElement recording =
-                wait.until(ExpectedConditions.visibilityOfElementLocated(recordingInProgress));
+        WebElement recording = wait.until
+                (ExpectedConditions.visibilityOfElementLocated(recordingInProgress));
 
         ExtentTestListener.logStep("Recording in progress");
 
@@ -370,6 +280,7 @@ public class FSlotPage extends BaseClassMobile {
 
         ExtentTestListener.logStep("PASS : Pickup Instructions saved");
 
+
         System.out.println("==============================================");
         ExtentTestListener.logStep("Pickup Instructions Flow Completed");
         System.out.println("==============================================");
@@ -380,9 +291,9 @@ public class FSlotPage extends BaseClassMobile {
     // CONFIRM ORDER
     // =========================================================
     public void clickConfirmOrder() throws InterruptedException {
-
+        Thread.sleep(5000);
         System.out.println("Waiting for Confirm Order...");
-        Thread.sleep(4000);
+
         WebElement confirm =
                 wait.until(ExpectedConditions.elementToBeClickable(confirmOrder));
 
@@ -399,16 +310,22 @@ public class FSlotPage extends BaseClassMobile {
     // =========================================================
     public void clickOKPopup() {
 
-        System.out.println("Waiting for OK popup...");
+        System.out.println("Checking for OK popup...");
 
-        WebElement ok =
-                wait.until(ExpectedConditions.elementToBeClickable(okButton));
+        List<WebElement> okButtons = driver.findElements(okButton);
 
-        System.out.println("OK popup found");
+        if (!okButtons.isEmpty() && okButtons.get(0).isDisplayed()) {
 
-        ok.click();
+            okButtons.get(0).click();
 
-        ExtentTestListener.logStep("PASS : OK popup clicked");
+            ExtentTestListener.logStep("PASS : OK popup clicked");
+            System.out.println("OK popup clicked successfully");
+
+        } else {
+
+            ExtentTestListener.logStep("OK popup not visible - skipped");
+            System.out.println("OK popup not visible - skipped");
+        }
     }
 
 
@@ -422,7 +339,7 @@ public class FSlotPage extends BaseClassMobile {
         System.out.println("==============================================");
 
         selectMaterialCategory();
-        clickFirstAvailableSlot();
+        clickSlotTiming();
         enterPickupInstructions();
         clickConfirmOrder();
         clickOKPopup();

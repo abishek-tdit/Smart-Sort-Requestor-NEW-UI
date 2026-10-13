@@ -9,7 +9,7 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 
 import java.util.List;
 
-public class GUploadPackedMaterialsImagePage extends BaseClassMobile {
+public class G1UploadPackedMaterialsImagePage extends BaseClassMobile {
 
     public void uploadImage() throws InterruptedException {
 
@@ -28,7 +28,7 @@ public class GUploadPackedMaterialsImagePage extends BaseClassMobile {
         Thread.sleep(800);
 
         weightField.clear();
-        weightField.sendKeys("10");
+        weightField.sendKeys("5");
 
         double duration = StepTimer.endStep();
 
@@ -144,116 +144,5 @@ public class GUploadPackedMaterialsImagePage extends BaseClassMobile {
                         + String.format("%.2f", duration)
                         + " sec");
 
-
-        // =========================================================
-        // Select Reason - OPTIONAL
-        // =========================================================
-
-        StepTimer.startStep();
-
-        try {
-
-            List<WebElement> reasonElements =
-                    driver.findElements(AppiumBy.accessibilityId("Select Reason"));
-
-            if (!reasonElements.isEmpty()
-                    && reasonElements.get(0).isDisplayed()) {
-
-                // Click Select Reason
-                reasonElements.get(0).click();
-
-                ExtentTestListener.logStep("Select Reason Clicked");
-
-                // Select Technical Issue
-                wait.until(ExpectedConditions.elementToBeClickable
-                        (AppiumBy.accessibilityId("Technical issue"))).click();
-
-                ExtentTestListener.logStep("Reason Selected : Technical issue");
-
-                // Scroll down to Submit
-                scrollDown();
-            }
-            else
-            {
-                ExtentTestListener.logStep("Select Reason not visible - Skipping Reason selection");
-            }
-        }
-        catch (Exception e) {
-            ExtentTestListener.logStep("Select Reason not available - Moving to Submit button");
-        }
-
-        duration = StepTimer.endStep();
-
-        ExtentTestListener.logStep("Reason Selection Completed | Time Taken : "
-                        + String.format("%.2f", duration)
-                        + " sec");
-
-
-        // =========================================================
-        // Click Submit
-        // =========================================================
-
-        StepTimer.startStep();
-
-        try {
-            wait.until(ExpectedConditions.elementToBeClickable
-                    (AppiumBy.accessibilityId("Submit"))).click();
-
-            duration = StepTimer.endStep();
-
-            if (sessionRestarted) {
-
-                ExtentTestListener.logStep("Submit Clicked After Restart | Time Taken : "
-                                + String.format("%.2f", duration)
-                                + " sec");
-            }
-            else
-            {
-                ExtentTestListener.logStep("Submit Clicked | Time Taken : "
-                                + String.format("%.2f", duration)
-                                + " sec");
-            }
-        }
-        catch (Exception e)
-        {
-            duration = StepTimer.endStep();
-
-            ExtentTestListener.logStep("Submit button not found | Time Taken : "
-                            + String.format("%.2f", duration)
-                            + " sec");
-
-            throw new RuntimeException("Submit button not found after session recovery", e);
-        }
-
-
-        // =========================================================
-        // Wait After Submit
-        // =========================================================
-
-        StepTimer.startStep();
-
-        Thread.sleep(5000);
-
-        duration = StepTimer.endStep();
-
-        ExtentTestListener.logStep("Wait After Submit Completed | Time Taken : "
-                + String.format("%.2f", duration)
-                + " sec");
-
-
-        // =========================================================
-        // Go To Dashboard
-        // =========================================================
-
-        StepTimer.startStep();
-
-        wait.until(ExpectedConditions.elementToBeClickable
-                (AppiumBy.accessibilityId("Go to Dashboard"))).click();
-
-        duration = StepTimer.endStep();
-
-        ExtentTestListener.logStep("Dashboard Clicked | Time Taken : "
-                        + String.format("%.2f", duration)
-                        + " sec");
     }
 }
