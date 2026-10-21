@@ -12,7 +12,7 @@ public class C1RequestorOrderPlacingFlowTest extends BaseClassMobile {
     @Test(priority = 3)
     public void smartSortOrderFlow() throws Exception {
 
-        //Login
+//        //Login
 //        ALoginPage loginPage = new ALoginPage(driver);
 //        loginPage.login("0500000555",
 //                          generatedPassword);
@@ -34,6 +34,7 @@ public class C1RequestorOrderPlacingFlowTest extends BaseClassMobile {
         //Slot Selection
         Thread.sleep(2000);
         FSlotPage slotPage = new FSlotPage();
+
         slotPage.selectSlotConfirmAndOK();
 
 

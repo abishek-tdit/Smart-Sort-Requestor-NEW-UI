@@ -32,10 +32,14 @@ public class FSlotPage extends BaseClassMobile {
                     + "contains(@content-desc,'08:00')" + " and "
                     + "contains(@content-desc,'11:45')" + "]" );
 
-    private final By PICKUP_INSTRUCTIONS = AppiumBy.xpath("//android.widget.ImageView["
-            + "contains(@content-desc,'Pickup Instructions')"
-            + " and "
-            + "contains(@content-desc,'Add any specific instructions for the Collector')" + "]");
+    private final By PICKUP_INSTRUCTIONS =
+            AppiumBy.xpath(
+                    "//*[contains(@content-desc,'Pickup instructions') " +
+                            "or contains(@content-desc,'Pickup Instructions') " +
+                            "or contains(@text,'Pickup instructions') " +
+                            "or contains(@text,'Pickup Instructions')]"
+            );
+
     private final By waitOutside = AppiumBy.accessibilityId("Wait outside");
     private final By noteTextBox = AppiumBy.className("android.widget.EditText");
     private final By startRecording = AppiumBy.accessibilityId("Start recording");
@@ -164,18 +168,56 @@ public class FSlotPage extends BaseClassMobile {
         System.out.println("==============================================");
 
 
-
+        // =====================================================
         // 1. PICKUP INSTRUCTIONS
+        // =====================================================
         System.out.println("Waiting for Pickup Instructions...");
 
-        WebElement pickupButton = wait.until
-                (ExpectedConditions.elementToBeClickable(PICKUP_INSTRUCTIONS));
+        WebElement pickupButton = wait.until(
+                ExpectedConditions.visibilityOfElementLocated(
+                        PICKUP_INSTRUCTIONS
+                )
+        );
 
         System.out.println("Pickup Instructions found");
 
-        pickupButton.click();
+        // Verify that the element is enabled and clickable
+        if (!pickupButton.isEnabled()) {
+            throw new RuntimeException(
+                    "Pickup Instructions element is disabled"
+            );
+        }
 
-        ExtentTestListener.logStep("PASS : Pickup Instructions clicked");
+        // Click using Appium clickGesture
+        try {
+            driver.executeScript(
+                    "mobile: clickGesture",
+                    Map.of(
+                            "elementId",
+                            ((RemoteWebElement) pickupButton).getId()
+                    )
+            );
+
+            System.out.println(
+                    "Pickup Instructions clicked using clickGesture"
+            );
+
+        } catch (Exception e) {
+
+            System.out.println(
+                    "clickGesture failed. Trying normal click..."
+            );
+
+            pickupButton.click();
+
+            System.out.println(
+                    "Pickup Instructions clicked using normal click"
+            );
+        }
+
+        ExtentTestListener.logStep(
+                "PASS : Pickup Instructions clicked successfully"
+        );
 
 
         // 2. WAIT OUTSIDE
